@@ -78,7 +78,7 @@ tbody td{padding:9px 12px;border-bottom:1px solid var(--out-v);font-size:12px;ve
 tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;}
 .mono{font-family:'Roboto Mono',monospace;font-size:11px;}
 .miss-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--err);margin-top:2px;}
-.pag{display:flex;align-items:center;justify-content:flex-end;gap:3px;padding:7px 12px;border-top:1px solid var(--out-v);font-size:11px;color:var(--on-sur-v);}
+
 .pg-info{margin-right:8px;}
 .pgb{width:28px;height:28px;border-radius:50%;border:none;background:transparent;color:var(--on-sur-v);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;}
 .pgb:hover{background:var(--sur-v);}.pgb.on{background:var(--pri);color:#fff;}.pgb:disabled{opacity:.4;cursor:not-allowed;}
@@ -294,15 +294,15 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .sidebar.collapsed .sidebar-label{opacity:0;pointer-events:none;width:0;}
 .sidebar-badge{background:var(--pri);color:#fff;font-size:10px;font-weight:700;line-height:1;padding:2px 6px;border-radius:10px;flex-shrink:0;}
 .sidebar.collapsed .sidebar-badge{display:none;}
-.sidebar.collapsed .sidebar-item{justify-content:center;padding:10px;}
+.sidebar.collapsed .sidebar-item{justify-content:center;padding:10px;gap:0;}
 .sidebar.collapsed .sidebar-item::after{content:attr(data-tooltip);position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);background:#333;color:#fff;font-size:12px;padding:4px 8px;border-radius:5px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s .1s;z-index:200;}
 .sidebar.collapsed .sidebar-item:hover::after{opacity:1;}
 .sidebar-sep{height:1px;background:var(--out);margin:6px 10px;flex-shrink:0;}
-@media(max-width:900px){.sidebar{width:64px;}.sidebar .sidebar-label{opacity:0;width:0;}.sidebar .sidebar-item{justify-content:center;padding:10px;}.sidebar .sidebar-badge{display:none;}}
+@media(max-width:900px){.sidebar{width:64px;}.sidebar .sidebar-label{opacity:0;width:0;}.sidebar .sidebar-item{justify-content:center;padding:10px;gap:0;}.sidebar .sidebar-badge{display:none;}}
 @media(max-width:600px){.sidebar{position:fixed;left:0;top:60px;bottom:0;z-index:200;transform:translateX(-100%);transition:transform .25s cubic-bezier(.4,0,.2,1),width .22s;width:240px!important;box-shadow:4px 0 24px rgba(0,0,0,.15);}.sidebar.mobile-open{transform:translateX(0);}.sidebar .sidebar-label{opacity:1!important;width:auto!important;}.sidebar .sidebar-item{justify-content:flex-start!important;padding:10px 12px!important;}.sidebar .sidebar-badge{display:inline-flex!important;}.sidebar-overlay{display:block;position:fixed;inset:0;z-index:199;background:rgba(0,0,0,.3);}.sidebar-overlay.hidden{display:none;}}
 /* ── Summary compact ─────────────────────────────────────────── */
 .summary-row.compact{gap:4px;padding:6px 16px;}
-.summary-row.compact .sc{padding:5px 10px;min-width:60px;background:var(--pri-c);border-color:var(--pri-c);}
+.summary-row.compact .sc{padding:5px 10px;min-width:60px;}
 .summary-row.compact .sc-lbl{font-size:7px;}
 .summary-row.compact .sc-cnt{font-size:16px;}
 /* ── KPIs extras ─────────────────────────────────────────────── */
@@ -628,11 +628,7 @@ body{
   display:flex;gap:7px;align-items:center;flex-wrap:wrap;
   background:var(--sur);border-bottom:1px solid var(--out);
 }
-.tbl-wrap{
-  flex:1;min-height:0;min-width:0;
-  display:flex;flex-direction:column;
-  overflow:hidden;background:var(--sur);
-}
+
 .tbl-wrap table{width:100%;}
 .bulk-wrap{
   flex:1;display:flex;flex-direction:column;
@@ -711,10 +707,7 @@ body{
 }
 
 /* ══ Tabela Atendimentos ══════════════════════════════════════════════ */
-.tbl-wrap{
-  flex:1;min-height:0;min-width:0;
-  display:flex;flex-direction:column;overflow:hidden;
-}
+
 .tbl-wrap table{width:100%;border-collapse:collapse;}
 
 
@@ -731,44 +724,21 @@ body{
   width:100%;
 }
 #page0{overflow-y:auto;overflow-x:hidden;}
-#page1{overflow:hidden;}
+
 #page2{overflow:hidden;}
 #page3{overflow-y:auto;overflow-x:hidden;}
 
 
 /* ── tbl-wrap: tabela de atendimentos com scroll ─────────────────── */
-.tbl-wrap{
-  flex:1;min-height:0;min-width:0;
-  display:flex;flex-direction:column;
-  overflow:hidden;
-  background:var(--sur);
-}
-.tbl-scroll{
-  flex:1;
-  overflow-y:auto;
-  overflow-x:auto;
-  min-height:0;
-}
+
+
 .tbl-scroll table{
   width:100%;
   border-collapse:collapse;
   min-width:600px;
 }
-.tbl-scroll thead th{
-  position:sticky;
-  top:0;
-  z-index:2;
-  background:var(--sur);
-  border-bottom:2px solid var(--out);
-}
-.pag{
-  flex-shrink:0;
-  border-top:1px solid var(--out);
-  background:var(--sur);
-  padding:6px 16px;
-  display:flex;align-items:center;justify-content:flex-end;gap:6px;
-  font-size:12px;
-}
+
+
 
 /* ══════════════════════════════════════════════════════════════════════
    BULK TABLE — versão definitiva
@@ -818,8 +788,8 @@ body{
 .bt th.col-status,
 .bt th.col-id-venda { background:#1f2937; color:#fff; }
 
-.bt th.sec-id        { background:#2563eb; color:#fff; }
-.bt th.sec-trat      { background:#4f46e5; color:#fff; }
+.bt th.sec-id        { background:#374151; color:#fff; }
+.bt th.sec-trat      { background:#1a73e8; color:#fff; }
 .bt th.sec-disp      { background:#ea580c; color:#fff; }
 
 /* ── Cores de seção (célula) ─────────────────────────────────────── */
@@ -838,18 +808,18 @@ body{
 /* ── Estrutura interna do TH ─────────────────────────────────────── */
 /* Barra de seção (colorida, 12px, topo do th) */
 .th-sec{
-  height:12px;
-  font-size:8px;font-weight:700;
+  height:14px;
+  font-size:10px;font-weight:700;
   text-transform:uppercase;letter-spacing:.4px;
-  padding:0 4px;
+  padding:0 6px;
   display:flex;align-items:center;
   overflow:hidden;white-space:nowrap;
-  background:inherit;color:rgba(255,255,255,.85);
+  background:inherit;color:rgba(255,255,255,.95);
 }
 /* Coluna flex do th (label + filtro) */
 .th-col{
   display:flex;flex-direction:column;
-  height:38px;          /* 50px total - 12px sec = 38px */
+  height:36px;          /* 50px total - 14px sec = 36px */
   overflow:hidden;
 }
 /* Linha de label + botões */
@@ -970,6 +940,38 @@ body{
 }
 /* kpi-row já tem definição — garantir grid responsivo */
 .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px;}
+
+/* ── Página Atendimentos: scroll funcional ── */
+#page1{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;}
+.tbl-wrap{flex:1;min-height:0;min-width:0;display:flex;flex-direction:column;overflow:hidden;background:var(--sur);}
+.tbl-scroll{flex:1;overflow-y:auto;overflow-x:auto;min-height:0;}
+.tbl-scroll thead th{position:sticky;top:0;z-index:2;background:var(--sur-v);}
+.pag{flex-shrink:0;display:flex;align-items:center;justify-content:flex-end;gap:3px;padding:7px 14px;border-top:1px solid var(--out);background:var(--sur);font-size:12px;}
+
+/* ── Campos obrigatórios: destaque visual na célula ─────────────── */
+.bt td.miss-cell{
+  background:#fff3cd !important;
+  border-left:2px solid #f59e0b !important;
+}
+.bt td.miss-cell .bulk-inp,
+.bt td.miss-cell .bulk-sel{
+  background:transparent;
+}
+/* Label de coluna obrigatória: vermelho mais vivo */
+.req-lbl{
+  color:#fca5a5 !important;
+  font-weight:700 !important;
+}
+/* Ícone * no label obrigatório */
+.req-lbl::after{
+  content:' *';
+  font-size:9px;
+  vertical-align:super;
+}
+/* th-sec diferenciação maior entre seções */
+.bt th.sec-id   .th-sec { background:#1f2937; }
+.bt th.sec-trat .th-sec { background:#1d4ed8; }
+.bt th.sec-disp .th-sec { background:#c2410c; }
 </style>
 </head>
 <body>
@@ -1005,7 +1007,7 @@ body{
 <div class="sidebar-overlay hidden" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
 <div class="content-area" id="contentArea">
 <div id="page0" style="display:none"><div class="dash-wrap"><div class="dash-top" style="flex-wrap:wrap;gap:8px"><div class="dash-title">Dashboard de Atendimento</div><div class="period-bar" style="flex-wrap:wrap"><label>Período:</label><div style="display:flex;gap:5px"><button class="period-btn" onclick="setPeriod(7)">7d</button><button class="period-btn" onclick="setPeriod(30)">30d</button><button class="period-btn active" id="btnTodos" onclick="setPeriod(0)">Todos</button></div><input type="date" class="period-inp" id="dtDe" onchange="setPeriodCustom()"><span style="font-size:12px;color:var(--on-sur-v)">até</span><input type="date" class="period-inp" id="dtAte" onchange="setPeriodCustom()"><button class="btn btn-outlined btn-sm" onclick="applyDashFilter()">Aplicar</button><span class="period-info" id="periodInfo">Todos os registros</span></div></div><div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center"><label style="font-size:12px;color:var(--on-sur-v);font-weight:500">Filtrar:</label><select class="sel-field" id="dashSku" onchange="applyDashFilter()" style="border-radius:18px;font-size:12px"><option value="">Todos os SKUs</option></select><select class="sel-field" id="dashCanal" onchange="applyDashFilter()" style="border-radius:18px;font-size:12px"><option value="">Todos os Canais</option><option>Mercado Livre</option><option>Shopee</option><option>Amazon</option><option>Magalu</option><option>Cardex</option></select></div><div class="kpi-section-title">📊 KPIs</div><div class="kpi-row" id="kpiSectionRow"></div><div style="height:8px"></div><div class="kpi-row" id="kpiRow"></div><div class="charts-row"><div class="chart-card"><div class="chart-title">📊 Registros por Status</div><div class="chart-wrap"><canvas id="chartStatus"></canvas></div></div><div class="chart-card"><div class="chart-title">🏪 Registros por Canal</div><div class="chart-wrap"><canvas id="chartCanal"></canvas></div></div></div><div class="charts-row"><div class="chart-card"><div class="chart-title">📋 Por Modalidade</div><div class="chart-wrap-sm"><canvas id="chartModal"></canvas></div></div><div class="chart-card"><div class="chart-title">🏷️ Top Motivos de Reclamação</div><div class="chart-wrap-sm"><canvas id="chartMotivo"></canvas></div></div></div><div class="kpi-row" id="finKpiRow" style="margin-top:12px"></div><div class="dash-bottom-row"><div class="dash-table-card"><div class="dash-card-title">📦 Registros por SKU <span id="skuTotalBadge" style="font-size:11px;color:var(--on-sur-v);font-weight:400">—</span></div><div class="dash-card-scroll"><table class="dash-mini-table"><thead><tr><th>SKU</th><th>Registros</th><th>Reclamações</th></tr></thead><tbody id="skuTableBody"></tbody></table></div></div><div class="dash-table-card"><div class="dash-card-title">🔍 Motivos por SKU</div><div class="dash-card-scroll"><table class="dash-mini-table"><thead><tr><th>SKU</th><th>Motivo</th><th>Qtd</th></tr></thead><tbody id="skuMotivoBody"></tbody></table></div></div></div><div class="month-chart-card"><div class="dash-card-title">📅 Registros por Mês (últimos 6 meses)</div><div class="month-chart-wrap"><canvas id="chartMes"></canvas></div></div></div></div>
-<div id="page1" style="display:none"><div class="summary-row" id="summaryRow"></div><div class="toolbar"><div class="search-field"><span style="color:var(--on-sur-v)">🔍</span><input id="srch" placeholder="Buscar ID, nome, SKU..." oninput="render()"></div><select class="sel-field" id="fStatus" onchange="render()"><option value="">Todos os status ativos</option><option>TRATATIVA ABERTA</option><option>TRATATIVA ATRASADA</option><option>ACOMPANHAR DISPUTA</option><option>ACOMPANHAR ENVIO</option><option>POSSÍVEL EXTRAVIO</option><option>EMITIR NF DEVOL</option><option>AGUARDANDO REEMBOLSO</option><option>EM ATRASO</option><option>A ENVIAR</option><option>CONCLUÍDO</option><option>AGUARDANDO PRODUTO</option></select><select class="sel-field" id="fCanal" onchange="render()"><option value="">Todos os canais</option><option>Mercado Livre</option><option>Shopee</option><option>Amazon</option><option>Magalu</option><option>Cardex</option></select><button class="flt-btn" id="btnMiss" onclick="toggleMiss()">⚠ Incompletos</button></div><div class="tbl-wrap"><table><thead><tr><th>Modalidade</th><th>ID Venda</th><th>Nome</th><th>Status</th><th>EMPR.</th><th>Canal</th><th>SKU</th><th>Data</th><th></th></tr></thead><tbody id="tbody"></tbody></table><div class="pag" id="pag"></div></div></div>
+<div id="page1" style="display:none"><div class="summary-row" id="summaryRow"></div><div class="toolbar"><div class="search-field"><span style="color:var(--on-sur-v)">🔍</span><input id="srch" placeholder="Buscar ID, nome, SKU..." oninput="render()"></div><select class="sel-field" id="fStatus" onchange="render()"><option value="">Todos os status ativos</option><option>TRATATIVA ABERTA</option><option>TRATATIVA ATRASADA</option><option>ACOMPANHAR DISPUTA</option><option>ACOMPANHAR ENVIO</option><option>POSSÍVEL EXTRAVIO</option><option>EMITIR NF DEVOL</option><option>AGUARDANDO REEMBOLSO</option><option>EM ATRASO</option><option>A ENVIAR</option><option>CONCLUÍDO</option><option>AGUARDANDO PRODUTO</option></select><select class="sel-field" id="fCanal" onchange="render()"><option value="">Todos os canais</option><option>Mercado Livre</option><option>Shopee</option><option>Amazon</option><option>Magalu</option><option>Cardex</option></select><button class="flt-btn" id="btnMiss" onclick="toggleMiss()">⚠ Incompletos</button></div><div class="tbl-wrap"><div class="tbl-scroll"><table><thead><tr><th>Modalidade</th><th>ID Venda</th><th>Nome</th><th>Status</th><th>EMPR.</th><th>Canal</th><th>SKU</th><th>Data</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div><div class="pag" id="pag"></div></div></div>
 <div id="page2" style="display:none">
 <div class="bulk-wrap">
   <div class="bulk-hdr">
@@ -1052,7 +1054,7 @@ body{
   </div>
 </div>
 </div>
-<div <div id="page3" style="display:none">
+<div id="page3" style="display:none">
   <div style="max-width:640px;margin:32px auto;padding:0 24px 40px">
     <h2 style="font-family:'Google Sans',sans-serif;font-size:20px;font-weight:500;color:var(--on-sur);margin:0 0 20px;display:flex;align-items:center;gap:10px">⚙ Configurações da Planilha</h2>
     <div class="cfg-card">
@@ -1285,7 +1287,7 @@ async function loadData(){
     var _t1=document.getElementById('tab1Count');if(_t1)_t1.textContent=ativos.length;
     var _s1=document.getElementById('snav1Count');if(_s1)_s1.textContent=ativos.length;
     var _s2=document.getElementById('snav2Count');if(_s2)_s2.textContent=ativos.length;var _t2=document.getElementById('tab2Count');if(_t2)_t2.textContent=ativos.length;
-    renderSummary();render();snack(allData.length+' registros carregados','success');
+    renderSummary();render();if(document.getElementById('page2')?.style.display!=='none'||bulkOrig.length>0)buildBulk();snack(allData.length+' registros carregados','success');
   }catch(e){document.getElementById('tbody').innerHTML='<tr><td colspan="9"><div class="state-box"><div style="font-size:28px">⚠️</div><div style="color:var(--err)">'+e.message+'</div></div></td></tr>';snack(e.message,'error');}
 }
 
@@ -1712,7 +1714,7 @@ function applyBF(){
 
 
 
-const DEFAULT_COL_WIDTHS={"MODALIDADE": 100, "NOME": 140, "CANAL": 110, "EMPR": 60, "MODELO": 70, "DATA_VENDA": 90, "SKU": 120, "QT": 40, "RASTREIO": 110, "NF": 80, "NF_DEVOL": 80, "NF_DEVOL_EMISSAO": 100, "AUTOR": 80, "NEC_NF_DEVOL": 80, "DATA_CAMINHO_MKT": 100, "DATA_ENTREGUE_MKT": 100, "CHAMADO_ABERTO": 90, "MOTIVO": 120, "DETALHAMENTO": 120, "OBS_RECLAM": 130, "DATA_TRATATIVA": 90, "DEVOLUCAO_ABERTA": 100, "NEC_PECAS": 80, "PECAS_ENVIADAS": 90, "OBS_PECAS": 110, "REENVIO_RECEBIDO": 100, "CUSTO_ENVIO": 80, "PAGO_PLAT": 100, "VALOR_PAGO": 80, "CUSTOS_TOTAL": 80, "TRATATIVA_FINALIZADA": 100, "DATA_PREVISTA_RETORNO": 100, "STATUS_FULL": 120, "CHEGOU_CARDEX": 90, "DISPUTA_ABERTA": 90, "PLAT_DISPUTA": 110, "CREDITO": 80, "ID_TRANSACAO": 100, "REEMBOLSO_MKT": 100, "DISPUTA_FINALIZADA": 100, "CREDITO_RECEBIDO_VALOR": 100, "CREDITO_RECEBIDO": 90, "OBS_DISPUTA": 120};
+const DEFAULT_COL_WIDTHS={"MODALIDADE": 105, "NOME": 150, "CANAL": 120, "EMPR": 65, "MODELO": 75, "DATA_VENDA": 100, "SKU": 130, "QT": 40, "RASTREIO": 120, "NF": 90, "NF_DEVOL": 90, "NF_DEVOL_EMISSAO": 130, "AUTOR": 80, "NEC_NF_DEVOL": 120, "DATA_CAMINHO_MKT": 130, "DATA_ENTREGUE_MKT": 140, "CHAMADO_ABERTO": 120, "MOTIVO": 130, "DETALHAMENTO": 130, "OBS_RECLAM": 140, "DATA_TRATATIVA": 110, "DEVOLUCAO_ABERTA": 135, "NEC_PECAS": 110, "PECAS_ENVIADAS": 120, "OBS_PECAS": 110, "REENVIO_RECEBIDO": 130, "CUSTO_ENVIO": 100, "PAGO_PLAT": 100, "VALOR_PAGO": 90, "CUSTOS_TOTAL": 105, "TRATATIVA_FINALIZADA": 145, "DATA_PREVISTA_RETORNO": 150, "STATUS_FULL": 130, "CHEGOU_CARDEX": 120, "DISPUTA_ABERTA": 110, "PLAT_DISPUTA": 135, "CREDITO": 90, "ID_TRANSACAO": 120, "REEMBOLSO_MKT": 120, "DISPUTA_FINALIZADA": 140, "CREDITO_RECEBIDO_VALOR": 155, "CREDITO_RECEBIDO": 130, "OBS_DISPUTA": 120};
 function buildBulkHead(thead){
   if(!thead)return;
   const visID=ID_COLS.filter(c=>!hiddenCols.has(c.k));
@@ -1866,6 +1868,10 @@ function renderBulkRows(tbody){
   _setupVirtualScroll(tbody,sheet);
   _renderVirtual(tbody,sheet);
 }
+
+// ── Virtual scroll constants ─────────────────────────────────────────
+const VIRTUAL_ROW_H = 28;   // altura de cada linha (px) — igual ao .bt td height
+const VIRTUAL_BUFFER = 10;  // linhas extras acima/abaixo do viewport
 
 function _setupVirtualScroll(tbody,sheet){
   if(sheet._vScrollBound)return;
@@ -2100,7 +2106,91 @@ function closeFS(){
 }
 
 function n2c(n){let s='';n++;while(n>0){n--;s=String.fromCharCode(65+(n%26))+s;n=Math.floor(n/26);}return s;}
-async function getToken(){const st=sessionStorage.getItem('gToken');if(st)return st;if(!cfg.clientId){snack('Configure o Client ID OAuth','error');return null;}return new Promise(resolve=>{const uri=window.location.origin+window.location.pathname;const url='https://accounts.google.com/o/oauth2/v2/auth?client_id='+cfg.clientId+'&redirect_uri='+encodeURIComponent(uri)+'&response_type=token&scope='+encodeURIComponent('https://www.googleapis.com/auth/spreadsheets');const pop=window.open(url,'oauth','width=500,height=600');const iv=setInterval(()=>{try{const h=pop?.location?.hash;if(h?.includes('access_token')){const t=new URLSearchParams(h.replace('#','?')).get('access_token');sessionStorage.setItem('gToken',t);pop.close();clearInterval(iv);resolve(t);}}catch(e){}if(pop?.closed){clearInterval(iv);resolve(null);}},500);});}
+// ── OAuth via Google Identity Services (Token Model) ─────────────────
+// Substitui o Implicit Flow (response_type=token) que o Google bloqueou.
+// O GIS Token Model é o método aprovado e não usa popup de redirect URI.
+let _gisTokenClient = null;
+let _gisTokenResolve = null;
+
+function _loadGIS(){
+  // Carrega a biblioteca GIS dinamicamente para evitar erros em file://
+  return new Promise(function(resolve){
+    if(typeof google !== 'undefined' && google.accounts && google.accounts.oauth2){
+      resolve(true); return;
+    }
+    var s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.onload = function(){ resolve(true); };
+    s.onerror = function(){ snack('Erro ao carregar Google Identity Services','error'); resolve(false); };
+    document.head.appendChild(s);
+  });
+}
+
+function _initGIS(){
+  if(!cfg.clientId){
+    snack('Configure o Client ID OAuth 2.0 nas Configurações','error');
+    return false;
+  }
+  if(typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2){
+    snack('Google Identity Services não carregou','error');
+    return false;
+  }
+  _gisTokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: cfg.clientId,
+    scope: 'https://www.googleapis.com/auth/spreadsheets',
+    callback: function(tokenResponse){
+      if(tokenResponse.error){
+        snack('Erro OAuth: ' + tokenResponse.error, 'error');
+        if(_gisTokenResolve){ _gisTokenResolve(null); _gisTokenResolve = null; }
+        return;
+      }
+      // Cachear token com validade de ~55 minutos
+      var expiry = Date.now() + ((tokenResponse.expires_in || 3600) - 300) * 1000;
+      sessionStorage.setItem('gToken', tokenResponse.access_token);
+      sessionStorage.setItem('gTokenExp', expiry.toString());
+      if(_gisTokenResolve){ _gisTokenResolve(tokenResponse.access_token); _gisTokenResolve = null; }
+    },
+    error_callback: function(err){
+      console.warn('GIS OAuth error:', err);
+      snack('Autenticação cancelada ou falhou', 'warn');
+      if(_gisTokenResolve){ _gisTokenResolve(null); _gisTokenResolve = null; }
+    }
+  });
+  return true;
+}
+
+async function getToken(){
+  // 1. Verificar cache
+  var cached = sessionStorage.getItem('gToken');
+  var expiry = parseInt(sessionStorage.getItem('gTokenExp') || '0');
+  if(cached && Date.now() < expiry) return cached;
+
+  // 2. Limpar cache expirado
+  sessionStorage.removeItem('gToken');
+  sessionStorage.removeItem('gTokenExp');
+
+  // 3. Validar configuração
+  if(!cfg.clientId){
+    snack('Configure o Client ID OAuth 2.0 nas Configurações','error');
+    sidebarNav(3);
+    return null;
+  }
+
+  // 4. Carregar GIS se necessário
+  var loaded = await _loadGIS();
+  if(!loaded) return null;
+
+  // 5. Inicializar token client se necessário
+  if(!_gisTokenClient){
+    if(!_initGIS()) return null;
+  }
+
+  // 6. Solicitar token (abre popup de consentimento do Google, sem redirect URI)
+  return new Promise(function(resolve){
+    _gisTokenResolve = resolve;
+    _gisTokenClient.requestAccessToken({ prompt: '' });
+  });
+}
 function toggleSF(k){statusFilter=statusFilter===k?null:k;applyBF();}
 function syncFSFilters(){
   const map=[['fsBfStatus','bfStatus'],['fsBfCanal','bfCanal'],['fsBfModal','bfModal']];
@@ -2119,7 +2209,15 @@ function hideSection(sec){
   // sec = 'id' | 'trat' | 'disp'
   const secCols={'id':ID_COLS,'trat':TC,'disp':DC};
   const cols=secCols[sec];if(!cols)return;
-  cols.forEach(c=>{if(c.t!=='ro')hiddenCols.add(c.k);});
+  // Para seção 'id': manter apenas MODALIDADE, NOME, CANAL, EMPR, DATA_VENDA, SKU
+  const keepWhenClosed=new Set(['MODALIDADE','NOME','CANAL','EMPR','DATA_VENDA','SKU']);
+  cols.forEach(c=>{
+    if(sec==='id'){
+      if(!keepWhenClosed.has(c.k))hiddenCols.add(c.k);
+    } else {
+      if(c.t!=='ro')hiddenCols.add(c.k);
+    }
+  });
   buildBulkHead(document.getElementById('bHead'));
   buildBulkHead(document.getElementById('fsHead'));
   applyBF();
@@ -2180,15 +2278,27 @@ document.addEventListener('keydown',e=>{
   }
   if(e.key==='s'){bulkSave();e.preventDefault();}
 });
-function snack(msg,type){type=type||'';const t=document.getElementById('snack');t.textContent=msg;t.className='snack '+type+' show';setTimeout(()=>t.classList.remove('show'),3500);}
-function snack(msg,type){type=type||'';const t=document.getElementById('snack');t.textContent=msg;t.className='snack '+type+' show';setTimeout(()=>t.classList.remove('show'),3500);}
+function snack(msg,type){type=type||'';const t=document.getElementById('snack');if(!t)return;t.textContent=msg;t.className='snack '+type+' show';setTimeout(()=>t.classList.remove('show'),3500);}
+function snack(msg,type){type=type||'';const t=document.getElementById('snack');if(!t)return;t.textContent=msg;t.className='snack '+type+' show';setTimeout(()=>t.classList.remove('show'),3500);}
 
 
 // ── Sidebar ──────────────────────────────────────────────────────────
 function toggleSidebar(){var sb=document.getElementById('sidebar');if(!sb)return;var c=sb.classList.toggle('collapsed');try{localStorage.setItem('sidebarCollapsed',c?'1':'0');}catch(e){}}
 function closeMobileSidebar(){var sb=document.getElementById('sidebar');if(sb)sb.classList.remove('mobile-open');var ov=document.getElementById('sidebarOverlay');if(ov)ov.classList.add('hidden');}
 function sidebarNav(n){switchPage(n);if(window.innerWidth<=600)closeMobileSidebar();}
-function updateSidebarActive(n){for(var i=0;i<=2;i++){var el=document.getElementById('snav'+i);if(el)el.classList.toggle('active',i===n);}var cfgEl=document.getElementById('snavCfg');if(cfgEl)cfgEl.classList.toggle('active',n===3);}
+function updateSidebarActive(n){
+  // Atualizar itens 0, 1, 2 (Dashboard, Atendimentos, Edição em Massa)
+  for(var i=0;i<=2;i++){
+    var el=document.getElementById('snav'+i);
+    if(el)el.classList.toggle('active',i===n);
+  }
+  // Configurações
+  var cfgEl=document.getElementById('snavCfg');
+  if(cfgEl)cfgEl.classList.toggle('active',n===3);
+  // Novo Registro nunca fica ativo (não é uma página)
+  var novoEl=document.getElementById('snavNovo');
+  if(novoEl)novoEl.classList.remove('active');
+}
 function toggleCfg(){sidebarNav(3);}
 function saveCfgPage(){saveCfg();}
 
@@ -2436,6 +2546,12 @@ function openModal(rec){
     updateReqVisual();
   },0);
 }
-</script>
+
+function clearToken(){
+  sessionStorage.removeItem('gToken');
+  sessionStorage.removeItem('gTokenExp');
+  _gisTokenClient = null;
+  snack('Token removido. Faça login novamente ao salvar.', 'success');
+}</script>
 </body>
 </html>
