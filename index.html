@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>KIDSY — Central de Atendimento</title><link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600&family=Roboto:wght@300;400;500&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet"><script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
-<style>
+<title>Atendimento - Kidsy</title>
+<meta charset="UTF-8"><link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAABCGlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGA8wQAELAYMDLl5JUVB7k4KEZFRCuwPGBiBEAwSk4sLGHADoKpv1yBqL+viUYcLcKakFicD6Q9ArFIEtBxopAiQLZIOYWuA2EkQtg2IXV5SUAJkB4DYRSFBzkB2CpCtkY7ETkJiJxcUgdT3ANk2uTmlyQh3M/Ck5oUGA2kOIJZhKGYIYnBncAL5H6IkfxEDg8VXBgbmCQixpJkMDNtbGRgkbiHEVBYwMPC3MDBsO48QQ4RJQWJRIliIBYiZ0tIYGD4tZ2DgjWRgEL7AwMAVDQsIHG5TALvNnSEfCNMZchhSgSKeDHkMyQx6QJYRgwGDIYMZAKbWPz9HbOBQAAADeUlEQVR4nKVWPXPjZBDefaXI8mE7UixbwUouw
 :root{--pri:#1a73e8;--pri-c:#d2e3fc;--sur:#fff;--sur-v:#f1f3f4;--on-sur:#202124;--on-sur-v:#5f6368;--out:#dadce0;--out-v:#e8eaed;--err:#d93025;--err-c:#fce8e6;--warn:#f9ab00;--ok:#1e8e3e;--ok-c:#e6f4ea;--pur:#7627bb;--pur-c:#f3e8fd;}
 *{margin:0;padding:0;box-sizing:border-box;}
 
@@ -330,7 +330,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .fsec-collapse-btn:hover{background:var(--sur-v);}
 .fsec.collapsed .fsec-collapse-btn{transform:rotate(-90deg);}
 .fsec-
-/* .fsec.collapsed .fsec- */
+/* 
 /* ── req-fld ─────────────────────────────────────────────────── */
 /* ── fill handle ─────────────────────────────────────────────── */
 
@@ -349,7 +349,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 
 /* ── Status cards refinados ─────────────────────────────────────── */
 .sc:hover{box-shadow:0 2px 8px rgba(0,0,0,.12);border-color:var(--pri-c);}
-.sc-active{background:var(--pri)!important;border-color:var(--pri)!important;}
+.sc-active{background:var(--pri)!important;border-color:var(--pri)!important;color:#fff!important;box-shadow:0 2px 8px rgba(26,115,232,.4)!important;}
 .sc-active .sc-lbl,.sc-active .sc-cnt{color:#fff!important;}
 .sc-total{border-style:dashed;}
 .sc::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;border-radius:8px 0 0 8px;}
@@ -527,8 +527,9 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
   padding:0 4px;transition:transform .2s;
 }
 .fsec.collapsed .fsec-collapse-btn{transform:rotate(-90deg);}
+.fsec.collapsed .fsec-body{display:none;}
 .fsec-
-/* .fsec.collapsed .fsec- */
+/* 
 
 /* Subsecção (Full/Estoque dentro de Identificação) */
 .fsec-subsec{
@@ -981,6 +982,58 @@ body{
 .bt thead .col-id-venda{left:164px;z-index:11;background:#374151;color:#fff;}
 .bt td.col-id-venda{position:sticky;left:164px;z-index:3;background:#fff;}
 .bt th.col-id-venda{position:sticky;left:164px;z-index:11;background:#1f2937;color:#fff;width:160px;min-width:160px;}
+
+.kpi-info{border-left:4px solid #1a73e8;}
+
+.fsec-full{background:#f0fdf4;}
+.fsec-full .fsec-tit{color:#15803d;}
+ticky;top:0;z-index:2;background:var(--sur-v);}
+.pag{flex-shrink:0;display:flex;align-items:center;justify-content:flex-end;gap:3px;padding:7px 14px;border-top:1px solid var(--out);background:var(--sur);font-size:12px;}
+
+/* ── Campos obrigatórios: destaque visual na célula ─────────────── */
+.bt td.miss-cell{
+  background:#fff3cd !important;
+  border-left:2px solid #f59e0b !important;
+}
+.bt td.miss-cell .bulk-inp,
+.bt td.miss-cell .bulk-sel{
+  background:transparent;
+}
+/* Label de coluna obrigatória: vermelho mais vivo */
+.req-lbl{
+  color:#fca5a5 !important;
+  font-weight:700 !important;
+}
+/* Ícone * no label obrigatório */
+.req-lbl::after{
+  content:' *';
+  font-size:9px;
+  vertical-align:super;
+}
+/* th-sec diferenciação maior entre seções */
+.bt th.sec-id   .th-sec { background:#1f2937; }
+.bt th.sec-trat .th-sec { background:#1d4ed8; }
+.bt th.sec-disp .th-sec { background:#c2410c; }
+
+
+/* ── col-id-venda: alinhado com padrão de col-status ── */
+.col-id-venda{
+  position:sticky;left:164px;z-index:3;
+  width:160px;min-width:160px;max-width:160px;
+  background:#f3f4f6;
+  font-family:'Roboto Mono',monospace;font-size:10px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  border-right:2px solid var(--out);border-bottom:1px solid var(--out-v);
+  box-sizing:border-box;
+}
+.bt thead .col-id-venda{left:164px;z-index:11;background:#374151;color:#fff;}
+.bt td.col-id-venda{position:sticky;left:164px;z-index:3;background:#fff;}
+.bt th.col-id-venda{position:sticky;left:164px;z-index:11;background:#1f2937;color:#fff;width:160px;min-width:160px;}
+
+.kpi-info{border-left:4px solid #1a73e8;}
+
+.fsec-full{background:#f0fdf4;}
+.fsec-full .fsec-tit{color:#15803d;}
 </style>
 </head>
 <body>
@@ -1070,47 +1123,7 @@ body{
       <div class="cfg-section-title">Conexão com Google Sheets</div>
       <div class="cfg-f">
         <label>ID da Planilha</label>
-        <input id="sheetId" placeholder="1cDH2mXl..." style="width:100%;box-sizing:border-box"/>
-        <small style="color:var(--on-sur-v)">URL: docs.google.com/spreadsheets/d/<strong>ID</strong>/edit</small>
-      </div>
-      <div class="cfg-f">
-        <label>Nome da Aba</label>
-        <input id="sheetName" value="ATENDIMENTOS" style="width:220px"/>
-      </div>
-      <div class="cfg-f">
-        <label>API Key</label>
-        <input id="apiKey" type="password" placeholder="AIzaSy..." style="width:100%;box-sizing:border-box"/>
-        <small style="color:var(--on-sur-v)">Chave de API com Sheets API v4 habilitado.</small>
-      </div>
-      <div class="cfg-f">
-        <label>Client ID OAuth 2.0</label>
-        <input id="clientId" placeholder="123....apps.googleusercontent.com" style="width:100%;box-sizing:border-box"/>
-      </div>
-      <div style="display:flex;gap:10px;padding-top:8px;border-top:1px solid var(--out-v)">
-        <button class="btn btn-filled" onclick="saveCfg()">💾 Salvar</button>
-        <button class="btn btn-outlined" onclick="loadData()">↻ Testar Conexão</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- POPUP DE EDIÇÃO -->
-<div class="dlg-ov" id="dlgOv">
-  <div class="dlg">
-    <div class="dlg-hdr">
-      <div class="dlg-hdr-inner">
-        <div class="dlg-tit" id="dlgTit">Registro</div>
-        <div class="dlg-sub" id="dlgSub"></div>
-      </div>
-      <button class="dlg-x" onclick="closeDlg()">✕</button>
-    </div>
-    <div class="dlg-body" id="dlgBody"></div>
-    <div class="dlg-ftr">
-      <button class="btn btn-outlined" onclick="closeDlg()">Cancelar</button>
-      <button class="btn btn-filled" onclick="saveRecord()">Salvar</button>
-    </div>
-  </div>
-</div>
-<script>
+        <input id="sheetId" placeholder="1cDH2m
 const COL={
   // ── Identificação ──────────────────────────────────────────────
   STATUS:0, MODALIDADE:1, ID_VENDA:2, NOME:3, CANAL:4,
@@ -1353,18 +1366,27 @@ function renderDashboard(){
   const ativos=dashData.filter(r=>!IGNORADOS.includes(r.STATUS));
   // todosAtivos = todos os ativos sem filtro de período (para motivos, SKU, financeiro)
   const todosAtivos=allData.filter(r=>!IGNORADOS.includes(r.STATUS));
+  // ── Popular select dashSku com SKUs únicos de allData ─────────────
+  (function(){
+    var skuSel=document.getElementById('dashSku');
+    if(!skuSel)return;
+    var currentVal=skuSel.value;
+    var skus=Array.from(new Set(dashData.map(function(r){return(r.SKU||'').trim();}).filter(Boolean))).sort();
+    var opts='<option value="">Todos os SKUs</option>';
+    skus.forEach(function(s){opts+='<option value="'+s+'"'+(s===currentVal?' selected':'')+'>'+s+'</option>';});
+    skuSel.innerHTML=opts;
+  })();
 
   // ── KPIs PRINCIPAIS (respeitam filtro de período) ───────────────────────
   const atrasadas=ativos.filter(r=>r.STATUS==='TRATATIVA ATRASADA').length;
   const extravios=ativos.filter(r=>r.STATUS==='POSSÍVEL EXTRAVIO').length;
   const concluidos=dashData.filter(r=>r.STATUS==='CONCLUÍDO').length;
-  const totalAll=dashData.filter(r=>r.ID_VENDA).length;
-  const taxaResol=totalAll?Math.round((concluidos/totalAll)*100):0;
+  const acompEnvio=ativos.filter(r=>r.STATUS==='ACOMPANHAR ENVIO').length;
   document.getElementById('kpiRow').innerHTML=
     '<div class="kpi kpi-pri"><div class="kpi-lbl">Total Ativos</div><div class="kpi-val">'+ativos.length+'</div><div class="kpi-sub">no período</div></div>'+
     '<div class="kpi kpi-err"><div class="kpi-lbl">Trat. Atrasadas</div><div class="kpi-val">'+atrasadas+'</div><div class="kpi-sub">no período</div></div>'+
     '<div class="kpi kpi-pur"><div class="kpi-lbl">Possíveis Extravios</div><div class="kpi-val">'+extravios+'</div><div class="kpi-sub">no período</div></div>'+
-    '<div class="kpi kpi-ok"><div class="kpi-lbl">Taxa Resolução</div><div class="kpi-val">'+taxaResol+'%</div><div class="kpi-sub">'+concluidos+' de '+totalAll+'</div></div>';
+    '<div class="kpi kpi-info"><div class="kpi-lbl">Acompanhar Envio</div><div class="kpi-val">'+acompEnvio+'</div><div class="kpi-sub">no período</div></div>';
 
   // ── GRÁFICOS DE STATUS / CANAL / MODALIDADE (respeitam filtro de período) ─
   const sL=['TRATATIVA ABERTA','TRATATIVA ATRASADA','ACOMPANHAR DISPUTA','ACOMPANHAR ENVIO','POSSÍVEL EXTRAVIO','AGUARDANDO REEMBOLSO','EM ATRASO','A ENVIAR'];
@@ -1373,9 +1395,9 @@ function renderDashboard(){
   const cc=['#f9ab00','#e55722','#232f3e','#0086ff','#7627bb'];
   const mo=['Devolução','Cancelado','Não Entregue','Mensagem','Reclamação','Resolvido'];
 
-  // ── TOP MOTIVOS (usa allData — todos os registros históricos) ────────────
+  // ── TOP MOTIVOS (filtrado por dashData) ───────────────────────────────────
   const mm={};
-  allData.filter(r=>r.MOTIVO&&r.MOTIVO.trim()).forEach(r=>{mm[r.MOTIVO]=(mm[r.MOTIVO]||0)+1;});
+  dashData.filter(r=>r.MOTIVO&&r.MOTIVO.trim()).forEach(r=>{mm[r.MOTIVO]=(mm[r.MOTIVO]||0)+1;});
   const mt=Object.entries(mm).sort((a,b)=>b[1]-a[1]).slice(0,8);
 
   // Destruir charts anteriores
@@ -1396,9 +1418,9 @@ function renderDashboard(){
   mk('chartModal','bar',mo,mo.map(m=>ativos.filter(r=>r.MODALIDADE===m).length),['#1a73e8','#d93025','#f9ab00','#7627bb','#e55722','#1e8e3e']);
   mk('chartMotivo','bar',mt.map(m=>m[0]),mt.map(m=>m[1]),['#1a73e8','#4285f4','#669df6','#8ab4f8','#aecbfa','#d2e3fc','#c6dafc','#e8f0fe']);
 
-  // ── SKU TABLE (usa allData) ──────────────────────────────────────────────
+  // ── SKU TABLE (filtrado por dashData) ──────────────────────────────────────
   const skuMap={};
-  allData.filter(r=>r.SKU).forEach(r=>{
+  dashData.filter(r=>r.SKU).forEach(r=>{
     const sku=r.SKU;
     if(!skuMap[sku])skuMap[sku]={total:0,reclam:0};
     skuMap[sku].total++;
@@ -1416,7 +1438,7 @@ function renderDashboard(){
 
   // ── SKU + MOTIVO TABLE (usa allData) ─────────────────────────────────────
   const skuMotivoMap={};
-  allData.filter(r=>r.MOTIVO&&r.SKU&&r.MOTIVO.trim()).forEach(r=>{
+  dashData.filter(r=>r.MOTIVO&&r.SKU&&r.MOTIVO.trim()).forEach(r=>{
     const key=r.SKU+'||'+r.MOTIVO;
     if(!skuMotivoMap[key])skuMotivoMap[key]={sku:r.SKU,motivo:r.MOTIVO,n:0};
     skuMotivoMap[key].n++;
@@ -1472,8 +1494,8 @@ function renderDashboard(){
 
   // ── KPIs FINANCEIROS (usa allData) ───────────────────────────────────────
   function parseMoney(v){return parseFloat((v||'').replace(/[R$\s]/g,'').replace(/\./g,'').replace(',','.'))||0;}
-  const custoTotal=allData.reduce((s,r)=>s+parseMoney(r.CUSTOS_TOTAL),0);
-  const reembolsoTotal=allData.reduce((s,r)=>s+parseMoney(r.REEMBOLSO||'0'),0);
+  const custoTotal=dashData.reduce((s,r)=>s+parseMoney(r.CUSTOS_TOTAL),0); // filtrado
+  const reembolsoTotal=dashData.reduce((s,r)=>s+parseMoney(r.REEMBOLSO||'0'),0); // filtrado
   const resultadoFin=dashData.reduce((s,r)=>s+parseMoney(r.RESULTADO_FIN||'0'),0); // col AY (RESULTADO_FIN) diretamente da planilha
   const finEl=document.getElementById('finKpiRow');
   if(finEl){
@@ -1488,6 +1510,7 @@ function renderDashboard(){
     if(!secEl)return;
     var base=dashData;
     var total=base.length;
+    var totalValido=base.filter(function(r){return (r.ID_VENDA||'').trim()||(r.NOME||'').trim();}).length;
     if(!total){secEl.innerHTML='<div style="color:var(--on-sur-v);font-size:12px;padding:8px">Sem dados</div>';return;}
 
     // KPI 1 — Índice de campos em falta
@@ -1496,7 +1519,7 @@ function renderDashboard(){
 
     // KPI 2 — Índice de concluídos pelo total
     var concluidos=base.filter(function(r){return r.STATUS==='CONCLUÍDO';}).length;
-    var pctConc=total?((concluidos/total)*100).toFixed(1):0;
+    var pctConc=totalValido?((concluidos/total)*100).toFixed(1):0;
 
     // KPI 3 — Reembolso sobre custo
     var totalCusto=base.reduce(function(s,r){return s+parseMoney(r.CUSTOS_TOTAL||'0');},0);
@@ -1527,9 +1550,16 @@ function renderDashboard(){
 
     secEl.innerHTML=
       kcard('⚠️','Campos em Falta',comFalta,'font-size:26px;font-weight:600;color:var(--err)',pctFalta+'%','red','de '+total+' registros')+
-      kcard('✅','Concluídos',concluidos,'font-size:26px;font-weight:600;color:var(--ok)',pctConc+'%','green','de '+total+' registros')+
+      kcard('✅','Concluídos',concluidos,'font-size:26px;font-weight:600;color:var(--ok)',pctConc+'%','green','de '+totalValido+' registros')+
       kcard('💰','Resultado Fin.',fmtR(totalReemb),'font-size:18px;font-weight:600;color:'+(totalReemb>=0?'var(--ok)':'var(--err)'),pctReemb+'%','pur','custo: '+fmtR(totalCusto))+
       kcard('🏆','Crédito Recebido',credRec,'font-size:26px;font-weight:600;color:#1a73e8',pctCred+'%','blue','de '+disputas+' disputas abertas');
+
+    // KPI 5 — Taxa de Reabertura de Chamado
+    var tratSim=base.filter(function(r){return (r.CHAMADO_ABERTO||'').trim()==='SIM';}).length;
+    var tratReab=base.filter(function(r){return (r.CHAMADO_ABERTO||'').trim()==='Reaberto';}).length;
+    var totalTrat=tratSim+tratReab;
+    var pctReab=totalTrat>0?((tratReab/totalTrat)*100).toFixed(1):'—';
+      secEl.innerHTML+=kcard('🔄','Taxa Reabertura',tratReab,'font-size:26px;font-weight:600;color:#f59e0b',pctReab+'%','warn','de '+totalTrat+' tratativas abertas');
   })();
   }
 }
@@ -1552,7 +1582,8 @@ function renderSummary(){
   var cf=document.getElementById('fCanal')?.value||'';var ef=document.getElementById('fEmpr')?.value||'';
   var summaryRow=document.getElementById('summaryRow');
   var footerEl=document.getElementById('filterCountFooter');
-  if(summaryRow)summaryRow.classList.toggle('compact',!!(sf&&!cf&&!ef));
+  // compact removido: cards mantêm tamanho original ao filtrar
+  if(summaryRow)summaryRow.classList.remove('compact');
   if(footerEl)footerEl.textContent='';
   var base=(cf||ef)?filtered:allData.filter(r=>!IGNORADOS_BULK.includes(r.STATUS));
   var h='<div class="sc sc-total" onclick="clearF()" title="Limpar filtro">'
@@ -1572,7 +1603,7 @@ function renderSummary(){
   });
   if(summaryRow)summaryRow.innerHTML=h;
 }
-function setSt(s){document.getElementById('fStatus').value=s;missOnly=false;var _bm=document.getElementById('btnMiss');if(_bm)_bm.classList.remove('on');curPage=1;render();}
+function setSt(s){document.getElementById('fStatus').value=s;missOnly=false;var _bm=document.getElementById('btnMiss');if(_bm)_bm.classList.remove('on');curPage=1;render();renderSummary();}
 function setMiss(v){missOnly=v;var _bm2=document.getElementById('btnMiss');if(_bm2)_bm2.classList.toggle('on',v);curPage=1;render();}
 function toggleMiss(){setMiss(!missOnly);}
 function clearF(){document.getElementById('fStatus').value='';document.getElementById('fCanal').value='';var _fe=document.getElementById('fEmpr');if(_fe)_fe.value='';document.getElementById('srch').value='';missOnly=false;var _bm=document.getElementById('btnMiss');if(_bm)_bm.classList.remove('on');curPage=1;render();}
@@ -1641,6 +1672,8 @@ function fYN(id,lbl,val,req,fe){
   const mk=(v,l)=>'<div class="ro"><input type="radio" name="f_'+id+'" id="f_'+id+'_'+v+'" value="'+v+'" '+(val===v?'checked':'')+' ><label for="f_'+id+'_'+v+'">'+l+'</label></div>';
   return '<div class="fld '+rc+'"><label>'+lbl+'</label><div class="rg">'+mk('SIM','SIM')+mk('NÃO','NÃO')+'</div></div>';
 }
+function fYN3(id,lbl,val,req,fe){req=req||false;fe=fe||false;const rc=(req&&!val)||fe?'req-fld':'';const mk=(v,l)=>'<div class="ro"><input type="radio" name="f_'+id+'" id="f_'+id+'_'+v+'" value="'+v+'" '+(val===v?'checked':'')+' onchange="fldChg(\''+id+'\',this.value)"><label for="f_'+id+'_'+v+'">'+l+'</label></div>';return '<div class="fld '+rc+'"><label>'+lbl+'</label><div class="rg">'+mk('SIM','SIM')+mk('NÃO','NÃO')+mk('Reaberto','Reaberto')+'</div></div>';}
+function fTxt(id,lbl,val){return '<div class="fld"><label>'+lbl+'</label>'+'<textarea id="f_'+id+'" rows="3" style="resize:vertical;min-height:60px;width:100%;box-sizing:border-box" oninput="fldChg(\''+id+'\',this.value)">'+((val||'').replace(/</g,'&lt;'))+'</textarea>'+'</div>';}
 function closeDlg(){var _d=document.getElementById('dlgOv');if(_d)_d.classList.remove('open');curRec=null;}
 
 const bancoCache={};
@@ -2097,6 +2130,18 @@ function updateBulkInfo(){const n=Object.keys(bulkChg).length;['bulkInfo','fsInf
 function bulkReset(){bulkChg={};hiddenCols.clear();colSortState={};colFilters={};colWidths={};statusFilter=null;missFilter=null;buildBulk();snack('Desfeito');}
 async function bulkSave(){
   const keys=Object.keys(bulkChg);if(!keys.length){snack('Nenhuma alteração');return;}
+  // ── Popup de confirmação ─────────────────────────────────────────
+  const totalLinhas=keys.length;
+  // Coletar campos únicos que serão alterados
+  const camposAlterados=new Set();
+  keys.forEach(i=>{Object.keys(bulkChg[i]).forEach(k=>camposAlterados.add(k));});
+  const camposList=Array.from(camposAlterados).join(', ');
+  const msg='Confirmar salvamento?\n\n'
+    +'• '+totalLinhas+' linha(s) serão alteradas\n'
+    +'• Campos: '+camposList+'\n\n'
+    +'Esta ação irá atualizar a planilha Google Sheets.';
+  if(!confirm(msg))return;
+  // ────────────────────────────────────────────────────────────────
   const tkn=await getToken();if(!tkn)return;
   const data=[];keys.forEach(i=>{const r=bulkOrig[i];Object.entries(bulkChg[i]).forEach(([key,val])=>{const idx=COL[key];if(idx===undefined||FORMULA_COLS.has(idx))return;data.push({range:cfg.sheetName+'!'+n2c(idx)+r._row,values:[[val]]});});});
   if(!data.length){snack('Nenhum campo editável');return;}
@@ -2432,7 +2477,7 @@ function openModal(rec){
         '</div>',
         '<div class="fg3">',
           fInp('NOME','Nome',r.NOME),
-          fInp('DATA_VENDA','Data Venda',r.DATA_VENDA),
+          fInp('DATA_VENDA','Data Venda',r.DATA_VENDA,'text',false,'DD/MM/AAAA'),
           fInp('SKU','SKU',r.SKU),
           fInp('QT','QT',r.QT),
         '</div>',
@@ -2445,14 +2490,6 @@ function openModal(rec){
           '<div class="fld"><label>Autor</label><div class="mdi" style="background:#f8f9fa;color:#5f6368;height:34px;line-height:34px;font-size:13px;padding:0 9px;border-radius:6px;border:1px solid var(--out-v)">'+(r.AUTOR||'APP')+'</div></div>',
         '</div>',
         // Full/Estoque subsecção
-        '<div class="fsec-subsec">',
-          '<div class="fsec-subsec-tit">🏭 Full / Estoque</div>',
-          '<div class="fg3">',
-            fSel('STATUS_FULL','Status Full',r.STATUS_FULL,['','OK Estoque Full','Aguardando Retirada','Em Troca','Cliente c/ Produto','Descarte Estoque Full','Nâo foi identificado']),
-            fSel('CHEGOU_CARDEX','Chegou Cardex?',r.CHEGOU_CARDEX,['','SIM','NÃO']),
-            fInp('DATA_PREVISTA_RETORNO','Data Prev. Retorno',r.DATA_PREVISTA_RETORNO),
-          '</div>',
-        '</div>',
       '</div>',
     '</div>',
 
@@ -2466,18 +2503,16 @@ function openModal(rec){
       '<div class="fsec-body">',
         // CHAMADO_ABERTO: 3 opções (SIM / NÃO / Reaberto)
         '<div class="fg">',
-          fSel('CHAMADO_ABERTO','Tratativa Aberta?',r.CHAMADO_ABERTO,['','SIM','NÃO','Reaberto']),
-          fSel('DEVOLUCAO_ABERTA','Aberto o processo de devolução?',r.DEVOLUCAO_ABERTA,['','SIM','NÃO'],true,isErr('DEVOLUCAO_ABERTA')),
+          fYN3('CHAMADO_ABERTO','Tratativa Aberta?',r.CHAMADO_ABERTO),
+          fYN('DEVOLUCAO_ABERTA','Aberto o processo de devolução?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA')),
         '</div>',
         '<div class="fg3">',
-          fInp('DATA_TRATATIVA','Data Tratativa',r.DATA_TRATATIVA),
+          fInp('DATA_TRATATIVA','Data Tratativa',r.DATA_TRATATIVA,'text',false,'DD/MM/AAAA'),
           fSel('MOTIVO','Motivo',r.MOTIVO,MOTIVOS,false,isErr('MOTIVO')),
           fSel('DETALHAMENTO','Detalhamento',r.DETALHAMENTO,DETALHAMENTOS),
         '</div>',
-        '<div class="fg3">',
+        '<div class="fg" style="grid-template-columns:2fr 1fr">',
           fInp('OBS_RECLAM','Obs. Reclamação',r.OBS_RECLAM),
-        '</div>',
-        '<div class="fg3">',
           fInp('PAGO_PLAT','Pago Plat/Cliente',r.PAGO_PLAT),
         '</div>',
         '<div class="fg3">',
@@ -2488,8 +2523,8 @@ function openModal(rec){
           fInp('CUSTO_ENVIO','Custo Envio',r.CUSTO_ENVIO),
         '</div>',
         '<div class="fg3 '+(pA?'show ':'')+'" id="pecasExtra">',
-          fSel('PECAS_ENVIADAS','Peças Enviadas?',r.PECAS_ENVIADAS,['','SIM','NÃO']),
-          fSel('REENVIO_RECEBIDO','Reenvio Recebido?',r.REENVIO_RECEBIDO,['','SIM','NÃO']),
+          fYN('PECAS_ENVIADAS','Peças Enviadas?',r.PECAS_ENVIADAS),
+          fYN('REENVIO_RECEBIDO','Reenvio Recebido?',r.REENVIO_RECEBIDO),
           fInp('OBS_PECAS','Obs. Peças',r.OBS_PECAS),
         '</div>',
         '<div class="fg3">',
@@ -2499,7 +2534,23 @@ function openModal(rec){
     '</div>',
 
     // ── SEÇÃO: Disputa (SEPARADA e INDEPENDENTE) ─────────────────────
-    '<div class="fsec fsec-disp">',
+    
+        // ── SEÇÃO: Full / Estoque ─────────────────────────────────────────
+        '<div class="fsec fsec-full">',
+          '<div class="fsec-tit-row">',
+            '<div class="fsec-tit">🏭 Full / Estoque</div>',
+            '<button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button>',
+          '</div>',
+          '<div class="fsec-body">',
+            '<div class="fg3">',
+              fYN('CHEGOU_CARDEX','Chegou na Cardex?',r.CHEGOU_CARDEX),
+              fSel('STATUS_FULL','Status Full',r.STATUS_FULL,['','OK Estoque Full','Aguardando Retirada','Em Troca','Cliente c/ Produto','Descarte Estoque']),
+              fInp('DATA_PREVISTA_RETORNO','Data Prev. Retorno',r.DATA_PREVISTA_RETORNO,'text',false,'DD/MM/AAAA'),
+            '</div>',
+          '</div>',
+        '</div>',
+        
+'<div class="fsec fsec-disp">',
       '<div class="fsec-tit-row">',
         '<div class="fsec-tit">⚖️ Disputa</div>',
         '<button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button>',
@@ -2519,7 +2570,7 @@ function openModal(rec){
           fInp('ID_TRANSACAO','ID Transação',r.ID_TRANSACAO),
           fInp('CREDITO','R$ Crédito',r.CREDITO),
           fInp('CREDITO_RECEBIDO_VALOR','R$ Créd. Recebido',r.CREDITO_RECEBIDO_VALOR),
-          fSel('CREDITO_RECEBIDO','Crédito Recebido?',r.CREDITO_RECEBIDO,['','SIM','NÃO']),
+          fYN('CREDITO_RECEBIDO','Crédito Recebido?',r.CREDITO_RECEBIDO),
         '</div>',
         '<div class="fg3 '+(dA?'show ':'')+'" id="dX1">',
           fYN('DISPUTA_FINALIZADA','Disputa Finalizada?',r.DISPUTA_FINALIZADA,true,isErr('DISPUTA_FINALIZADA')),
@@ -2546,6 +2597,51 @@ function openModal(rec){
       radio.addEventListener('change',function(){
         var mkt=document.querySelector('input[name="f_REEMBOLSO_MKT"]:checked')?.value==='SIM';
         var da=document.querySelector('input[name="f_DISPUTA_ABERTA"]:checked')?.value==='SIM';
+        document.getElementById('mktExtra')?.classList.toggle('show',da&&mkt);
+        updateReqVisual();
+      });
+    });
+
+    // Wire DISPUTA_ABERTA → extras de disputa
+    document.querySelectorAll('input[name="f_DISPUTA_ABERTA"]').forEach(function(radio){
+      radio.addEventListener('change',function(){
+        var sim=document.querySelector('input[name="f_DISPUTA_ABERTA"]:checked')?.value==='SIM';
+        ['dX1','dX2','dX3'].forEach(function(id){
+          document.getElementById(id)?.classList.toggle('show',sim);
+        });
+        if(!sim)document.getElementById('mktExtra')?.classList.remove('show');
+        updateReqVisual();
+      });
+    });
+
+    // Novo registro: auto-detectar canal pelo ID
+    if(isNew){
+      var idEl=document.getElementById('f_ID_VENDA');
+      if(idEl){
+        idEl.addEventListener('blur',async function(){
+          var id=idEl.value.trim();if(!id||id.length<4)return;
+          var canal=detectCanal(id);
+          var cSel=document.getElementById('f_CANAL');
+          if(canal&&cSel){cSel.value=canal;cSel.classList.add('af');}
+          var c=cSel?.value||canal;if(c)await autoFill(id,c);
+        });
+        document.getElementById('f_CANAL')?.addEventListener('change',async function(){
+          var id=idEl.value.trim();
+          var c=document.getElementById('f_CANAL').value;
+          if(id&&c)await autoFill(id,c);
+        });
+      }
+    }
+    updateReqVisual();
+  },0);
+}
+
+function clearToken(){
+  sessionStorage.removeItem('gToken');
+  sessionStorage.removeItem('gTokenExp');
+  _gisTokenClient = null;
+  snack('Token removido. Faça login novamente ao salvar.', 'success');
+}="f_DISPUTA_ABERTA"]:checked')?.value==='SIM';
         document.getElementById('mktExtra')?.classList.toggle('show',da&&mkt);
         updateReqVisual();
       });
