@@ -167,13 +167,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
   background:#f3f4f6;
   border-right:1px solid var(--out);border-bottom:1px solid var(--out-v);
 }
-.bt .col-id-venda{
-  position:sticky;left:164px;z-index:3;
-  width:150px;min-width:150px;
-  background:#f3f4f6;
-  font-family:Roboto Mono,monospace;font-size:10px;
-  border-right:2px solid var(--out);border-bottom:1px solid var(--out-v);
-}
+
 
 /* ── THEAD — UMA ÚNICA ROW ───────────────────────────────────────── */
 .bt thead th{
@@ -187,7 +181,6 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 }
 .bt thead .col-ln   {left:0;   background:#374151;}
 .bt thead .col-status{left:36px; background:#374151;}
-.bt thead .col-id-venda{left:164px;background:#374151;}
 
 /* ── th-sec: tarja de seção (topo do TH, fundo colorido) ──────────── */
 
@@ -198,7 +191,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 /* Colunas fixas: th-sec escuro e vazio */
 .bt thead .col-ln     .th-sec,
 .bt thead .col-status .th-sec,
-.bt thead .col-id-venda 
+.bt thead .col-id-venda .th-sec
 
 /* ── th-col: área com label + filtro ──────────────────────────────── */
 
@@ -209,7 +202,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 /* Colunas fixas */
 .bt thead .col-ln      .th-col,
 .bt thead .col-status  .th-col,
-.bt thead .col-id-venda 
+.bt thead .col-id-venda .th-col
 
 /* ── Texto dos controles ──────────────────────────────────────────── */
 
@@ -222,16 +215,16 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 
 .th-btn:hover{opacity:1;background:rgba(0,0,0,.1);}
 .bt thead .col-status .th-btn,
-.bt thead .col-id-venda 
+.bt thead .col-id-venda .th-btn
 /* Filter inputs */
 
 .bt thead th.sec-id   
 .bt thead th.sec-trat 
 .bt thead th.sec-disp 
 .bt thead .col-status .th-filter,
-.bt thead .col-id-venda 
+.bt thead .col-id-venda .th-filter
 .bt thead .col-status .th-filter::placeholder,
-.bt thead .col-id-venda 
+.bt thead .col-id-venda .th-filter::placeholder
 
 /* Col resizer */
 
@@ -262,9 +255,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 
 /* Fill handle */
 
-.bt td.sel 
-.bt td:hover 
-.bt td:focus-within 
+/* fill-handle show via .bt td.sel .fill-handle rule above */
 
 
 
@@ -328,7 +319,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 
 
 
-.dlg-
+/* .dlg- */
 /* ── Sections ────────────────────────────────────────────────── */
 .fsec{border-radius:10px;margin-bottom:14px;overflow:hidden;border:1px solid var(--out);}
 .fsec-id{background:#f8f9fa;}.fsec-trat{background:#eff6ff;}.fsec-disp{background:#fff7ed;}
@@ -339,11 +330,11 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .fsec-collapse-btn:hover{background:var(--sur-v);}
 .fsec.collapsed .fsec-collapse-btn{transform:rotate(-90deg);}
 .fsec-
-.fsec.collapsed .fsec-
+/* .fsec.collapsed .fsec- */
 /* ── req-fld ─────────────────────────────────────────────────── */
 /* ── fill handle ─────────────────────────────────────────────── */
 
-.bt td.sel .fill-handle,.bt td:hover 
+.bt td.sel .fill-handle,.bt td:hover .fill-handle,.bt td:focus-within .fill-handle{display:block;}
 
 /* ── filterCountFooter ───────────────────────────────────────── */
 #filterCountFooter{position:fixed;bottom:8px;left:12px;font-size:11px;color:var(--on-sur-v);background:var(--sur);border:1px solid var(--out);border-radius:12px;padding:2px 10px;z-index:50;}
@@ -486,7 +477,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 
 
 
-.dlg-
+/* .dlg- */
 
 
 
@@ -537,7 +528,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 }
 .fsec.collapsed .fsec-collapse-btn{transform:rotate(-90deg);}
 .fsec-
-.fsec.collapsed .fsec-
+/* .fsec.collapsed .fsec- */
 
 /* Subsecção (Full/Estoque dentro de Identificação) */
 .fsec-subsec{
@@ -786,7 +777,6 @@ body{
 /* ── Cores de seção (header) ─────────────────────────────────────── */
 .bt th.col-ln,
 .bt th.col-status,
-.bt th.col-id-venda { background:#1f2937; color:#fff; }
 
 .bt th.sec-id        { background:#374151; color:#fff; }
 .bt th.sec-trat      { background:#1a73e8; color:#fff; }
@@ -798,7 +788,7 @@ body{
 .bt td.sec-disp      { background:#fff7ed; }
 
 /* Seleção */
-.bt td.sel           { background:#dbeafe!important; outline:2px solid #2563eb; outline-offset:-2px; z-index:1; }
+.bt td.sel           { background:#dbeafe!important; outline:2px solid #2563eb; outline-offset:-2px; overflow:visible!important; z-index:1; }
 .bt td.sel-range     { background:#e0f2fe!important; outline:1px solid #93c5fd; outline-offset:-1px; }
 .bt td.fill-range    { background:#bbf7d0!important; outline:1px dashed #16a34a; outline-offset:-1px; }
 .bt td.chg-cell      { background:#fef9c3!important; }
@@ -808,18 +798,18 @@ body{
 /* ── Estrutura interna do TH ─────────────────────────────────────── */
 /* Barra de seção (colorida, 12px, topo do th) */
 .th-sec{
-  height:14px;
+  height:18px;
   font-size:10px;font-weight:700;
   text-transform:uppercase;letter-spacing:.4px;
   padding:0 6px;
   display:flex;align-items:center;
-  overflow:hidden;white-space:nowrap;
+  overflow:visible;white-space:nowrap;
   background:inherit;color:rgba(255,255,255,.95);
 }
 /* Coluna flex do th (label + filtro) */
 .th-col{
   display:flex;flex-direction:column;
-  height:36px;          /* 50px total - 14px sec = 36px */
+  height:32px;          /* 50px total - 18px sec = 32px */
   overflow:hidden;
 }
 /* Linha de label + botões */
@@ -863,9 +853,13 @@ body{
 
 /* Botão ocultar seção */
 .sec-hide-btn{
-  background:none;border:none;cursor:pointer;
-  font-size:8px;color:rgba(255,255,255,.6);padding:0 2px;margin-left:2px;
+  background:rgba(255,255,255,.15);border:none;cursor:pointer;
+  font-size:10px;font-weight:700;color:#fff;
+  padding:0 4px;margin-left:4px;
+  border-radius:3px;line-height:1;
+  flex-shrink:0;
 }
+.sec-hide-btn:hover{background:rgba(255,255,255,.3);}
 .sec-hide-btn:hover{color:#fff;}
 
 /* ── Inputs nas células ──────────────────────────────────────────── */
@@ -890,8 +884,8 @@ body{
 
 /* ── Fill handle ─────────────────────────────────────────────────── */
 .fill-handle{
-  position:absolute;right:-5px;bottom:-5px;
-  width:10px;height:10px;
+  position:absolute;right:1px;bottom:1px;
+  width:8px;height:8px;
   background:#2563eb;
   border:2px solid #fff;border-radius:1px;
   cursor:crosshair;z-index:20;
@@ -900,19 +894,19 @@ body{
   pointer-events:all;
 }
 .fill-handle::before{
-  content:'';position:absolute;inset:-8px;cursor:crosshair;
+  content:'';position:absolute;inset:-4px;cursor:crosshair;
 }
-.bt td.sel 
+.bt td.sel .fill-handle{display:block;}
 
 /* ── Larguras fixas das colunas sticky ───────────────────────────── */
 .col-ln       { width:36px; min-width:36px; position:sticky;left:0;z-index:11; background:#1f2937; }
 .col-status   { width:140px;min-width:140px;position:sticky;left:36px;z-index:11; background:#1f2937; }
-.col-id-venda { width:160px;min-width:160px;position:sticky;left:176px;z-index:11; background:#1f2937; }
+
 
 /* Sticky para células das colunas fixas */
 .bt td.col-ln       { position:sticky;left:0;z-index:3;background:#f3f4f6; }
 .bt td.col-status   { position:sticky;left:36px;z-index:3;background:#fff; }
-.bt td.col-id-venda { position:sticky;left:176px;z-index:3;background:#fff; }
+
 
 
 /* ── Popup seções — espaçamento melhorado ─────────────────────────── */
@@ -972,6 +966,21 @@ body{
 .bt th.sec-id   .th-sec { background:#1f2937; }
 .bt th.sec-trat .th-sec { background:#1d4ed8; }
 .bt th.sec-disp .th-sec { background:#c2410c; }
+
+
+/* ── col-id-venda: alinhado com padrão de col-status ── */
+.col-id-venda{
+  position:sticky;left:164px;z-index:3;
+  width:160px;min-width:160px;max-width:160px;
+  background:#f3f4f6;
+  font-family:'Roboto Mono',monospace;font-size:10px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  border-right:2px solid var(--out);border-bottom:1px solid var(--out-v);
+  box-sizing:border-box;
+}
+.bt thead .col-id-venda{left:164px;z-index:11;background:#374151;color:#fff;}
+.bt td.col-id-venda{position:sticky;left:164px;z-index:3;background:#fff;}
+.bt th.col-id-venda{position:sticky;left:164px;z-index:11;background:#1f2937;color:#fff;width:160px;min-width:160px;}
 </style>
 </head>
 <body>
@@ -1175,6 +1184,7 @@ let cfg={sheetId:localStorage.getItem('sheetId')||'',sheetName:localStorage.getI
 let allData=[],filtered=[],curRec=null,missOnly=false,curPage=1;
 let bulkOrig=[],bulkChg={},bulkFiltered=[];
 let dashData=[];const PG=20;let charts={};
+let fillSrc=null,fillKey=null,fillVal=null,fillScroll=null;
 let hiddenCols=new Set(),missFilter=null,statusFilter=null,colSortState={},colFilters={};
 let colWidths={}; // {key: widthPx}
 // Section visibility
@@ -1186,14 +1196,14 @@ let hiddenSections=new Set(); // 'id','trat','disp'
 const ID_COLS=[
   // Mesma ordem da planilha raiz (cols 1-17)
   {k:'MODALIDADE',       l:'Modalidade',              t:'sel', o:MODALIDADES},
-  {k:'NOME',             l:'Nome',                    t:'ro'},
+  {k:'NOME',             l:'Nome',                    t:'txt'},
   {k:'CANAL',            l:'Canal De Venda',          t:'sel', o:['','Mercado Livre','Shopee','Amazon','Magalu','TikTok','Cardex']},
   {k:'EMPR',             l:'EMPR.',                   t:'sel', o:['','JLD','DGL'], req:true},
   {k:'MODELO',           l:'Modelo',                  t:'sel', o:['','Full','Normal','Flex','NE'], req:true},
-  {k:'DATA_VENDA',       l:'Data da Venda',           t:'ro'},
-  {k:'SKU',              l:'SKU',                     t:'ro'},
-  {k:'QT',               l:'QT',                      t:'ro'},
-  {k:'RASTREIO',         l:'Rastreio',                t:'ro'},
+  {k:'DATA_VENDA',       l:'Data da Venda',           t:'txt'},
+  {k:'SKU',              l:'SKU',                     t:'txt'},
+  {k:'QT',               l:'QT',                      t:'txt'},
+  {k:'RASTREIO',         l:'Rastreio',                t:'txt'},
   {k:'NF',               l:'NF',                      t:'txt'},
   {k:'NF_DEVOL',         l:'NF DEVOL',                t:'txt'},
   {k:'NF_DEVOL_EMISSAO', l:'NF DEVOL (Emissão)',      t:'txt'},
@@ -1270,7 +1280,18 @@ function switchPage(n){
     var tb=document.getElementById('tab'+i);if(tb)tb.classList.toggle('active',i===n);
   });
   if(n===0)renderDashboard();
-  if(n===2)buildBulk();
+  if(n===2){
+    _resetVCache();
+    buildBulk();
+    // Re-render com tamanho real após página estar visível
+    var _bBody=document.getElementById('bBody');
+    var _bSheet=document.getElementById('bulkSheet');
+    if(_bBody&&_bSheet&&_bSheet.clientHeight>0&&bulkFiltered.length>200){
+      _resetVCache();
+      _setupVirtualScroll(_bBody,_bSheet);
+      _renderVirtual(_bBody,_bSheet);
+    }
+  }
   if(typeof updateSidebarActive==='function')updateSidebarActive(n);
 }
 async function loadData(){
@@ -1653,7 +1674,10 @@ function buildBulk(){
   var bfSku=document.getElementById('bfSku');if(bfSku){bfSku.value='';bfSku.classList.remove('active');}
   buildMissChips();
   buildBulkHead(document.getElementById('bHead'));
+  _resetVCache();
   renderBulkRows(document.getElementById('bBody'));
+  // Atualizar contador 'Mostrando X de Y'
+  var _bfc2=document.getElementById('bfCount');if(_bfc2)_bfc2.textContent=bulkFiltered.length;
   updateBulkInfo();
 }
 function buildMissChips(filteredIdxs){
@@ -1704,6 +1728,7 @@ function applyBF(){
   // Rebuild miss chips scoped to current filter
   buildMissChips(idxs);
 
+  _resetVCache();
   renderBulkRows(document.getElementById('bBody'));
   const cnt=bulkFiltered.length;
   var _bfc=document.getElementById('bfCount');if(_bfc)_bfc.textContent=cnt;
@@ -1714,7 +1739,7 @@ function applyBF(){
 
 
 
-const DEFAULT_COL_WIDTHS={"MODALIDADE": 105, "NOME": 150, "CANAL": 120, "EMPR": 65, "MODELO": 75, "DATA_VENDA": 100, "SKU": 130, "QT": 40, "RASTREIO": 120, "NF": 90, "NF_DEVOL": 90, "NF_DEVOL_EMISSAO": 130, "AUTOR": 80, "NEC_NF_DEVOL": 120, "DATA_CAMINHO_MKT": 130, "DATA_ENTREGUE_MKT": 140, "CHAMADO_ABERTO": 120, "MOTIVO": 130, "DETALHAMENTO": 130, "OBS_RECLAM": 140, "DATA_TRATATIVA": 110, "DEVOLUCAO_ABERTA": 135, "NEC_PECAS": 110, "PECAS_ENVIADAS": 120, "OBS_PECAS": 110, "REENVIO_RECEBIDO": 130, "CUSTO_ENVIO": 100, "PAGO_PLAT": 100, "VALOR_PAGO": 90, "CUSTOS_TOTAL": 105, "TRATATIVA_FINALIZADA": 145, "DATA_PREVISTA_RETORNO": 150, "STATUS_FULL": 130, "CHEGOU_CARDEX": 120, "DISPUTA_ABERTA": 110, "PLAT_DISPUTA": 135, "CREDITO": 90, "ID_TRANSACAO": 120, "REEMBOLSO_MKT": 120, "DISPUTA_FINALIZADA": 140, "CREDITO_RECEBIDO_VALOR": 155, "CREDITO_RECEBIDO": 130, "OBS_DISPUTA": 120};
+const DEFAULT_COL_WIDTHS={"MODALIDADE":180, "NOME": 150, "CANAL": 120, "EMPR": 65, "MODELO": 75, "DATA_VENDA": 100, "SKU": 130, "QT": 40, "RASTREIO": 120, "NF": 90, "NF_DEVOL": 90, "NF_DEVOL_EMISSAO": 130, "AUTOR": 80, "NEC_NF_DEVOL": 120, "DATA_CAMINHO_MKT": 130, "DATA_ENTREGUE_MKT": 140, "CHAMADO_ABERTO": 120, "MOTIVO": 130, "DETALHAMENTO": 130, "OBS_RECLAM": 140, "DATA_TRATATIVA": 110, "DEVOLUCAO_ABERTA": 135, "NEC_PECAS": 110, "PECAS_ENVIADAS": 120, "OBS_PECAS": 110, "REENVIO_RECEBIDO": 130, "CUSTO_ENVIO": 100, "PAGO_PLAT": 100, "VALOR_PAGO": 90, "CUSTOS_TOTAL": 105, "TRATATIVA_FINALIZADA": 145, "DATA_PREVISTA_RETORNO": 150, "STATUS_FULL": 130, "CHEGOU_CARDEX": 120, "DISPUTA_ABERTA": 110, "PLAT_DISPUTA": 135, "CREDITO": 90, "ID_TRANSACAO": 120, "REEMBOLSO_MKT": 120, "DISPUTA_FINALIZADA": 140, "CREDITO_RECEBIDO_VALOR": 155, "CREDITO_RECEBIDO": 130, "OBS_DISPUTA": 120};
 function buildBulkHead(thead){
   if(!thead)return;
   const visID=ID_COLS.filter(c=>!hiddenCols.has(c.k));
@@ -1726,7 +1751,10 @@ function buildBulkHead(thead){
     const fv=colFilters[c.k]||'';
     const _w=colWidths[c.k]||(DEFAULT_COL_WIDTHS[c.k]||80);const cw='width:'+_w+'px;';
     const hideBtn='<button class="th-btn" onclick="hideCol(\''+c.k+'\')" title="Ocultar">✕</button>';
-    return '<th class="'+secCls+'" data-colkey="'+c.k+'" style="'+cw+'">'
+    // Primeira coluna de seção: garantir largura mínima para o label+botão✕
+    const minW=secLabel?Math.max(_w,180):_w;
+    const cw2='width:'+minW+'px;';
+    return '<th class="'+secCls+'" data-colkey="'+c.k+'" style="'+cw2+'">'
       +'<div class="th-col">'
         +'<div class="th-top">'
           +'<span class="'+lCls+'" title="'+c.l+'">'+c.l+'</span>'
@@ -1865,6 +1893,12 @@ function renderBulkRows(tbody){
   // Virtual render: detectar scroll container
   const sheet=tbody.closest('.bulk-sheet,.fs-body');
   if(!sheet){_renderAllRows(tbody);return;}
+  // Se o container está oculto (clientHeight=0), renderizar diretamente
+  // para garantir que os dados aparecem quando a página ficar visível
+  if(sheet.clientHeight===0){
+    _renderAllRows(tbody);
+    return;
+  }
   _setupVirtualScroll(tbody,sheet);
   _renderVirtual(tbody,sheet);
 }
@@ -1872,6 +1906,8 @@ function renderBulkRows(tbody){
 // ── Virtual scroll constants ─────────────────────────────────────────
 const VIRTUAL_ROW_H = 28;   // altura de cada linha (px) — igual ao .bt td height
 const VIRTUAL_BUFFER = 10;  // linhas extras acima/abaixo do viewport
+let _lastVStart = -1, _lastVEnd = -1, _lastVTarget = null;
+function _resetVCache(){ _lastVStart=-1; _lastVEnd=-1; _lastVTarget=null; }
 
 function _setupVirtualScroll(tbody,sheet){
   if(sheet._vScrollBound)return;
@@ -1891,14 +1927,14 @@ function _renderVirtual(tbody,sheet){
     const activeRow=activeTd?parseInt(activeTd.dataset.row):-1;
     if(activeRow>=0){
       const fi=bulkFiltered.indexOf(activeRow);
-      const scrollTop=sheet.scrollTop;const viewH=sheet.clientHeight||600;
+      const scrollTop=sheet.scrollTop;const viewH=sheet.clientHeight>0?sheet.clientHeight:800; // 800 se página oculta
       let vS=Math.max(0,Math.floor(scrollTop/VIRTUAL_ROW_H)-VIRTUAL_BUFFER);
       let vE=Math.min(bulkFiltered.length,Math.ceil((scrollTop+viewH)/VIRTUAL_ROW_H)+VIRTUAL_BUFFER);
       if(fi>=vS&&fi<vE)return; // input ativo está no range — não re-renderizar
     }
   }
   const scrollTop=sheet.scrollTop;
-  const viewH=sheet.clientHeight||600;
+  const viewH=sheet.clientHeight>0?sheet.clientHeight:800; // 800 se página oculta
   let vStart=Math.max(0,Math.floor(scrollTop/VIRTUAL_ROW_H)-VIRTUAL_BUFFER);
   let vEnd=Math.min(bulkFiltered.length,Math.ceil((scrollTop+viewH)/VIRTUAL_ROW_H)+VIRTUAL_BUFFER);
   if(tbody===_lastVTarget&&vStart===_lastVStart&&vEnd===_lastVEnd)return;
@@ -1922,7 +1958,7 @@ function _renderVirtual(tbody,sheet){
     const r=bulkOrig[i];
     parts.push('<tr id="br_'+i+'" class="'+(bulkChg[i]?'chg':'')+'">'
       +'<td class="col-ln">'+r._row+'</td>'
-      +'<td class="col-status"><span class="chip '+(_stChipMap[r.STATUS]||'')+'" style="font-size:10px;padding:2px 5px">'+(r.STATUS||'—')+'</span></td>'
+      +'<td class="col-status"><span class="chip '+(CC[r.STATUS]||'')+'" style="font-size:10px;padding:2px 5px">'+(r.STATUS||'—')+'</span></td>'
       +'<td class="col-id-venda">'+(r.ID_VENDA||'—')+'</td>');
     visID.forEach(c=>{parts.push(mkIDCell(r,i,c));});
     visTR.forEach(c=>{parts.push(mkEditCell(r,i,c,'sec-trat'));});
@@ -1947,7 +1983,7 @@ function _renderAllRows(tbody){
     const r=bulkOrig[i];
     parts.push('<tr id="br_'+i+'" class="'+(bulkChg[i]?'chg':'')+'">'
       +'<td class="col-ln">'+r._row+'</td>'
-      +'<td class="col-status"><span class="chip '+(_stChipMap[r.STATUS]||'')+'" style="font-size:10px;padding:2px 5px">'+(r.STATUS||'—')+'</span></td>'
+      +'<td class="col-status"><span class="chip '+(CC[r.STATUS]||'')+'" style="font-size:10px;padding:2px 5px">'+(r.STATUS||'—')+'</span></td>'
       +'<td class="col-id-venda">'+(r.ID_VENDA||'—')+'</td>');
     visID.forEach(c=>{parts.push(mkIDCell(r,i,c));});
     visTR.forEach(c=>{parts.push(mkEditCell(r,i,c,'sec-trat'));});
@@ -1955,6 +1991,8 @@ function _renderAllRows(tbody){
     parts.push('</tr>');
   });
   tbody.innerHTML=parts.join('');
+  // Resetar cache virtual para próxima chamada renderizar de novo
+  _lastVStart=-1;_lastVEnd=-1;_lastVTarget=null;
 }
 
 function selCell(el, addToSel){
