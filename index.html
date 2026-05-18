@@ -1512,7 +1512,7 @@ function renderDashboard(){
 
     // KPI 2 — Índice de concluídos pelo total
     var concluidos=base.filter(function(r){return r.STATUS==='CONCLUÍDO';}).length;
-    var pctConc=totalValido?((concluidos/total)*100).toFixed(1):0;
+    var pctConc=totalValido?((concluidos/totalValido)*100).toFixed(1):0;
 
     // KPI 3 — Reembolso sobre custo
     var totalCusto=base.reduce(function(s,r){return s+parseMoney(r.CUSTOS_TOTAL||'0');},0);
