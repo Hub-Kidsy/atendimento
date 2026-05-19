@@ -492,14 +492,26 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
   border-radius:8px;
   padding:6px 8px;
   background:#fff8f8;
+  transition:border 0.2s,background 0.2s;
+}
+/* Campo obrigatório preenchido: verde */
+.req-ok{
+  border:1.5px solid #16a34a;
+  border-radius:8px;
+  padding:6px 8px;
+  background:#f0fdf4;
+  transition:border 0.2s,background 0.2s;
 }
 .req-fld label:first-of-type{
   color:var(--err);
   font-weight:600;
   font-size:11px;
 }
-.req-fld .mdi,.req-fld select,.req-fld .rg{
+.req-fld .mdi,.req-fld select,.req-fld .rg,
+.req-ok select,.req-ok .rg{
   border-color:transparent !important;
+  outline:none !important;
+  box-shadow:none !important;
 }
 /* Remover indicadores duplos */
 .req-fld.reqb,.req-fld.err{border-color:var(--err);}
@@ -987,6 +999,12 @@ body{
 
 .fsec-full{background:#f0fdf4;}
 .fsec-full .fsec-tit{color:#15803d;}
+
+.req-ok select:invalid,.req-ok select{
+  border:none !important;
+  outline:none !important;
+  box-shadow:none !important;
+}
 </style>
 </head>
 <body>
@@ -1022,7 +1040,7 @@ body{
 <div class="sidebar-overlay hidden" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
 <div class="content-area" id="contentArea">
 <div id="page0" style="display:none"><div class="dash-wrap"><div class="dash-top" style="flex-wrap:wrap;gap:8px"><div class="dash-title">Dashboard de Atendimento</div><div class="period-bar" style="flex-wrap:wrap"><label>Período:</label><div style="display:flex;gap:5px"><button class="period-btn" onclick="setPeriod(7)">7d</button><button class="period-btn" onclick="setPeriod(30)">30d</button><button class="period-btn active" id="btnTodos" onclick="setPeriod(0)">Todos</button></div><input type="date" class="period-inp" id="dtDe" onchange="setPeriodCustom()"><span style="font-size:12px;color:var(--on-sur-v)">até</span><input type="date" class="period-inp" id="dtAte" onchange="setPeriodCustom()"><button class="btn btn-outlined btn-sm" onclick="applyDashFilter()">Aplicar</button><span class="period-info" id="periodInfo">Todos os registros</span></div></div><div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center"><label style="font-size:12px;color:var(--on-sur-v);font-weight:500">Filtrar:</label><select class="sel-field" id="dashSku" onchange="applyDashFilter()" style="border-radius:18px;font-size:12px"><option value="">Todos os SKUs</option></select><select class="sel-field" id="dashCanal" onchange="applyDashFilter()" style="border-radius:18px;font-size:12px"><option value="">Todos os Canais</option><option>Mercado Livre</option><option>Shopee</option><option>Amazon</option><option>Magalu</option><option>Cardex</option></select></div><div class="kpi-section-title">📊 KPIs</div><div class="kpi-row" id="kpiSectionRow"></div><div style="height:8px"></div><div class="kpi-row" id="kpiRow"></div><div class="charts-row"><div class="chart-card"><div class="chart-title">📊 Registros por Status</div><div class="chart-wrap"><canvas id="chartStatus"></canvas></div></div><div class="chart-card"><div class="chart-title">🏪 Registros por Canal</div><div class="chart-wrap"><canvas id="chartCanal"></canvas></div></div></div><div class="charts-row"><div class="chart-card"><div class="chart-title">📋 Por Modalidade</div><div class="chart-wrap-sm"><canvas id="chartModal"></canvas></div></div><div class="chart-card"><div class="chart-title">🏷️ Top Motivos de Reclamação</div><div class="chart-wrap-sm"><canvas id="chartMotivo"></canvas></div></div></div><div class="kpi-row" id="finKpiRow" style="margin-top:12px"></div><div class="dash-bottom-row"><div class="dash-table-card"><div class="dash-card-title">📦 Registros por SKU <span id="skuTotalBadge" style="font-size:11px;color:var(--on-sur-v);font-weight:400">—</span></div><div class="dash-card-scroll"><table class="dash-mini-table"><thead><tr><th>SKU</th><th>Registros</th><th>Reclamações</th></tr></thead><tbody id="skuTableBody"></tbody></table></div></div><div class="dash-table-card"><div class="dash-card-title">🔍 Motivos por SKU</div><div class="dash-card-scroll"><table class="dash-mini-table"><thead><tr><th>SKU</th><th>Motivo</th><th>Qtd</th></tr></thead><tbody id="skuMotivoBody"></tbody></table></div></div></div><div class="month-chart-card"><div class="dash-card-title">📅 Registros por Mês (últimos 6 meses)</div><div class="month-chart-wrap"><canvas id="chartMes"></canvas></div></div></div></div>
-<div id="page1" style="display:none"><div class="summary-row" id="summaryRow"></div><div class="toolbar"><div class="search-field"><span style="color:var(--on-sur-v)">🔍</span><input id="srch" placeholder="Buscar ID, nome, SKU..." oninput="render()"></div><select class="sel-field" id="fStatus" onchange="render()"><option value="">Todos os status ativos</option><option>TRATATIVA ABERTA</option><option>TRATATIVA ATRASADA</option><option>ACOMPANHAR DISPUTA</option><option>ACOMPANHAR ENVIO</option><option>POSSÍVEL EXTRAVIO</option><option>EMITIR NF DEVOL</option><option>AGUARDANDO REEMBOLSO</option><option>EM ATRASO</option><option>A ENVIAR</option><option>CONCLUÍDO</option><option>AGUARDANDO PRODUTO</option></select><select class="sel-field" id="fCanal" onchange="render()"><option value="">Todos os canais</option><option>Mercado Livre</option><option>Shopee</option><option>Amazon</option><option>Magalu</option><option>Cardex</option></select><button class="flt-btn" id="btnMiss" onclick="toggleMiss()">⚠ Incompletos</button></div><div class="tbl-wrap"><div class="tbl-scroll"><table><thead><tr><th>Modalidade</th><th>ID Venda</th><th>Nome</th><th>Status</th><th>EMPR.</th><th>Canal</th><th>SKU</th><th>Data</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div><div class="pag" id="pag"></div></div></div>
+<div id="page1" style="display:none"><div class="summary-row" id="summaryRow"></div><div class="toolbar"><div class="search-field"><span style="color:var(--on-sur-v)">🔍</span><input id="srch" placeholder="Buscar ID, nome, SKU..." oninput="render()"></div><select class="sel-field" id="fStatus" onchange="fStatusChange(this.value)"><option value="">Todos os status ativos</option><option>TRATATIVA ABERTA</option><option>TRATATIVA ATRASADA</option><option>ACOMPANHAR DISPUTA</option><option>ACOMPANHAR ENVIO</option><option>POSSÍVEL EXTRAVIO</option><option>EMITIR NF DEVOL</option><option>AGUARDANDO REEMBOLSO</option><option>EM ATRASO</option><option>A ENVIAR</option><option>CONCLUÍDO</option><option>AGUARDANDO PRODUTO</option><option>ERRO DE PREENCHIMENTO</option><option value="__MISS__">⚠ Campos em Falta</option></select><select class="sel-field" id="fCanal" onchange="render()"><option value="">Todos os canais</option><option>Mercado Livre</option><option>Shopee</option><option>Amazon</option><option>Magalu</option><option>Cardex</option></select><button class="flt-btn" id="btnMiss" onclick="toggleMiss()">⚠ Campos em falta</button></div><div class="tbl-wrap"><div class="tbl-scroll"><table><thead><tr><th>Modalidade</th><th>ID Venda</th><th>Nome</th><th>Status</th><th>EMPR.</th><th>Canal</th><th>SKU</th><th>Data</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div><div class="pag" id="pag"></div></div></div>
 <div id="page2" style="display:none">
 <div class="bulk-wrap">
   <div class="bulk-hdr">
@@ -1039,7 +1057,7 @@ body{
       <option>TRATATIVA ABERTA</option><option>TRATATIVA ATRASADA</option>
       <option>ACOMPANHAR DISPUTA</option><option>ACOMPANHAR ENVIO</option>
       <option>POSSÍVEL EXTRAVIO</option><option>AGUARDANDO REEMBOLSO</option>
-      <option>EM ATRASO</option><option>A ENVIAR</option>
+      <option>EM ATRASO</option><option>A ENVIAR</option><option>ERRO DE PREENCHIMENTO</option><option value="__MISS__">⚠ Campos em Falta</option>
     </select>
     <select class="bulk-filter-sel" id="bfCanal" onchange="applyBF()">
       <option value="">Todos os Canais</option>
@@ -1110,6 +1128,7 @@ body{
       <button class="dlg-x" onclick="closeDlg()">✕</button>
     </div>
     <div class="dlg-body" id="dlgBody"></div>
+    <div id="dlgMissMsg" style="display:none;margin:0 0 8px 0;padding:8px 12px;background:#fff3cd;border:1px solid #f59e0b;border-radius:8px;font-size:12px;color:#92400e;line-height:1.6"></div>
     <div class="dlg-ftr">
       <button class="btn btn-outlined" onclick="closeDlg()">Cancelar</button>
       <button class="btn btn-filled" onclick="saveRecord()">Salvar</button>
@@ -1174,7 +1193,7 @@ const IGNORADOS_BULK=['CONCLUÍDO',''];
 const MOTIVOS=['','Arrependimento','Atraso na entrega','Caixa Danificada','Defeito','Envio atrasado','Falta de Peça','Motivo desconhecido','Não Recebido','Produto Danificado','Produto Errado','Qualidade Ruim'];
 const MODALIDADES=['','Devolução','Reclamação','Mensagem','Cancelado','Em Atraso','Não Entregue','Resolvido'];
 const DETALHAMENTOS=['','Alça','Bandeja','Barras','Capuz','Conexão','Corpo do Produto','Danificado pela transportadora','Entrega atrasada','Ferramentas','Hastes dobráveis','Kit de parafusos e porcas','Manual','Mosquiteiro','Não especificado','Pernas','Roda','Saboneteira','Silicone','Suporte','Trava','Zíper'];
-const OBRIG_KEYS=['ID_VENDA','CANAL','EMPR','MODELO'];
+const OBRIG_KEYS=['MODALIDADE','ID_VENDA','CANAL','EMPR','MODELO'];
 
 function cN(s){s=s.toUpperCase();let n=0;for(let i=0;i<s.length;i++)n=n*26+(s.charCodeAt(i)-64);return n-1;}
 const BANCO_MAP={
@@ -1569,6 +1588,7 @@ const SL=[
   {k:'A ENVIAR',c:'sc-info',l:'A ENVIAR'},
   {k:'AGUARDANDO REEMBOLSO',c:'sc-pur',l:'REEMBOLSO'},
   {k:'AGUARDANDO PRODUTO',c:'sc-warn',l:'AG. PRODUTO'},
+  {k:'ERRO DE PREENCHIMENTO',c:'sc-err',l:'ERRO PREENCH.'},
 ];
 function renderSummary(){
   var sf=document.getElementById('fStatus')?.value||'';
@@ -1579,7 +1599,9 @@ function renderSummary(){
   if(summaryRow)summaryRow.classList.remove('compact');
   if(footerEl)footerEl.textContent='';
   var base=(cf||ef)?filtered:allData.filter(r=>!IGNORADOS_BULK.includes(r.STATUS));
-  var h='<div class="sc sc-total" onclick="clearF()" title="Limpar filtro">'
+  // Total Ativos fica ativo quando não há filtro de status nem missOnly
+  var totalActive=!sf&&!missOnly;
+  var h='<div class="sc sc-total'+(totalActive?' sc-active':'')+'" onclick="clearF()" title="Limpar filtro">'
     +'<div class="sc-lbl">'+(cf?'Filtrado':'Total Ativos')+'</div>'
     +'<div class="sc-cnt">'+base.length+'</div></div>';
   var statusCount={};
@@ -1597,9 +1619,28 @@ function renderSummary(){
   if(summaryRow)summaryRow.innerHTML=h;
 }
 function setSt(s){document.getElementById('fStatus').value=s;missOnly=false;var _bm=document.getElementById('btnMiss');if(_bm)_bm.classList.remove('on');curPage=1;render();renderSummary();}
-function setMiss(v){missOnly=v;var _bm2=document.getElementById('btnMiss');if(_bm2)_bm2.classList.toggle('on',v);curPage=1;render();}
+
+function fStatusChange(v){
+  if(v==='__MISS__'){
+    document.getElementById('fStatus').value='';
+    setMiss(true);
+  } else {
+    if(missOnly){missOnly=false;var _bm=document.getElementById('btnMiss');if(_bm){_bm.classList.remove('on','sc-active');}}
+    curPage=1;render();renderSummary();
+  }
+}
+function setMiss(v){
+  missOnly=v;
+  // Quando ativar missOnly, limpar filtro de status para não conflitar
+  if(v){
+    var _fs=document.getElementById('fStatus');if(_fs)_fs.value='';
+  }
+  var _bm2=document.getElementById('btnMiss');
+  if(_bm2){_bm2.classList.toggle('on',v);_bm2.classList.toggle('sc-active',v);}
+  curPage=1;render();renderSummary();
+}
 function toggleMiss(){setMiss(!missOnly);}
-function clearF(){document.getElementById('fStatus').value='';document.getElementById('fCanal').value='';var _fe=document.getElementById('fEmpr');if(_fe)_fe.value='';document.getElementById('srch').value='';missOnly=false;var _bm=document.getElementById('btnMiss');if(_bm)_bm.classList.remove('on');curPage=1;render();}
+function clearF(){document.getElementById('fStatus').value='';document.getElementById('fCanal').value='';var _fe=document.getElementById('fEmpr');if(_fe)_fe.value='';document.getElementById('srch').value='';missOnly=false;var _bm=document.getElementById('btnMiss');if(_bm){_bm.classList.remove('on');_bm.classList.remove('sc-active');}curPage=1;render();renderSummary();}
 const CC={'TRATATIVA ABERTA':'chip chip-ta','TRATATIVA ATRASADA':'chip chip-tat','ACOMPANHAR DISPUTA':'chip chip-ad','ACOMPANHAR ENVIO':'chip chip-ae','POSSÍVEL EXTRAVIO':'chip chip-pe','AGUARDANDO REEMBOLSO':'chip chip-ar','EM ATRASO':'chip chip-ea','A ENVIAR':'chip chip-av'};
 function render(){
   const s=document.getElementById('srch').value.toLowerCase();const sf=document.getElementById('fStatus').value;const cf=document.getElementById('fCanal').value;const ef=(document.getElementById('fEmpr')?.value||'');
@@ -1667,7 +1708,7 @@ function fYN(id,lbl,val,req,fe){
 }
 function fYN3(id,lbl,val,req,fe){req=req||false;fe=fe||false;const rc=(req&&!val)||fe?'req-fld':'';const mk=(v,l)=>'<div class="ro"><input type="radio" name="f_'+id+'" id="f_'+id+'_'+v+'" value="'+v+'" '+(val===v?'checked':'')+' onchange="fldChg(\''+id+'\',this.value)"><label for="f_'+id+'_'+v+'">'+l+'</label></div>';return '<div class="fld '+rc+'"><label>'+lbl+'</label><div class="rg">'+mk('SIM','SIM')+mk('NÃO','NÃO')+mk('Reaberto','Reaberto')+'</div></div>';}
 function fTxt(id,lbl,val){return '<div class="fld"><label>'+lbl+'</label>'+'<textarea id="f_'+id+'" rows="3" style="resize:vertical;min-height:60px;width:100%;box-sizing:border-box" oninput="fldChg(\''+id+'\',this.value)">'+((val||'').replace(/</g,'&lt;'))+'</textarea>'+'</div>';}
-function closeDlg(){var _d=document.getElementById('dlgOv');if(_d)_d.classList.remove('open');curRec=null;}
+function closeDlg(){var _d=document.getElementById('dlgOv');if(_d)_d.classList.remove('open');curRec=null;var mm=document.getElementById('dlgMissMsg');if(mm){mm.style.display='none';mm.innerHTML='';}}
 
 const bancoCache={};
 async function fetchBanco(aba){if(bancoCache[aba])return bancoCache[aba];try{const maxCol={'Mercado Livre':'BQ','Shopee':'BP','Magalu':'AV','Amazon':'AO'}[aba]||'AZ';const url='https://sheets.googleapis.com/v4/spreadsheets/'+BANCO_ID+'/values/'+encodeURIComponent(aba+'!A:'+maxCol)+'?key='+cfg.apiKey;const res=await fetch(url);if(!res.ok)return null;const data=await res.json();bancoCache[aba]=data.values||[];return bancoCache[aba];}catch(e){return null;}}
@@ -1677,7 +1718,11 @@ async function saveRecord(){
   const get=id=>{const el=document.getElementById('f_'+id);if(el)return el.value;for(const r of document.querySelectorAll('input[name="f_'+id+'"]'))if(r.checked)return r.value;return'';};
   const novos={};EDIT_COLS.forEach(({key})=>{novos[key]=get(key)||'';});
   const miss=OBRIG_KEYS.filter(f=>!novos[f]);if(['Devolução','Mensagem','Reclamação'].includes(novos.MODALIDADE)&&!novos.MOTIVO)miss.push('MOTIVO');if(novos.DISPUTA_ABERTA==='SIM'&&!novos.DISPUTA_FINALIZADA)miss.push('DISPUTA_FINALIZADA');if(novos.DISPUTA_FINALIZADA==='SIM'&&!novos.REEMBOLSO_MKT)miss.push('REEMBOLSO_MKT');if(novos.REEMBOLSO_MKT==='SIM'&&!novos.CREDITO)miss.push('CREDITO');
-  if(miss.length){snack('Preencha: '+miss.map(f=>ML[f]||f).join(', '));return;}
+  if(miss.length){
+    var mm=document.getElementById('dlgMissMsg');
+    if(mm){mm.style.display='block';mm.innerHTML='&#9888;&#65039; Preencha os seguintes campos obrigatórios:<br>&#8226; '+miss.map(f=>ML[f]||f).join('<br>&#8226; ');}
+    return;
+  }
   const tkn=await getToken();if(!tkn)return;
   const isNew=!curRec;
   if(isNew){const mx=Math.max(...Object.values(COL))+1;const row=new Array(mx).fill('');EDIT_COLS.forEach(({key,idx})=>{row[idx]=novos[key]||'';});row[COL.STATUS]='';
@@ -1733,8 +1778,9 @@ function applyBF(){
   const skuEl=document.getElementById('bfSku');if(skuEl)skuEl.classList.toggle('active',!!skuf);
 
   let idxs=[...Array(bulkOrig.length).keys()];
-  // Status filter
-  if(sf)idxs=idxs.filter(i=>bulkOrig[i].STATUS===sf);
+  // Status filter (inclui caso especial __MISS__ = campos em falta)
+  if(sf==='__MISS__')idxs=idxs.filter(i=>getMiss(bulkOrig[i]).length>0);
+  else if(sf)idxs=idxs.filter(i=>bulkOrig[i].STATUS===sf);
   // Canal filter
   if(cf)idxs=idxs.filter(i=>bulkOrig[i].CANAL===cf);
   // Modalidade filter
@@ -2398,29 +2444,70 @@ document.addEventListener('DOMContentLoaded',function(){
   try{var c=localStorage.getItem('sidebarCollapsed');var sb=document.getElementById('sidebar');if(sb&&c==='1')sb.classList.add('collapsed');}catch(e){}
 });
 
+function fldChg(id,val){
+  // Atualizar validação visual em tempo real
+  updateReqVisual();
+  // Atualizar mensagem de campos obrigatórios se ela estiver visível
+  var mm=document.getElementById('dlgMissMsg');
+  if(mm&&mm.style.display!=='none'){
+    var get=function(k){
+      var el=document.getElementById('f_'+k);
+      if(el)return el.value;
+      for(var r of document.querySelectorAll('input[name="f_'+k+'"]'))if(r.checked)return r.value;
+      return'';
+    };
+    var miss2=OBRIG_KEYS.filter(function(f){return !get(f);});
+    if(miss2.length===0){mm.style.display='none';mm.innerHTML='';}
+    else{mm.innerHTML='&#9888;&#65039; Preencha os seguintes campos obrigatórios:<br>&#8226; '+miss2.map(function(f){return ML[f]||f;}).join('<br>&#8226; ');}
+  }
+}
+
 function updateReqVisual(){
-  // NEC_PECAS e TRATATIVA_FINALIZADA são sempre obrigatórios (sem DEVOLUCAO_ABERTA)
   var dAv=document.querySelector('input[name="f_DISPUTA_ABERTA"]:checked')?.value||'';
   var isDA=dAv==='SIM';
+
+  // Obter valor de um campo (input ou radio)
+  function getVal(fid){
+    var el=document.getElementById('f_'+fid);
+    if(el)return el.value||'';
+    var r=document.querySelector('input[name="f_'+fid+'"]:checked');
+    return r?r.value:'';
+  }
+
+  // Aplicar estado visual: active=true→req-fld/req-ok conforme preenchimento; false→remove ambos
   function setReq(fid,active){
     var el=document.getElementById('f_'+fid+'_SIM')||document.getElementById('f_'+fid)||document.querySelector('[name="f_'+fid+'"]');
     if(!el)return;
     var fld=el.closest('.fld');if(!fld)return;
-    fld.classList.toggle('req-fld',active);
+    if(!active){fld.classList.remove('req-fld','req-ok');return;}
+    var val=getVal(fid);
+    fld.classList.toggle('req-fld',!val);
+    fld.classList.toggle('req-ok',!!val);
   }
-  // Campos sempre obrigatórios: marcar se vazios
-  ['ID_VENDA','CANAL','EMPR','MODELO'].forEach(function(f){
-    var el=document.getElementById('f_'+f);
-    if(el)el.closest('.fld')?.classList.toggle('req-fld',!el.value);
+
+  // Campos sempre obrigatórios
+  ['MODALIDADE','ID_VENDA','CANAL','EMPR','MODELO'].forEach(function(f){
+    var el=document.getElementById('f_'+f);if(!el)return;
+    var fld=el.closest('.fld');if(!fld)return;
+    fld.classList.toggle('req-fld',!el.value);
+    fld.classList.toggle('req-ok',!!el.value);
   });
-  // NEC_PECAS e TRATATIVA_FINALIZADA sempre obrigatórios
   setReq('NEC_PECAS', true);
   setReq('TRATATIVA_FINALIZADA', true);
+  // MOTIVO: obrigatório quando MODALIDADE é Devolução, Mensagem ou Reclamação
+  var modalVal=getVal('MODALIDADE');
+  var motivoReq=['Devolução','Mensagem','Reclamação'].includes(modalVal);
+  setReq('MOTIVO', motivoReq);
+  // DEVOLUCAO_ABERTA e DISPUTA_ABERTA sempre obrigatórios
+  setReq('DEVOLUCAO_ABERTA', true);
+  setReq('DISPUTA_ABERTA', true);
   // Disputa condicional
   setReq('REEMBOLSO_MKT', isDA);
   setReq('DISPUTA_FINALIZADA', isDA);
 }
 function openModal(rec){
+  // Resetar mensagem de validação ao abrir popup
+  var _mm=document.getElementById('dlgMissMsg');if(_mm){_mm.style.display='none';_mm.innerHTML='';}
   // POPUP REFATORADO — sincronizado com planilha 52 colunas
   curRec=rec;const isNew=!rec;const r=rec||{};
 
