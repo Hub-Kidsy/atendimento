@@ -1506,7 +1506,7 @@ function renderDashboard(){
 
   // ── KPIs FINANCEIROS (usa allData) ───────────────────────────────────────
   function parseMoney(v){return parseFloat((v||'').replace(/[R$\s]/g,'').replace(/\./g,'').replace(',','.'))||0;}
-  const custoTotal=dashData.reduce((s,r)=>s+parseMoney(r.CUSTOS_TOTAL),0); // filtrado
+  const custoTotal=dashData.reduce((s,r)=>s+parseMoney(r.CUSTOS_TOTAIS),0); // col AW (Custos)
   const reembolsoTotal=dashData.reduce((s,r)=>s+parseMoney(r.REEMBOLSO||'0'),0); // filtrado
   const resultadoFin=dashData.reduce((s,r)=>s+parseMoney(r.RESULTADO_FIN||'0'),0); // col AY (RESULTADO_FIN) diretamente da planilha
   const finEl=document.getElementById('finKpiRow');
@@ -1728,34 +1728,33 @@ async function saveRecord(){
   if(isNew){
     // ── Localizar primeira linha livre (col C vazia E col D vazia/fórmula='') ────
     try{
-      // Ler colunas C e D para encontrar primeira linha preparada disponível
+      // Passo 1: Ler colunas C e D para localizar primeira linha preparada (vazia)
       const scanRes=await fetch(
         'https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values/'
         +encodeURIComponent(cfg.sheetName+'!C:D')+'?key='+cfg.apiKey);
       if(!scanRes.ok){const e=await scanRes.json();throw new Error(e.error?.message||scanRes.statusText);}
       const scanData=(await scanRes.json()).values||[];
-      // scanData[0] = linha 1 (cabeçalho), scanData[i] = linha i+1
-      // Percorrer a partir da linha 2 (índice 1) para encontrar a primeira linha
-      // onde C (col 0) está vazia E D (col 1) está vazia ou ''
       let targetRow=-1;
       for(let i=1;i<scanData.length;i++){
         const cVal=(scanData[i][0]||'').trim();
         const dVal=(scanData[i][1]||'').trim();
-        if(cVal===''&&dVal===''){targetRow=i+1;break;} // +1 porque sheets é 1-based
+        if(cVal===''&&dVal===''){targetRow=i+1;break;}
       }
-      // Se não encontrou linha preparada, usar a próxima após os dados
       if(targetRow<0)targetRow=scanData.length+1;
-      // Montar o array da linha com os dados do novo registro
-      const mx=Math.max(...Object.values(COL))+1;
-      const row=new Array(mx).fill('');
-      EDIT_COLS.forEach(({key,idx})=>{row[idx]=novos[key]||'';});
-      // Salvar na linha encontrada usando UPDATE (não append) — preserva fórmulas das demais colunas
-      const range=encodeURIComponent(cfg.sheetName+'!A'+targetRow);
+      // Passo 2: Montar batchUpdate com SOMENTE as células preenchidas
+      // — igual à lógica de edição, preservando fórmulas das células não enviadas
+      const batchData=[];
+      EDIT_COLS.forEach(({key,idx})=>{
+        const val=novos[key]||'';
+        if(!val)return; // não enviar campos vazios — preserva fórmulas
+        batchData.push({range:cfg.sheetName+'!'+n2c(idx)+targetRow,values:[[val]]});
+      });
+      if(!batchData.length){snack('Nenhum campo preenchido','warn');return;}
+      // Passo 3: Enviar apenas as células com valor via batchUpdate
       const saveRes=await fetch(
-        'https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values/'+range
-        +'?valueInputOption=USER_ENTERED',
-        {method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},
-        body:JSON.stringify({range:cfg.sheetName+'!A'+targetRow,majorDimension:'ROWS',values:[row]})});
+        'https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values:batchUpdate',
+        {method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},
+        body:JSON.stringify({valueInputOption:'USER_ENTERED',data:batchData})});
       if(!saveRes.ok){const e=await saveRes.json();throw new Error(e.error?.message||saveRes.statusText);}
       snack('Criado na linha '+targetRow+'!','success');closeDlg();loadData();
     }catch(e){snack('Erro: '+e.message,'error');}
