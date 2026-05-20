@@ -1005,6 +1005,10 @@ body{
   outline:none !important;
   box-shadow:none !important;
 }
+
+/* Duplicidade: campo com valor já existente em outro registro */
+.dup-warn{background:#fef08a!important;border:2px solid #eab308!important;border-radius:8px;padding:6px 8px;transition:border 0.2s,background 0.2s;}
+.dup-warn input,.dup-warn select,.dup-warn textarea{border:none!important;outline:none!important;background:transparent!important;}
 </style>
 </head>
 <body>
@@ -1528,8 +1532,10 @@ function renderDashboard(){
     if(!total){secEl.innerHTML='<div style="color:var(--on-sur-v);font-size:12px;padding:8px">Sem dados</div>';return;}
 
     // KPI 1 — Índice de campos em falta
-    // Registros com pelo menos 1 campo obrigatório faltando (cada registro conta 1 vez)
-    var comFalta=base.filter(function(r){return getMiss(r).length>0;}).length;
+    // Registros ATIVOS com pelo menos 1 campo obrigatório faltando (cada registro = 1)
+    var baseAtivos=base.filter(function(r){return !IGNORADOS.includes(r.STATUS);});
+    var comFalta=baseAtivos.filter(function(r){return getMiss(r).length>0;}).length;
+    var totalAtivosFalta=baseAtivos.filter(function(r){return(r.ID_VENDA||'').trim()||(r.NOME||'').trim();}).length;
     var pctFalta=totalValido?((comFalta/totalValido)*100).toFixed(1):0;
 
     // KPI 2 — Índice de concluídos pelo total
@@ -1686,7 +1692,7 @@ function fInp(id,lbl,val,type,req,ph,ro,isNew){
   return '<div class="fld '+rc+'"><label>'+lbl+'</label>'
     +'<input type="'+type+'" id="f_'+id+'" class="mdi '+errCls+(ro?' af':'')+'"'
     +' value="'+(val||'').replace(/"/g,'&quot;')+'" placeholder="'+ph+'"'
-    +(ro?' readonly':'')+'></div>';
+    +(ro?' readonly':'')+(ro?'':' oninput="fldChg(\''+id+'\',this.value)"')+'></div>';
 }
 function fRO(id,lbl,val){return '<div class="fld"><label>'+lbl+'</label><input type="text" id="f_'+id+'" class="mdi '+(val?'af':'')+'" value="'+(val||'').replace(/"/g,'&quot;')+'" readonly></div>';}
 function fSel(id,lbl,val,opts,req,fe){
@@ -1715,7 +1721,7 @@ function closeDlg(){var _d=document.getElementById('dlgOv');if(_d)_d.classList.r
 
 const bancoCache={};
 async function fetchBanco(aba){if(bancoCache[aba])return bancoCache[aba];try{const maxCol={'Mercado Livre':'BQ','Shopee':'BP','Magalu':'AV','Amazon':'AO'}[aba]||'AZ';const url='https://sheets.googleapis.com/v4/spreadsheets/'+BANCO_ID+'/values/'+encodeURIComponent(aba+'!A:'+maxCol)+'?key='+cfg.apiKey;const res=await fetch(url);if(!res.ok)return null;const data=await res.json();bancoCache[aba]=data.values||[];return bancoCache[aba];}catch(e){return null;}}
-async function autoFill(idVenda,canal){const m=BANCO_MAP[canal];if(!m)return;snack('Buscando...','');const rows=await fetchBanco(canal);if(!rows){snack('Banco inacessível','error');return;}const found=rows.slice(1).find(r=>(r[m.buscaCol]||'').trim()===idVenda.trim());if(!found){snack('ID não encontrado','error');return;}const g=i=>found[i]||'';let sku=g(m.SKU);if(canal==='Amazon')sku=sku.replace(/_FBA_PC1/g,'').replace(/_FBA/g,'');const setRO=(id,v)=>{const el=document.getElementById('f_'+id);if(el){el.value=v;el.classList.toggle('af',!!v);}};const setSel=(id,v)=>{const el=document.getElementById('f_'+id);if(el&&v){el.value=v;el.classList.add('af');}};setRO('NOME',g(m.NOME));setRO('DATA_VENDA',g(m.DATA_VENDA));setRO('SKU',sku);setRO('QT',g(m.QT));setRO('RASTREIO',g(m.RASTREIO));setRO('ID_BLING',g(m.ID_BLING));setRO('DESC_STATUS',g(m.DESC));setSel('EMPR',g(m.EMPR));setSel('MODELO',g(m.MODELO));const mod=detectModal(g(m.DESC));if(mod)setSel('MODALIDADE',mod);const nfd=g(m.NF_DEVOL);if(nfd){const el=document.getElementById('f_NF_DEVOL');if(el&&!el.value)el.value=nfd;}snack('✓ Preenchido: '+idVenda,'success');}
+async function autoFill(idVenda,canal){const m=BANCO_MAP[canal];if(!m)return;snack('Buscando...','');const rows=await fetchBanco(canal);if(!rows){snack('Banco inacessível','error');return;}const found=rows.slice(1).find(r=>(r[m.buscaCol]||'').trim()===idVenda.trim());if(!found){snack('ID não encontrado','error');return;}const g=i=>found[i]||'';let sku=g(m.SKU);if(canal==='Amazon')sku=sku.replace(/_FBA_PC1/g,'').replace(/_FBA/g,'');const setRO=(id,v)=>{const el=document.getElementById('f_'+id);if(el){el.value=v;el.classList.toggle('af',!!v);if(typeof fldChg==='function')fldChg(id,v);}};const setSel=(id,v)=>{const el=document.getElementById('f_'+id);if(el&&v){el.value=v;el.classList.add('af');}};setRO('NOME',g(m.NOME));setRO('DATA_VENDA',g(m.DATA_VENDA));setRO('SKU',sku);setRO('QT',g(m.QT));setRO('RASTREIO',g(m.RASTREIO));setRO('ID_BLING',g(m.ID_BLING));setRO('DESC_STATUS',g(m.DESC));setSel('EMPR',g(m.EMPR));setSel('MODELO',g(m.MODELO));const mod=detectModal(g(m.DESC));if(mod)setSel('MODALIDADE',mod);const nfd=g(m.NF_DEVOL);if(nfd){const el=document.getElementById('f_NF_DEVOL');if(el&&!el.value)el.value=nfd;}snack('✓ Preenchido: '+idVenda,'success');}
 
 async function saveRecord(){
   const get=id=>{const el=document.getElementById('f_'+id);if(el)return el.value;for(const r of document.querySelectorAll('input[name="f_'+id+'"]'))if(r.checked)return r.value;return'';};
@@ -1726,6 +1732,15 @@ async function saveRecord(){
     if(mm){mm.style.display='block';mm.innerHTML='&#9888;&#65039; Preencha os seguintes campos obrigatórios:<br>&#8226; '+miss.map(f=>ML[f]||f).join('<br>&#8226; ');}
     return;
   }
+  // ── Verificação de duplicidade antes de salvar ───────────────────
+  const dupLabels=checkAllDups();
+  if(dupLabels.length>0){
+    const dupMsg='⚠️ Os seguintes campos já existem em outro registro:\n\n• '
+      +dupLabels.join('\n• ')
+      +'\n\nDeseja salvar mesmo assim?';
+    if(!confirm(dupMsg))return; // usuário cancelou
+  }
+  // ────────────────────────────────────────────────────────────────
   const tkn=await getToken();if(!tkn)return;
   const isNew=!curRec;
   if(isNew){
@@ -2478,6 +2493,40 @@ document.addEventListener('DOMContentLoaded',function(){
   try{var c=localStorage.getItem('sidebarCollapsed');var sb=document.getElementById('sidebar');if(sb&&c==='1')sb.classList.add('collapsed');}catch(e){}
 });
 
+
+// ── Verificação de duplicidade ─────────────────────────────────────
+const DUP_FIELDS=['ID_VENDA','NOME','RASTREIO','NF','NF_DEVOL'];
+const DUP_LABELS={'ID_VENDA':'ID de Venda','NOME':'Nome','RASTREIO':'Rastreio','NF':'NF','NF_DEVOL':'NF de Devolução'};
+
+function checkDupField(fieldKey, val){
+  // Retorna true se val já existe em outro registro
+  if(!val||!val.trim())return false;
+  const v=val.trim().toLowerCase();
+  const ownRow=curRec?curRec._row:-1;
+  return allData.some(function(r){
+    if(r._row===ownRow)return false; // ignorar o próprio registro
+    return (r[fieldKey]||'').trim().toLowerCase()===v;
+  });
+}
+
+function updateDupVisual(fieldKey){
+  var el=document.getElementById('f_'+fieldKey);
+  if(!el)return;
+  var fld=el.closest('.fld');
+  if(!fld)return;
+  var val=el.value||'';
+  var isDup=checkDupField(fieldKey,val);
+  fld.classList.toggle('dup-warn',isDup);
+}
+
+function checkAllDups(){
+  // Retorna array de labels dos campos duplicados
+  return DUP_FIELDS.filter(function(f){
+    var el=document.getElementById('f_'+f);
+    var val=el?el.value:'';
+    return checkDupField(f,val);
+  }).map(function(f){return DUP_LABELS[f]||f;});
+}
 function fldChg(id,val){
   // Atualizar validação visual em tempo real
   updateReqVisual();
@@ -2494,6 +2543,8 @@ function fldChg(id,val){
     if(miss2.length===0){mm.style.display='none';mm.innerHTML='';}
     else{mm.innerHTML='&#9888;&#65039; Preencha os seguintes campos obrigatórios:<br>&#8226; '+miss2.map(function(f){return ML[f]||f;}).join('<br>&#8226; ');}
   }
+  // Verificação de duplicidade em tempo real
+  if(DUP_FIELDS.includes(id))updateDupVisual(id);
 }
 
 function updateReqVisual(){
@@ -2542,6 +2593,8 @@ function updateReqVisual(){
 function openModal(rec){
   // Resetar mensagem de validação ao abrir popup
   var _mm=document.getElementById('dlgMissMsg');if(_mm){_mm.style.display='none';_mm.innerHTML='';}
+  // Limpar marcações de duplicidade
+  document.querySelectorAll('.dup-warn').forEach(function(el){el.classList.remove('dup-warn');});
   // POPUP REFATORADO — sincronizado com planilha 52 colunas
   curRec=rec;const isNew=!rec;const r=rec||{};
 
