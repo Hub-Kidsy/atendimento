@@ -1507,12 +1507,14 @@ function renderDashboard(){
   // ── KPIs FINANCEIROS (usa allData) ───────────────────────────────────────
   function parseMoney(v){return parseFloat((v||'').replace(/[R$\s]/g,'').replace(/\./g,'').replace(',','.'))||0;}
   const custoTotal=dashData.reduce((s,r)=>s+parseMoney(r.CUSTOS_TOTAIS),0); // col AW (Custos)
+  const impostoResgatado=dashData.reduce((s,r)=>s+parseMoney(r.IMPOSTO_RESGATADO||'0'),0); // col AV
   const reembolsoTotal=dashData.reduce((s,r)=>s+parseMoney(r.REEMBOLSO||'0'),0); // filtrado
   const resultadoFin=dashData.reduce((s,r)=>s+parseMoney(r.RESULTADO_FIN||'0'),0); // col AY (RESULTADO_FIN) diretamente da planilha
   const finEl=document.getElementById('finKpiRow');
   if(finEl){
     finEl.innerHTML=
       '<div class="kpi kpi-err"><div class="kpi-lbl">Custos Total</div><div class="kpi-val" style="font-size:18px">R$ '+custoTotal.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">todos os registros</div></div>'+
+      '<div class="kpi kpi-info"><div class="kpi-lbl">Imposto Resgatado</div><div class="kpi-val" style="font-size:18px">R$ '+impostoResgatado.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">col AV</div></div>'+
       '<div class="kpi kpi-ok"><div class="kpi-lbl">Reemb. da Plataforma</div><div class="kpi-val" style="font-size:18px">R$ '+reembolsoTotal.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">recebido da plataforma</div></div>'+
       '<div class="kpi kpi-pur"><div class="kpi-lbl">Resultado Financeiro</div><div class="kpi-val" style="font-size:18px">R$ '+resultadoFin.toFixed(2).replace('.',',')+'</div><div class="kpi-sub">crédito - custos</div></div>';
 
