@@ -1533,12 +1533,12 @@ function renderDashboard(){
     var concluidos=base.filter(function(r){return r.STATUS==='CONCLUÍDO';}).length;
     var pctConc=totalValido?((concluidos/totalValido)*100).toFixed(1):0;
 
-    // KPI 3 — Reembolso sobre custo
+    // KPI 3 — Resultado Fin.: R$ Crédito Recebido (AQ) / Custos Total (AF)
     var totalCusto=base.reduce(function(s,r){return s+parseMoney(r.CUSTOS_TOTAL||'0');},0);
     var totalReemb=base.reduce(function(s,r){
-      return s+parseMoney(r.RESULTADO_FIN||'0'); // col AY da planilha
+      return s+parseMoney(r.CREDITO_RECEBIDO_VALOR||'0'); // col AQ = R$ Crédito Recebido
     },0);
-    var pctReemb=totalCusto>0?((totalReemb/totalCusto)*100).toFixed(1):'—';
+    var pctReemb=totalCusto>0?((totalReemb/totalCusto)*100).toFixed(1):'—'; // AQ/AF seguro
 
     // KPI 4 — Crédito recebido sobre disputas
     var disputas=base.filter(function(r){return (r.DISPUTA_ABERTA||'').trim()==='SIM';}).length;
@@ -1579,16 +1579,16 @@ function renderDashboard(){
 
 // PAGE 1
 const SL=[
-  {k:'TRATATIVA ATRASADA',c:'sc-err',l:'ATRASADA'},
-  {k:'TRATATIVA ABERTA',c:'sc-warn',l:'ABERTA'},
-  {k:'ACOMPANHAR DISPUTA',c:'sc-pur',l:'DISPUTA'},
-  {k:'ACOMPANHAR ENVIO',c:'sc-info',l:'ENVIO'},
-  {k:'POSSÍVEL EXTRAVIO',c:'sc-warn',l:'EXTRAVIO'},
-  {k:'EMITIR NF DEVOL',c:'sc-warn',l:'NF DEVOL'},
-  {k:'A ENVIAR',c:'sc-info',l:'A ENVIAR'},
-  {k:'AGUARDANDO REEMBOLSO',c:'sc-pur',l:'REEMBOLSO'},
-  {k:'AGUARDANDO PRODUTO',c:'sc-warn',l:'AG. PRODUTO'},
   {k:'ERRO DE PREENCHIMENTO',c:'sc-err',l:'ERRO PREENCH.'},
+  {k:'TRATATIVA ABERTA',c:'sc-warn',l:'ABERTA'},
+  {k:'TRATATIVA ATRASADA',c:'sc-err',l:'ATRASADA'},
+  {k:'A ENVIAR',c:'sc-info',l:'A ENVIAR'},
+  {k:'ACOMPANHAR ENVIO',c:'sc-info',l:'ENVIO'},
+  {k:'EMITIR NF DEVOL',c:'sc-warn',l:'NF DEVOL'},
+  {k:'AGUARDANDO PRODUTO',c:'sc-warn',l:'AG. PRODUTO'},
+  {k:'ACOMPANHAR DISPUTA',c:'sc-pur',l:'DISPUTA'},
+  {k:'AGUARDANDO REEMBOLSO',c:'sc-pur',l:'REEMBOLSO'},
+  {k:'POSSÍVEL EXTRAVIO',c:'sc-warn',l:'EXTRAVIO'},
 ];
 function renderSummary(){
   var sf=document.getElementById('fStatus')?.value||'';
@@ -1725,8 +1725,40 @@ async function saveRecord(){
   }
   const tkn=await getToken();if(!tkn)return;
   const isNew=!curRec;
-  if(isNew){const mx=Math.max(...Object.values(COL))+1;const row=new Array(mx).fill('');EDIT_COLS.forEach(({key,idx})=>{row[idx]=novos[key]||'';});row[COL.STATUS]='';
-    try{const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values/'+encodeURIComponent(cfg.sheetName+'!A:BD')+':append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},body:JSON.stringify({values:[row]})});if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}snack('Criado!','success');closeDlg();loadData();}catch(e){snack('Erro: '+e.message,'error');}
+  if(isNew){
+    // ── Localizar primeira linha livre (col C vazia E col D vazia/fórmula='') ────
+    try{
+      // Ler colunas C e D para encontrar primeira linha preparada disponível
+      const scanRes=await fetch(
+        'https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values/'
+        +encodeURIComponent(cfg.sheetName+'!C:D')+'?key='+cfg.apiKey);
+      if(!scanRes.ok){const e=await scanRes.json();throw new Error(e.error?.message||scanRes.statusText);}
+      const scanData=(await scanRes.json()).values||[];
+      // scanData[0] = linha 1 (cabeçalho), scanData[i] = linha i+1
+      // Percorrer a partir da linha 2 (índice 1) para encontrar a primeira linha
+      // onde C (col 0) está vazia E D (col 1) está vazia ou ''
+      let targetRow=-1;
+      for(let i=1;i<scanData.length;i++){
+        const cVal=(scanData[i][0]||'').trim();
+        const dVal=(scanData[i][1]||'').trim();
+        if(cVal===''&&dVal===''){targetRow=i+1;break;} // +1 porque sheets é 1-based
+      }
+      // Se não encontrou linha preparada, usar a próxima após os dados
+      if(targetRow<0)targetRow=scanData.length+1;
+      // Montar o array da linha com os dados do novo registro
+      const mx=Math.max(...Object.values(COL))+1;
+      const row=new Array(mx).fill('');
+      EDIT_COLS.forEach(({key,idx})=>{row[idx]=novos[key]||'';});
+      // Salvar na linha encontrada usando UPDATE (não append) — preserva fórmulas das demais colunas
+      const range=encodeURIComponent(cfg.sheetName+'!A'+targetRow);
+      const saveRes=await fetch(
+        'https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values/'+range
+        +'?valueInputOption=USER_ENTERED',
+        {method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},
+        body:JSON.stringify({range:cfg.sheetName+'!A'+targetRow,majorDimension:'ROWS',values:[row]})});
+      if(!saveRes.ok){const e=await saveRes.json();throw new Error(e.error?.message||saveRes.statusText);}
+      snack('Criado na linha '+targetRow+'!','success');closeDlg();loadData();
+    }catch(e){snack('Erro: '+e.message,'error');}
   }else{const rowN=curRec._row;const data=[];EDIT_COLS.forEach(({key,idx})=>{const o=curRec[key]||'';const n=novos[key]||'';if(o===n)return;data.push({range:cfg.sheetName+'!'+n2c(idx)+rowN,values:[[n]]});});if(!data.length){snack('Sem alterações','success');closeDlg();return;}
     try{const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values:batchUpdate',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},body:JSON.stringify({valueInputOption:'USER_ENTERED',data})});if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}snack(data.length+' campo(s) salvos!','success');closeDlg();loadData();}catch(e){snack('Erro: '+e.message,'error');}
   }
