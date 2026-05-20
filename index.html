@@ -1528,8 +1528,9 @@ function renderDashboard(){
     if(!total){secEl.innerHTML='<div style="color:var(--on-sur-v);font-size:12px;padding:8px">Sem dados</div>';return;}
 
     // KPI 1 — Índice de campos em falta
+    // Registros com pelo menos 1 campo obrigatório faltando (cada registro conta 1 vez)
     var comFalta=base.filter(function(r){return getMiss(r).length>0;}).length;
-    var pctFalta=total?((comFalta/total)*100).toFixed(1):0;
+    var pctFalta=totalValido?((comFalta/totalValido)*100).toFixed(1):0;
 
     // KPI 2 — Índice de concluídos pelo total
     var concluidos=base.filter(function(r){return r.STATUS==='CONCLUÍDO';}).length;
@@ -1563,9 +1564,9 @@ function renderDashboard(){
     }
 
     secEl.innerHTML=
-      kcard('⚠️','Campos em Falta',comFalta,'font-size:26px;font-weight:600;color:var(--err)',pctFalta+'%','red','de '+total+' registros')+
+      kcard('⚠️','Campos em Falta',comFalta,'font-size:26px;font-weight:600;color:var(--err)',pctFalta+'%','red','de '+totalValido+' registros')+
       kcard('✅','Concluídos',concluidos,'font-size:26px;font-weight:600;color:var(--ok)',pctConc+'%','green','de '+totalValido+' registros')+
-      kcard('💰','Resultado Fin.',fmtR(totalReemb),'font-size:18px;font-weight:600;color:'+(totalReemb>=0?'var(--ok)':'var(--err)'),pctReemb+'%','pur','custo: '+fmtR(totalCusto))+
+      kcard('💰','Reembolso Atendimento',fmtR(totalReemb),'font-size:18px;font-weight:600;color:'+(totalReemb>=0?'var(--ok)':'var(--err)'),pctReemb+'%','pur','custo: '+fmtR(totalCusto))+
       kcard('🏆','Crédito Recebido',credRec,'font-size:26px;font-weight:600;color:#1a73e8',pctCred+'%','blue','de '+disputas+' disputas abertas');
 
     // KPI 5 — Taxa de Reabertura de Chamado
