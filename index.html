@@ -1467,7 +1467,7 @@ body{
 
 </div>
 <div id="page1" style="display:none"><div class="dash-wrap"><div class="dash-top" style="flex-wrap:wrap;gap:8px"><div class="dash-title">Dashboard de Atendimento</div><div class="period-bar" style="flex-wrap:wrap"><label>Período:</label><div style="display:flex;gap:5px"><button class="period-btn" onclick="setPeriod(7)">7d</button><button class="period-btn" onclick="setPeriod(30)">30d</button><button class="period-btn active" id="btnTodos" onclick="setPeriod(0)">Todos</button></div><input type="date" class="period-inp" id="dtDe" onchange="setPeriodCustom()"><span style="font-size:12px;color:var(--on-sur-v)">até</span><input type="date" class="period-inp" id="dtAte" onchange="setPeriodCustom()"><button class="btn btn-outlined btn-sm" onclick="applyDashFilter()">Aplicar</button><span class="period-info" id="periodInfo">Todos os registros</span></div></div><div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center"><label style="font-size:12px;color:var(--on-sur-v);font-weight:500">Filtrar:</label><select class="sel-field" id="dashSku" onchange="applyDashFilter()" style="border-radius:18px;font-size:12px"><option value="">Todos os SKUs</option></select><select class="sel-field" id="dashCanal" onchange="applyDashFilter()" style="border-radius:18px;font-size:12px"><option value="">Todos os Canais</option><option>Mercado Livre</option><option>Shopee</option><option>Amazon</option><option>Magalu</option><option>Cardex</option></select></div><div class="kpi-section-title">📊 KPIs</div><div class="kpi-row" id="kpiSectionRow"></div><div style="height:8px"></div><div class="kpi-row" id="kpiRow"></div><div class="charts-row"><div class="chart-card"><div class="chart-title">📊 Registros por Status</div><div class="chart-wrap"><canvas id="chartStatus"></canvas></div></div><div class="chart-card"><div class="chart-title">🏪 Registros por Canal</div><div class="chart-wrap"><canvas id="chartCanal"></canvas></div></div></div><div class="charts-row"><div class="chart-card"><div class="chart-title">📋 Por Modalidade</div><div class="chart-wrap-sm"><canvas id="chartModal"></canvas></div></div><div class="chart-card"><div class="chart-title">🏷️ Top Motivos de Reclamação</div><div class="chart-wrap-sm"><canvas id="chartMotivo"></canvas></div></div></div><div class="kpi-row" id="finKpiRow" style="margin-top:12px"></div><div class="dash-bottom-row"><div class="dash-table-card"><div class="dash-card-title">📦 Registros por SKU <span id="skuTotalBadge" style="font-size:11px;color:var(--on-sur-v);font-weight:400">—</span></div><div class="dash-card-scroll"><table class="dash-mini-table"><thead><tr><th>SKU</th><th>Registros</th><th>Reclamações</th></tr></thead><tbody id="skuTableBody"></tbody></table></div></div><div class="dash-table-card"><div class="dash-card-title">🔍 Motivos por SKU</div><div class="dash-card-scroll"><table class="dash-mini-table"><thead><tr><th>SKU</th><th>Motivo</th><th>Qtd</th></tr></thead><tbody id="skuMotivoBody"></tbody></table></div></div></div><div class="month-chart-card"><div class="dash-card-title">📅 Registros por Mês (últimos 6 meses)</div><div class="month-chart-wrap"><canvas id="chartMes"></canvas></div></div></div></div>
-<div id="page2" style="display:none"><div class="summary-row" id="summaryRow"></div><div class="toolbar"><div class="search-field"><span style="color:var(--on-sur-v)">🔍</span><input id="srch" placeholder="Buscar ID, nome, SKU..." oninput="render()"></div><select class="sel-field" id="fStatus" onchange="render()"><option value="">Todos os status ativos</option><option>ERRO DE PREENCHIMENTO</option><option>TRATATIVA ABERTA</option><option>TRATATIVA ATRASADA</option><option>ACOMPANHAR DISPUTA</option><option>ACOMPANHAR ENVIO</option><option>POSSÍVEL EXTRAVIO</option><option>EMITIR NF DEVOL</option><option>AGUARDANDO REEMBOLSO</option><option>EM ATRASO</option><option>A ENVIAR</option><option>CONCLUÍDO</option><option>AGUARDANDO PRODUTO</option></select><select class="sel-field" id="fCanal" onchange="render()"><option value="">Todos os canais</option><option>Mercado Livre</option><option>Shopee</option><option>Amazon</option><option>Magalu</option><option>Cardex</option></select><button class="flt-btn" id="btnMiss" onclick="toggleMiss()">⚠ Incompletos</button><input class="sel-field" type="date" id="fDataIni" onchange="render()" title="Data inicial" style="width:130px;font-size:12px"><span style="font-size:11px;color:var(--on-sur-v)">até</span><input class="sel-field" type="date" id="fDataFim" onchange="render()" title="Data final" style="width:130px;font-size:12px"></div><div class="tbl-wrap"><div class="tbl-scroll"><table><thead><tr><th onclick="sortBy('MODALIDADE')" style="cursor:pointer;user-select:none;white-space:nowrap">Modalidade <span id="sort_MODALIDADE" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('ID_VENDA')" style="cursor:pointer;user-select:none;white-space:nowrap">ID Venda <span id="sort_ID_VENDA" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('NOME')" style="cursor:pointer;user-select:none;white-space:nowrap">Nome <span id="sort_NOME" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('STATUS')" style="cursor:pointer;user-select:none;white-space:nowrap">Status <span id="sort_STATUS" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('EMPR')" style="cursor:pointer;user-select:none;white-space:nowrap">EMPR. <span id="sort_EMPR" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('CANAL')" style="cursor:pointer;user-select:none;white-space:nowrap">Canal <span id="sort_CANAL" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('SKU')" style="cursor:pointer;user-select:none;white-space:nowrap">SKU <span id="sort_SKU" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('DATA_VENDA')" style="cursor:pointer;user-select:none;white-space:nowrap">Data <span id="sort_DATA_VENDA" style="font-size:10px;opacity:.6"></span></th><th></th></tr></thead><tbody id="tbody"></tbody></table></div><div class="pag" id="pag"></div></div></div>
+<div id="page2" style="display:none"><div class="summary-row" id="summaryRow"></div><div class="toolbar"><div class="search-field"><span style="color:var(--on-sur-v)">🔍</span><input id="srch" placeholder="Buscar ID, nome, SKU..." oninput="render()"></div><select class="sel-field" id="fStatus" onchange="render();renderSummary()"><option value="">Todos os status ativos</option><option>ERRO DE PREENCHIMENTO</option><option>TRATATIVA ABERTA</option><option>TRATATIVA ATRASADA</option><option>ACOMPANHAR DISPUTA</option><option>ACOMPANHAR ENVIO</option><option>POSSÍVEL EXTRAVIO</option><option>EMITIR NF DEVOL</option><option>AGUARDANDO REEMBOLSO</option><option>A ENVIAR</option><option>CONCLUÍDO</option><option>AGUARDANDO PRODUTO</option></select><select class="sel-field" id="fCanal" onchange="render()"><option value="">Todos os canais</option><option>Mercado Livre</option><option>Shopee</option><option>Amazon</option><option>Magalu</option><option>Cardex</option></select><button class="flt-btn" id="btnMiss" onclick="toggleMiss()">⚠ Incompletos</button><input class="sel-field" type="date" id="fDataIni" onchange="render()" title="Data inicial" style="width:130px;font-size:12px"><span style="font-size:11px;color:var(--on-sur-v)">até</span><input class="sel-field" type="date" id="fDataFim" onchange="render()" title="Data final" style="width:130px;font-size:12px"></div><div class="tbl-wrap"><div class="tbl-scroll"><table><thead><tr><th onclick="sortBy('MODALIDADE')" style="cursor:pointer;user-select:none;white-space:nowrap">Modalidade <span id="sort_MODALIDADE" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('ID_VENDA')" style="cursor:pointer;user-select:none;white-space:nowrap">ID Venda <span id="sort_ID_VENDA" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('NOME')" style="cursor:pointer;user-select:none;white-space:nowrap">Nome <span id="sort_NOME" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('STATUS')" style="cursor:pointer;user-select:none;white-space:nowrap">Status <span id="sort_STATUS" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('EMPR')" style="cursor:pointer;user-select:none;white-space:nowrap">EMPR. <span id="sort_EMPR" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('CANAL')" style="cursor:pointer;user-select:none;white-space:nowrap">Canal <span id="sort_CANAL" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('SKU')" style="cursor:pointer;user-select:none;white-space:nowrap">SKU <span id="sort_SKU" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('DATA_VENDA')" style="cursor:pointer;user-select:none;white-space:nowrap">Data <span id="sort_DATA_VENDA" style="font-size:10px;opacity:.6"></span></th><th></th></tr></thead><tbody id="tbody"></tbody></table></div><div class="pag" id="pag"></div></div></div>
 <div id="page3" style="display:none">
 <div class="bulk-wrap">
   <div class="bulk-hdr">
@@ -1484,7 +1484,7 @@ body{
       <option>TRATATIVA ABERTA</option><option>TRATATIVA ATRASADA</option>
       <option>ACOMPANHAR DISPUTA</option><option>ACOMPANHAR ENVIO</option>
       <option>POSSÍVEL EXTRAVIO</option><option>AGUARDANDO REEMBOLSO</option>
-      <option>EM ATRASO</option><option>A ENVIAR</option>
+      <option>A ENVIAR</option>
     </select>
     <select class="bulk-filter-sel" id="bfCanal" onchange="applyBF()">
       <option value="">Todos os Canais</option>
@@ -1787,6 +1787,39 @@ function switchPage(n){
   }
   if(typeof updateSidebarActive==='function')updateSidebarActive(n);
 }
+
+// ── Recarrega dados preservando estado dos filtros da página Atendimentos ──
+async function loadDataPreservingState(){
+  // Capturar estado atual dos filtros de DOM
+  const _page=curPage;
+  const _miss=missOnly;
+  const _sortC=sortCol;
+  const _sortD=sortDir;
+  const _scroll=document.getElementById('tableWrap')?.scrollTop||0;
+  // Capturar valores dos inputs/selects (já estão no DOM — apenas curPage/missOnly/sort são variáveis JS)
+  await loadData();
+  // Restaurar estado após loadData (que chama render internamente)
+  curPage=_page;
+  missOnly=_miss;
+  sortCol=_sortC;
+  sortDir=_sortD;
+  // Restaurar ícones de sort
+  if(sortCol){
+    ['MODALIDADE','ID_VENDA','NOME','STATUS','EMPR','CANAL','SKU','DATA_VENDA'].forEach(function(c){
+      var el=document.getElementById('sort_'+c);
+      if(!el)return;
+      el.textContent=c===sortCol?(sortDir===1?'↑':'↓'):'';
+    });
+  }
+  // Re-renderizar com estado restaurado
+  render();
+  renderSummary();
+  // Restaurar scroll
+  requestAnimationFrame(function(){
+    var tw=document.getElementById('tableWrap');
+    if(tw)tw.scrollTop=_scroll;
+  });
+}
 async function loadData(){
   if(!cfg.sheetId||!cfg.apiKey){if(typeof sidebarNav==='function')sidebarNav(4);snack('Configure a planilha','warn');return;}
   document.getElementById('tbody').innerHTML='<tr><td colspan="9"><div class="state-box"><div class="spinner"></div><span>Carregando...</span></div></td></tr>';
@@ -1844,8 +1877,6 @@ function clearDashFilters(){
 function renderDashboard(){
   // ativos = registros ativos dentro do período filtrado (para KPIs e gráficos de status)
   const ativos=dashData.filter(r=>!IGNORADOS.includes(r.STATUS));
-  // todosAtivos = todos os ativos sem filtro de período (para motivos, SKU, financeiro)
-  const todosAtivos=allData.filter(r=>!IGNORADOS.includes(r.STATUS));
   // ── Popular select dashSku com SKUs únicos de allData ─────────────
   (function(){
     var skuSel=document.getElementById('dashSku');
@@ -1916,7 +1947,7 @@ function renderDashboard(){
       +'<td><span style="color:'+(d.reclam>0?'var(--err)':'var(--on-sur-v)')+'">'+d.reclam+'</span></td></tr>';
   }).join('');
 
-  // ── SKU + MOTIVO TABLE (usa allData) ─────────────────────────────────────
+  // ── SKU + MOTIVO TABLE (usa dashData — respeita filtros) ──────────────────
   const skuMotivoMap={};
   dashData.filter(r=>r.MOTIVO&&r.SKU&&r.MOTIVO.trim()).forEach(r=>{
     const key=r.SKU+'||'+r.MOTIVO;
@@ -1930,7 +1961,14 @@ function renderDashboard(){
     +'<td><strong style="color:var(--err)">'+d.n+'</strong></td></tr>'
   ).join('') || '<tr><td colspan="3" style="text-align:center;color:var(--on-sur-v);padding:20px">Sem reclamações</td></tr>';
 
-  // ── REGISTROS POR MÊS (usa allData — ignora filtro de período) ───────────
+  // ── REGISTROS POR MÊS (allData sem filtro de data; respeita canal e SKU) ───
+  const _fCanal=(document.getElementById('dashCanal')?.value||'').trim();
+  const _fSku=(document.getElementById('dashSku')?.value||'').trim().toLowerCase();
+  const mesBase=allData.filter(r=>{
+    if(_fCanal&&r.CANAL!==_fCanal)return false;
+    if(_fSku&&!(r.SKU||'').toLowerCase().includes(_fSku))return false;
+    return true;
+  });
   const MESES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   const todayMes=new Date();
   const mesKeys12=[];
@@ -1939,7 +1977,7 @@ function renderDashboard(){
     mesKeys12.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));
   }
   const mesMap={};
-  allData.forEach(r=>{
+  mesBase.forEach(r=>{
     const d=parseDate(r.DATA_VENDA);if(!d)return;
     const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
     mesMap[key]=(mesMap[key]||0)+1;
@@ -1972,7 +2010,7 @@ function renderDashboard(){
     });
   }
 
-  // ── KPIs FINANCEIROS (usa allData) ───────────────────────────────────────
+  // ── KPIs FINANCEIROS (usa dashData — respeita filtros) ────────────────────
   function parseMoney(v){return parseFloat((v||'').replace(/[R$\s]/g,'').replace(/\./g,'').replace(',','.'))||0;}
   const custoTotal=dashData.reduce((s,r)=>s+parseMoney(r.CUSTOS_TOTAIS),0); // col AW (Custos)
   const impostoResgatado=dashData.reduce((s,r)=>s+parseMoney(r.IMPOSTO_RESGATADO||'0'),0); // col AV
@@ -2144,8 +2182,9 @@ function render(){
   const tot=filtered.length;const tp=Math.ceil(tot/PG)||1;if(curPage>tp)curPage=1;const st=(curPage-1)*PG;const pg=filtered.slice(st,st+PG);
   if(!pg.length){document.getElementById('tbody').innerHTML='<tr><td colspan="9"><div class="state-box"><div style="font-size:28px">📭</div><div>Nenhum registro</div></div></td></tr>';document.getElementById('pag').innerHTML='';return;}
   let h='';
+  const cell_style='style="cursor:pointer" title="Clique para editar"';
   pg.forEach(r=>{const m=getMiss(r).length;const cc=CC[r.STATUS]||'chip';const enc=encodeURIComponent(JSON.stringify(r));
-    h+='<tr><td>'+r.MODALIDADE+'</td><td class="mono">'+r.ID_VENDA+'</td><td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.NOME+'</td><td><span class="'+cc+'">'+r.STATUS+'</span>'+(m?'<div class="miss-badge">⚠ '+m+'</div>':'')+'</td><td>'+r.EMPR+'</td><td><span class="chip chip-canal">'+r.CANAL+'</span></td><td class="mono" style="font-size:10px">'+r.SKU+'</td><td style="color:var(--on-sur-v);font-size:11px">'+r.DATA_VENDA+'</td><td><button class="btn btn-outlined btn-sm" onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">✏</button></td></tr>';
+    h+='<tr><td '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.MODALIDADE+'</td><td class="mono" '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.ID_VENDA+'</td><td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer" title="Clique para editar" onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.NOME+'</td><td '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))"><span class="'+cc+'">'+r.STATUS+'</span>'+(m?'<div class="miss-badge">⚠ '+m+'</div>':'')+'</td><td '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.EMPR+'</td><td '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))"><span class="chip chip-canal">'+r.CANAL+'</span></td><td class="mono" style="font-size:10px;cursor:pointer" title="Clique para editar" onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.SKU+'</td><td style="color:var(--on-sur-v);font-size:11px;cursor:pointer" title="Clique para editar" onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.DATA_VENDA+'</td><td><button class="btn btn-outlined btn-sm" onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">✏</button></td></tr>';
   });
   document.getElementById('tbody').innerHTML=h;
   let p='<span class="pg-info">'+(st+1)+'–'+Math.min(st+PG,tot)+' de '+tot+'</span>';
@@ -2261,10 +2300,10 @@ async function saveRecord(){
         {method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},
         body:JSON.stringify({valueInputOption:'USER_ENTERED',data:batchData})});
       if(!saveRes.ok){const e=await saveRes.json();throw new Error(e.error?.message||saveRes.statusText);}
-      snack('Criado na linha '+targetRow+'!','success');closeDlg();loadData();
+      snack('Criado na linha '+targetRow+'!','success');closeDlg();loadDataPreservingState();
     }catch(e){snack('Erro: '+e.message,'error');}
   }else{const rowN=curRec._row;const data=[];EDIT_COLS.forEach(({key,idx})=>{const o=curRec[key]||'';const n=novos[key]||'';if(o===n)return;data.push({range:cfg.sheetName+'!'+n2c(idx)+rowN,values:[[n]]});});if(!data.length){snack('Sem alterações','success');closeDlg();return;}
-    try{const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values:batchUpdate',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},body:JSON.stringify({valueInputOption:'USER_ENTERED',data})});if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}snack(data.length+' campo(s) salvos!','success');closeDlg();loadData();}catch(e){snack('Erro: '+e.message,'error');}
+    try{const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values:batchUpdate',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},body:JSON.stringify({valueInputOption:'USER_ENTERED',data})});if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}snack(data.length+' campo(s) salvos!','success');closeDlg();loadDataPreservingState();}catch(e){snack('Erro: '+e.message,'error');}
   }
 }
 
