@@ -2045,11 +2045,12 @@ function renderDashboard(){
     var pctConc=totalValido?((concluidos/totalValido)*100).toFixed(1):0;
 
     // KPI 3 — Resultado Fin.: R$ Crédito Recebido (AQ) / Custos Total (AF)
-    var totalCusto=base.reduce(function(s,r){return s+parseMoney(r.CUSTOS_TOTAL||'0');},0);
+    // KPI Reembolso: AQ (R$ Crédito Recebido) / AG (Custos Total) * 100
+    var totalCusto=base.reduce(function(s,r){return s+parseMoney(r.CUSTOS_TOTAL||'0');},0); // col AG
     var totalReemb=base.reduce(function(s,r){
       return s+parseMoney(r.CREDITO_RECEBIDO_VALOR||'0'); // col AQ = R$ Crédito Recebido
     },0);
-    var pctReemb=totalCusto>0?((totalReemb/totalCusto)*100).toFixed(1):'—'; // AQ/AF seguro
+    var pctReemb=totalCusto>0?((totalReemb/totalCusto)*100).toFixed(1):'0'; // AQ/AG seguroo
 
     // KPI 4 — Crédito recebido sobre disputas
     var disputas=base.filter(function(r){return (r.DISPUTA_ABERTA||'').trim()==='SIM';}).length;
@@ -2074,7 +2075,7 @@ function renderDashboard(){
     secEl.innerHTML=
       kcard('⚠️','Campos em Falta',comFalta,'font-size:26px;font-weight:600;color:var(--err)',pctFalta+'%','red','de '+totalValido+' registros')+
       kcard('✅','Concluídos',concluidos,'font-size:26px;font-weight:600;color:var(--ok)',pctConc+'%','green','de '+totalValido+' registros')+
-      kcard('💰','Reembolso Atendimento',fmtR(totalReemb),'font-size:18px;font-weight:600;color:'+(totalReemb>=0?'var(--ok)':'var(--err)'),pctReemb+'%','pur','custo: '+fmtR(totalCusto))+
+      kcard('💰','Reembolso Atendimento',pctReemb+'%','font-size:26px;font-weight:600;color:'+(totalReemb>=0?'var(--ok)':'var(--err)'),fmtR(totalReemb),'pur','custo AG: '+fmtR(totalCusto))+
       kcard('🏆','Crédito Recebido',credRec,'font-size:26px;font-weight:600;color:#1a73e8',pctCred+'%','blue','de '+disputas+' disputas abertas');
 
     // KPI 5 — Taxa de Reabertura de Chamado
