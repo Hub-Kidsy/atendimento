@@ -1646,6 +1646,7 @@ const COLUMN_NAMES = {
   PAGO_PLAT:            ['Pago a Plataforma ou Cliente','PAGO_PLAT','PAGO PLAT','Pago Plataforma'],
   CUSTOS_TOTAL:         ['Custos Total','CUSTOS TOTAL','CUSTOS_TOTAL'],
   TRATATIVA_FINALIZADA: ['Tratativa Cliente FINALIZADA?','TRATATIVA CLIENTE FINALIZADA?','Tratativa Finalizada?','TRATATIVA_FINALIZADA'],
+  ABERTO_TRAT_PLAT:     ['Aberto Tratativa Plataforma?','ABERTO_TRAT_PLAT','Aberto Trat. Plataforma?'],
   MOD_TRAT_PLAT1:       ['Modalidade Tratativa Plataforma 1','MOD_TRAT_PLAT1'],
   MOTIVO_TRAT1:         ['Motivo da Tratativa 1?','Motivo Tratativa 1','MOTIVO_TRAT1'],
   DATA_TRAT1:           ['Data da Tratativa 1','DATA_TRAT1'],
@@ -1658,7 +1659,6 @@ const COLUMN_NAMES = {
   OBS_TRAT2:            ['Observações da Tratativa 2','OBS_TRAT2'],
   DISPUTA_ABERTA:       [' Disputa Aberta?','Disputa Aberta?','DISPUTA_ABERTA','DISPUTA ABERTA'],
   PLAT_DISPUTA:         ['Plataforma Disputa','PLAT_DISPUTA','PLAT DISPUTA'],
-  ID_TRANSACAO:         ['ID Transação','ID_TRANSACAO','ID TRANSACAO'],
   REEMBOLSO_MKT:        ['Reembolso do Marketplace?','REEMBOLSO_MKT','REEMBOLSO MKT','Reembolso MKT?'],
   DISPUTA_FINALIZADA:   ['Disputa Finalizada?','DISPUTA_FINALIZADA','DISPUTA FINALIZADA'],
   CREDITO_RECEBIDO_VALOR:['R$ Crédito Recebido','CREDITO_RECEBIDO_VALOR','Crédito Recebido R$'],
@@ -1720,44 +1720,33 @@ function applyColumnsMap(headers){
 
 // ══════════════════════════════════════════════════════════════════════
 const COL={
-  // ── Identificação ──────────────────────────────────────────────
+  // ── Identificação (0-16) ────────────────────────────────────────
   STATUS:0, ID_VENDA:1, NOME:2, CANAL:3, EMPR:4,
   MODELO:5, DATA_VENDA:6, SKU:7, QT:8,
   RASTREIO:9, NF:10, NF_DEVOL:11, NF_DEVOL_EMISSAO:12, AUTOR:13,
-  NEC_NF_DEVOL:14,
-  // ── Logística ──────────────────────────────────────────────────
-  DATA_CAMINHO_MKT:15, DATA_ENTREGUE_MKT:16,
-  // ── Tratativa Cliente ──────────────────────────────────────────
+  NEC_NF_DEVOL:14, DATA_CAMINHO_MKT:15, DATA_ENTREGUE_MKT:16,
+  // ── Tratativa Cliente (17-32) ────────────────────────────────────
   MOD_TRAT_CLIENTE:17,
   MOTIVO:18, DETALHAMENTO:19, OBS_RECLAM:20,
-  TRAT_CLIENTE_FIN_REP:21,   // Impacto na Reputação?
-  CHAMADO_ABERTO:22,          // Aberto Atendimento?
-  DATA_TRATATIVA:23,
-  NEC_PECAS:24, PECAS_ENVIADAS:25, OBS_PECAS:26, REENVIO_RECEBIDO:27,
-  DEVOLUCAO_ABERTA:28,
-  CUSTO_ENVIO:29, PAGO_PLAT:30, CUSTOS_TOTAL:31,
+  CHAMADO_ABERTO:21,          // Aberto Atendimento?
+  DATA_TRATATIVA:22,
+  NEC_PECAS:23, PECAS_ENVIADAS:24, OBS_PECAS:25, REENVIO_RECEBIDO:26,
+  CUSTO_ENVIO:27, PAGO_PLAT:28, CUSTOS_TOTAL:29,
+  TRAT_CLIENTE_FIN_REP:30,   // Impacto na Reputação?
+  DEVOLUCAO_ABERTA:31,        // Aberto o processo de devolução?
   TRATATIVA_FINALIZADA:32,    // Tratativa Cliente FINALIZADA?
-  // ── Tratativa Plataforma 1 ─────────────────────────────────────
-  MOD_TRAT_PLAT1:33,
-  MOTIVO_TRAT1:34,
-  DATA_TRAT1:35,
-  PROTOCOLO1:36,
-  OBS_TRAT1:37,
-  // ── Tratativa Plataforma 2 ─────────────────────────────────────
-  MOD_TRAT_PLAT2:38,
-  MOTIVO_TRAT2:39,
-  DATA_TRAT2:40,
-  PROTOCOLO2:41,
-  OBS_TRAT2:42,
-  // ── Disputa ────────────────────────────────────────────────────
-  DISPUTA_ABERTA:43, PLAT_DISPUTA:44, ID_TRANSACAO:45,
+  // ── Tratativa Plataforma (33-51) ─────────────────────────────────
+  ABERTO_TRAT_PLAT:33,        // Aberto Tratativa Plataforma? (NOVO)
+  MOD_TRAT_PLAT1:34, MOTIVO_TRAT1:35, DATA_TRAT1:36, PROTOCOLO1:37, OBS_TRAT1:38,
+  MOD_TRAT_PLAT2:39, MOTIVO_TRAT2:40, DATA_TRAT2:41, PROTOCOLO2:42, OBS_TRAT2:43,
+  DISPUTA_ABERTA:44, PLAT_DISPUTA:45,
+  // ID_TRANSACAO removido da planilha
   REEMBOLSO_MKT:46, DISPUTA_FINALIZADA:47,
   CREDITO_RECEBIDO_VALOR:48, CREDITO_RECEBIDO:49, OBS_DISPUTA:50,
-  TRAT_PLAT_FIN:51,           // Tratativa Plataforma FINALIZADA?
-  // ── Full/Estoque ───────────────────────────────────────────────
-  DATA_PREVISTA_RETORNO:52,
-  STATUS_FULL:53, CHEGOU_CARDEX:54,
-  // ── Financeiro (calculado) ─────────────────────────────────────
+  TRAT_PLAT_FIN:51,
+  // ── Full/Estoque (52-54) ─────────────────────────────────────────
+  DATA_PREVISTA_RETORNO:52, STATUS_FULL:53, CHEGOU_CARDEX:54,
+  // ── Financeiro/calculado (55-61) ─────────────────────────────────
   NF_TOTAL:55, VALOR_NF:56, IMPOSTO_RESGATADO:57,
   CUSTOS_TOTAIS:58, REEMBOLSO:59, RESULTADO_FIN:60, STATUS2:61
 };
@@ -1781,7 +1770,7 @@ const ML={
   DATA_PREVISTA_RETORNO:'Data Prev. Retorno',STATUS_FULL:'Status Full',
   CHEGOU_CARDEX:'Chegou Cardex?',DISPUTA_ABERTA:'Disputa Aberta?',
   PLAT_DISPUTA:'Plataforma Disputa',CREDITO:'R$ Crédito',
-  ID_TRANSACAO:'ID Transação',REEMBOLSO_MKT:'Reembolso Mkt?',
+  REEMBOLSO_MKT:'Reembolso Mkt?',
   DISPUTA_FINALIZADA:'Disputa Finalizada?',CREDITO_RECEBIDO_VALOR:'R$ Créd. Recebido',
   CREDITO_RECEBIDO:'Crédito Recebido?',OBS_DISPUTA:'Obs. Disputa',
   NF_TOTAL:'NFs Devol. Total',VALOR_NF:'Valor NF',IMPOSTO_RESGATADO:'Imposto Resgatado',
@@ -1791,7 +1780,7 @@ const ML={
   MOTIVO_TRAT_CLIENTE:'Motivo Tratativa',
   OBS_TRAT_CLIENTE:'Obs. Tratativa',
   TRAT_CLIENTE_FIN:'Tratativa Cliente Finalizada?',
-  MOD_TRAT_PLAT1:'Mod. Trat. Plat. 1',
+  ABERTO_TRAT_PLAT:'Aberto Trat. Plat.?',MOD_TRAT_PLAT1:'Mod. Trat. Plat. 1',
   MOD_TRAT_PLAT2:'Mod. Trat. Plat. 2',
   TRAT_PLAT_FIN:'Tratativa Plat. Finalizada?',
   TRAT_CLIENTE_FIN_REP:'Impacto na Reputação?',
@@ -1804,6 +1793,8 @@ const IGNORADOS=['CONCLUÍDO',''];
 const IGNORADOS_BULK=['CONCLUÍDO',''];
 const MOTIVOS=['','Arrependimento','Atraso na entrega','Caixa Danificada','Defeito','Envio atrasado','Falta de Peça','Motivo desconhecido','Não Recebido','Produto Danificado','Produto Errado','Qualidade Ruim'];
 const MODALIDADES=['','Devolução','Reclamação','Mensagem','Cancelado','Em Atraso','Não Entregue','Resolvido'];
+const MODALIDADES_PLAT=['','Disputa','Acordo','Mediação'];
+const MOTIVOS_TRAT=['','Reembolso','Erro','Extravio'];
 const DETALHAMENTOS=['','Alça','Bandeja','Barras','Capuz','Conexão','Corpo do Produto','Danificado pela transportadora','Entrega atrasada','Ferramentas','Hastes dobráveis','Kit de parafusos e porcas','Manual','Mosquiteiro','Não especificado','Pernas','Roda','Saboneteira','Silicone','Suporte','Trava','Zíper'];
 const OBRIG_KEYS=['MOD_TRAT_CLIENTE','ID_VENDA','CANAL','EMPR','MODELO'];
 
@@ -1831,12 +1822,12 @@ let hiddenSections=new Set(); // 'id','trat','disp'
 // IDENTIFICAÇÃO: Status(ro), Modalidade, Nome(ro), Canal(ro), EMPR, Modelo,
 //                NF, NF_DEVOL, NF_DEVOL_EMISSAO, NEC_NF_DEVOL, AUTOR
 const ID_COLS=[
-  // Mesma ordem da planilha raiz (cols 1-17)
-  {k:'MODALIDADE',       l:'Modalidade',              t:'sel', o:MODALIDADES},
+  // Identificação — ordem da planilha raiz cols 1-16
+  {k:'ID_VENDA',         l:'ID Venda',                t:'txt'},
   {k:'NOME',             l:'Nome',                    t:'txt'},
-  {k:'CANAL',            l:'Canal De Venda',          t:'sel', o:['','Mercado Livre','Shopee','Amazon','Magalu','TikTok','Cardex']},
-  {k:'EMPR',             l:'EMPR.',                   t:'sel', o:['','JLD','DGL'], req:true},
-  {k:'MODELO',           l:'Modelo',                  t:'sel', o:['','Full','Normal','Flex','NE'], req:true},
+  {k:'CANAL',            l:'Canal De Venda',          t:'sel', opts:['','Mercado Livre','Shopee','Amazon','Magalu','TikTok','Cardex']},
+  {k:'EMPR',             l:'EMPR.',                   t:'sel', opts:['','JLD','DGL'], req:true},
+  {k:'MODELO',           l:'Modelo',                  t:'sel', opts:['','Full','Normal','Flex','NE'], req:true},
   {k:'DATA_VENDA',       l:'Data da Venda',           t:'txt'},
   {k:'SKU',              l:'SKU',                     t:'txt'},
   {k:'QT',               l:'QT',                      t:'txt'},
@@ -1845,43 +1836,61 @@ const ID_COLS=[
   {k:'NF_DEVOL',         l:'NF DEVOL',                t:'txt'},
   {k:'NF_DEVOL_EMISSAO', l:'NF DEVOL (Emissão)',      t:'txt'},
   {k:'AUTOR',            l:'AUTOR',                   t:'txt'},
-  {k:'NEC_NF_DEVOL',     l:'Necessário NF Devol?',   t:'sel', o:['','SIM','NÃO']},
+  {k:'NEC_NF_DEVOL',     l:'Necessário NF Devol?',    t:'sel', opts:['','SIM','NÃO']},
   {k:'DATA_CAMINHO_MKT', l:'Data a Caminho Mkt',      t:'txt'},
   {k:'DATA_ENTREGUE_MKT',l:'Data Entregue Mkt',       t:'txt'},
 ];
 const TC=[
-  // Ordem da planilha raiz cols 18-35
-  {k:'CHAMADO_ABERTO',      l:'Chamado Aberto?',           t:'sel', opts:['','SIM','NÃO','Reaberto']},
-  {k:'MOTIVO',              l:'Motivo Reclamação',          t:'sel', opts:['','Arrependimento','Atraso na entrega','Caixa Danificada','Defeito','Envio atrasado','Falta de Peça','Motivo desconhecido','Não Recebido','Produto Danificado','Produto Errado','Qualidade Ruim']},
-  {k:'DETALHAMENTO',        l:'Detalhamento',               t:'sel', opts:['','Alça','Bandeja','Barras','Capuz','Conexão','Corpo do Produto','Danificado pela transportadora','Entrega atrasada','Ferramentas','Hastes dobráveis','Kit de parafusos e porcas','Manual','Mosquiteiro','Não especificado','Pernas','Roda','Saboneteira','Silicone','Suporte','Trava','Zíper']},
-  {k:'OBS_RECLAM',          l:'Obs. Reclamação',            t:'txt'},
-  {k:'DATA_TRATATIVA',      l:'DATA Tratativa',             t:'txt'},
-  {k:'DEVOLUCAO_ABERTA',    l:'Aberto processo devolução?', t:'sel', req:true, opts:['','SIM','NÃO','Reaberta']},
-  {k:'NEC_PECAS',           l:'Necessário Enviar Peças?',   t:'sel', req:true, opts:['','SIM','NÃO']},
-  {k:'PECAS_ENVIADAS',      l:'Enviadas Peças ao Cliente?', t:'sel', opts:['','SIM','NÃO']},
-  {k:'OBS_PECAS',           l:'Obs. envio de peças',        t:'txt'},
-  {k:'REENVIO_RECEBIDO',    l:'Reenvio recebido pelo cliente?', t:'sel', opts:['','SIM','NÃO']},
-  {k:'CUSTO_ENVIO',         l:'Custo de Envio',             t:'txt'},
-  {k:'PAGO_PLAT',           l:'Pago Plataforma/Cliente',    t:'txt'},
-  {k:'VALOR_PAGO',          l:'Valor Pago Plataforma',      t:'txt'},
-  {k:'CUSTOS_TOTAL',        l:'Custos Total',               t:'txt'},
-  {k:'TRATATIVA_FINALIZADA',l:'Tratativa FINALIZADA?',      t:'sel', req:true, opts:['','SIM','NÃO']},
-  {k:'DATA_PREVISTA_RETORNO',l:'Data Prevista de Retorno',  t:'txt'},
-  {k:'STATUS_FULL',         l:'STATUS FINAL FULL',          t:'sel', opts:['','OK Estoque Full','Aguardando Retirada','Em Troca','Cliente c/ Produto','Descarte Estoque Full','Nâo foi identificado']},
-  {k:'CHEGOU_CARDEX',       l:'CHEGOU NA CARDEX?',          t:'sel', opts:['','SIM','NÃO']},
+  // Tratativa Cliente — cols 17-32
+  {k:'MOD_TRAT_CLIENTE',    l:'Modalidade Tratativa',          t:'sel', opts:['','Cancelado','Devolução','Mensagem','Não Entregue','Reclamação','Resolvido','Troca']},
+  {k:'MOTIVO',              l:'Motivo Tratativa do Cliente',   t:'sel', opts:['','Arrependimento','Atraso na entrega','Caixa Danificada','Defeito','Envio atrasado','Falta de Peça','Motivo desconhecido','Não Recebido','Produto Danificado','Produto Errado','Qualidade Ruim']},
+  {k:'DETALHAMENTO',        l:'Detalhamento da Tratativa',     t:'sel', opts:['','Alça','Bandeja','Barras','Capuz','Conexão','Corpo do Produto','Danificado pela transportadora','Entrega atrasada','Ferramentas','Hastes dobráveis','Kit de parafusos e porcas','Manual','Mosquiteiro','Não especificado','Pernas','Roda','Saboneteira','Silicone','Suporte','Trava','Zíper']},
+  {k:'OBS_RECLAM',          l:'Observações da Tratativa',      t:'txt'},
+  {k:'TRAT_CLIENTE_FIN_REP',l:'Impacto na Reputação?',        t:'sel', opts:['','SIM','NÃO']},
+  {k:'CHAMADO_ABERTO',      l:'Aberto Atendimento?',           t:'sel', opts:['','SIM','NÃO','Reaberto']},
+  {k:'DATA_TRATATIVA',      l:'DATA Atendimento',              t:'txt'},
+  {k:'NEC_PECAS',           l:'Necessário Enviar Peças?',      t:'sel', opts:['','SIM','NÃO']},
+  {k:'PECAS_ENVIADAS',      l:'Enviadas Peças p/ Cliente?',    t:'sel', opts:['','SIM','NÃO']},
+  {k:'OBS_PECAS',           l:'Observação do envio de peças',  t:'txt'},
+  {k:'REENVIO_RECEBIDO',    l:'Reenvio recebido pelo cliente?',t:'sel', opts:['','SIM','NÃO']},
+  {k:'DEVOLUCAO_ABERTA',    l:'Aberto processo de devolução?', t:'sel', opts:['','SIM','NÃO']},
+  {k:'CUSTO_ENVIO',         l:'Custo de Envio',                t:'txt'},
+  {k:'PAGO_PLAT',           l:'Pago a Plataforma ou Cliente',  t:'txt'},
+  {k:'CUSTOS_TOTAL',        l:'Custos Total',                  t:'txt'},
+  {k:'TRATATIVA_FINALIZADA',l:'Tratativa Cliente FINALIZADA?', t:'sel', req:true, opts:['','SIM','NÃO']},
 ];
 const DC=[
-  // Ordem da planilha raiz cols 36-44
-  {k:'DISPUTA_ABERTA',        l:'Disputa Aberta?',         t:'sel', req:true, opts:['','SIM','NÃO']},
-  {k:'PLAT_DISPUTA',          l:'Plataforma Disputa',      t:'sel', opts:['','Mercado Livre','Shopee','Amazon','Magalu','TikTok']},
-  {k:'CREDITO',               l:'R$ Crédito?',             t:'txt'},
-  {k:'ID_TRANSACAO',          l:'ID Transação',            t:'txt'},
-  {k:'REEMBOLSO_MKT',         l:'Reembolso do Marketplace?',t:'sel', req:true, opts:['','SIM','NÃO']},
-  {k:'DISPUTA_FINALIZADA',    l:'Disputa Finalizada?',     t:'sel', req:true, opts:['','SIM','NÃO']},
-  {k:'CREDITO_RECEBIDO_VALOR',l:'R$ Crédito Recebido',     t:'txt'},
-  {k:'CREDITO_RECEBIDO',      l:'Crédito Recebido?',       t:'sel', opts:['','SIM','NÃO']},
-  {k:'OBS_DISPUTA',           l:'Obs. da Disputa',         t:'txt'},
+  // Tratativa Plataforma — abertura
+  {k:'ABERTO_TRAT_PLAT',      l:'Aberto Trat. Plataforma?',    t:'sel', opts:['','SIM','NÃO']},
+  // Trat. 1
+  {k:'MOD_TRAT_PLAT1',        l:'Mod. Trat. Plat. 1',          t:'sel', opts:['','Disputa','Acordo','Mediação']},
+  {k:'MOTIVO_TRAT1',          l:'Motivo da Tratativa 1',        t:'sel', opts:['','Reembolso','Erro','Extravio']},
+  {k:'DATA_TRAT1',            l:'Data da Tratativa 1',          t:'txt'},
+  {k:'PROTOCOLO1',            l:'Protocolo 1',                  t:'txt'},
+  {k:'OBS_TRAT1',             l:'Obs. da Tratativa 1',          t:'txt'},
+  // Trat. 2
+  {k:'MOD_TRAT_PLAT2',        l:'Mod. Trat. Plat. 2',          t:'sel', opts:['','Disputa','Acordo','Mediação']},
+  {k:'MOTIVO_TRAT2',          l:'Motivo da Tratativa 2',        t:'sel', opts:['','Reembolso','Erro','Extravio']},
+  {k:'DATA_TRAT2',            l:'Data da Tratativa 2',          t:'txt'},
+  {k:'PROTOCOLO2',            l:'Protocolo 2',                  t:'txt'},
+  {k:'OBS_TRAT2',             l:'Obs. da Tratativa 2',          t:'txt'},
+  // Disputa
+  {k:'DISPUTA_ABERTA',        l:'Disputa Aberta?',              t:'sel', opts:['','SIM','NÃO']},
+  {k:'PLAT_DISPUTA',          l:'Plataforma Disputa',           t:'sel', opts:['','Mercado Livre','Shopee','Amazon','Magalu','TikTok']},
+  {k:'REEMBOLSO_MKT',         l:'Reembolso do Marketplace?',    t:'sel', opts:['','SIM','NÃO']},
+  {k:'DISPUTA_FINALIZADA',    l:'Disputa Finalizada?',          t:'sel', opts:['','SIM','NÃO']},
+  {k:'CREDITO_RECEBIDO_VALOR',l:'R$ Crédito Recebido',          t:'txt'},
+  {k:'CREDITO_RECEBIDO',      l:'Crédito Recebido?',            t:'sel', opts:['','SIM','NÃO']},
+  {k:'OBS_DISPUTA',           l:'Obs. da Disputa',              t:'txt'},
+  {k:'TRAT_PLAT_FIN',         l:'Trat. Plataforma FINALIZADA?', t:'sel', opts:['','SIM','NÃO']},
 ];
+const FS=[
+  // Full / Estoque — cols 53-54
+  {k:'DATA_PREVISTA_RETORNO',l:'Data Prevista de Retorno',  t:'txt'},
+  {k:'STATUS_FULL',          l:'STATUS FINAL FULL',         t:'sel', opts:['','OK Estoque Full','Aguardando Retirada','Em Troca','Cliente c/ Produto','Descarte Estoque Full','Não foi identificado']},
+  {k:'CHEGOU_CARDEX',        l:'CHEGOU NA CARDEX?',         t:'sel', opts:['','SIM','NÃO']},
+];
+
 
 window.addEventListener('beforeunload',e=>{
   const n=Object.keys(bulkChg).length;
@@ -1969,13 +1978,16 @@ async function loadData(){
   document.getElementById('tbody').innerHTML='<tr><td colspan="9"><div class="state-box"><div class="spinner"></div><span>Carregando...</span></div></td></tr>';
   try{
     // Buscar A1:AZ para incluir cabeçalhos na linha 1
-    const rng=encodeURIComponent(cfg.sheetName+'!A1:AZ');
+    const rng=encodeURIComponent(cfg.sheetName+'!A1:BK');
     const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values/'+rng+'?key='+cfg.apiKey);
     if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}
     const allRows=(await res.json()).values||[];
     // Linha 0 = headers; dados a partir da linha 1
     const headers=allRows[0]||[];
     applyColumnsMap(headers); // atualiza COL dinamicamente
+    // Debug: logar índices financeiros para diagnóstico
+    console.log('[COL] Financeiro: CUSTOS_TOTAIS='+COL.CUSTOS_TOTAIS+' IMPOSTO_RESGATADO='+COL.IMPOSTO_RESGATADO+' REEMBOLSO='+COL.REEMBOLSO+' RESULTADO_FIN='+COL.RESULTADO_FIN);
+    if(allRows[1])console.log('[ROW1] col'+COL.CUSTOS_TOTAIS+'='+allRows[1][COL.CUSTOS_TOTAIS]+' col'+COL.IMPOSTO_RESGATADO+'='+allRows[1][COL.IMPOSTO_RESGATADO]+' col'+COL.REEMBOLSO+'='+allRows[1][COL.REEMBOLSO]);
     const rows=allRows.slice(1);
     allData=rows.map((row,i)=>{const r={_row:i+2,_raw:[...row]};Object.entries(COL).forEach(([k,ci])=>{r[k]=row[ci]||'';});return r;});
     dashData=allData;
@@ -2075,7 +2087,7 @@ function renderDashboard(){
 
   mk('chartStatus','doughnut',sL.map(s=>s.replace('TRATATIVA ','').replace('ACOMPANHAR ','')),sL.map(s=>ativos.filter(r=>r.STATUS===s).length),sC);
   mk('chartCanal','doughnut',cn,cn.map(c=>ativos.filter(r=>r.CANAL===c).length),cc);
-  mk('chartModal','bar',mo,mo.map(m=>ativos.filter(r=>r.MODALIDADE===m).length),['#1a73e8','#d93025','#f9ab00','#7627bb','#e55722','#1e8e3e']);
+  mk('chartModal','bar',mo,mo.map(m=>ativos.filter(r=>r.MOD_TRAT_CLIENTE===m).length),['#1a73e8','#d93025','#f9ab00','#7627bb','#e55722','#1e8e3e']);
   mk('chartMotivo','bar',mt.map(m=>m[0]),mt.map(m=>m[1]),['#1a73e8','#4285f4','#669df6','#8ab4f8','#aecbfa','#d2e3fc','#c6dafc','#e8f0fe']);
 
   // ── SKU TABLE (filtrado por dashData) ──────────────────────────────────────
@@ -2160,11 +2172,12 @@ function renderDashboard(){
   }
 
   // ── KPIs FINANCEIROS (usa dashData — respeita filtros) ────────────────────
-  function parseMoney(v){return parseFloat((v||'').replace(/[R$\s]/g,'').replace(/\./g,'').replace(',','.'))||0;}
-  const custoTotal=dashData.reduce((s,r)=>s+parseMoney(r.CUSTOS_TOTAIS),0); // col AW (Custos)
-  const impostoResgatado=dashData.reduce((s,r)=>s+parseMoney(r.IMPOSTO_RESGATADO||'0'),0); // col AV
-  const reembolsoTotal=dashData.reduce((s,r)=>s+parseMoney(r.REEMBOLSO||'0'),0); // filtrado
-  const resultadoFin=dashData.reduce((s,r)=>s+parseMoney(r.RESULTADO_FIN||'0'),0); // col AY (RESULTADO_FIN) diretamente da planilha
+  function parseMoney(v){if(!v||/^#/.test((v+'').trim()))return 0;return parseFloat((v+'').replace(/[R$\s]/g,'').replace(/\./g,'').replace(',','.'))||0;}
+  // Financeiro: colunas reais confirmadas BF=57 BG=58 BH=59 BI=60
+  const custoTotal=dashData.reduce((s,r)=>s+parseMoney(r.CUSTOS_TOTAIS||'0'),0); // col BG (58) — Custos Total
+  const impostoResgatado=dashData.reduce((s,r)=>s+parseMoney(r.IMPOSTO_RESGATADO||'0'),0); // col BF (57)
+  const reembolsoTotal=dashData.reduce((s,r)=>s+parseMoney(r.REEMBOLSO||'0'),0); // col BH (59)
+  const resultadoFin=dashData.reduce((s,r)=>s+parseMoney(r.RESULTADO_FIN||'0'),0); // col BI (60)
   const finEl=document.getElementById('finKpiRow');
   if(finEl){
     finEl.innerHTML=
@@ -2346,18 +2359,38 @@ function render(){
 function goP(p){const tp=Math.ceil(filtered.length/PG)||1;if(p<1||p>tp)return;curPage=p;render();}
 function getMiss(r){
   const m=[];
-  // Sempre obrigatórios
+
+  // ── OBRIGATÓRIOS ORIGINAIS (sempre) ─────────────────────────────
   OBRIG_KEYS.forEach(f=>{if(!r[f])m.push(f);});
-  // Motivo obrigatório para modalidades ativas
+
+  // MOTIVO — dependente de modalidade ativa (tratativa em andamento)
   const modAtiva=['Devolução','Reclamação','Mensagem','Cancelado','Em Atraso','Não Entregue'];
-  if(modAtiva.includes(r.MODALIDADE)&&!r.MOTIVO)m.push('MOTIVO');
-  // NEC_PECAS e TRATATIVA_FINALIZADA sempre obrigatórios (sem DEVOLUCAO_ABERTA)
-  if(!r.NEC_PECAS)m.push('NEC_PECAS');
-  if(!r.TRATATIVA_FINALIZADA)m.push('TRATATIVA_FINALIZADA');
-  // Disputa condicional
-  const dA=r.DISPUTA_ABERTA==='SIM';
+  if(modAtiva.includes(r.MOD_TRAT_CLIENTE)&&!r.MOTIVO)m.push('MOTIVO');
+
+  // ── OBRIGATÓRIOS DEPENDENTES DE CHAMADO_ABERTO ───────────────────
+  // NEC_PECAS, TRATATIVA_FINALIZADA e DEVOLUCAO_ABERTA
+  // só obrigatórios quando atendimento foi aberto (CHAMADO_ABERTO=SIM/Reaberto)
+  const cA=['SIM','Reaberto'].includes((r.CHAMADO_ABERTO||'').trim());
+  if(cA&&!r.NEC_PECAS)m.push('NEC_PECAS');
+  if(cA&&!r.TRATATIVA_FINALIZADA)m.push('TRATATIVA_FINALIZADA');
+  if(cA&&!r.DEVOLUCAO_ABERTA)m.push('DEVOLUCAO_ABERTA');
+
+  // ── OBRIGATÓRIOS DEPENDENTES DE ABERTO_TRAT_PLAT ─────────────────
+  // ABERTO_TRAT_PLAT — obrigatório original
+  if(!r.ABERTO_TRAT_PLAT)m.push('ABERTO_TRAT_PLAT');
+  // TRAT_PLAT_FIN — obrigatório somente quando ABERTO_TRAT_PLAT=SIM/Reaberto/REABERTA
+  const tpA=['SIM','Reaberto','REABERTA'].includes((r.ABERTO_TRAT_PLAT||'').trim());
+  if(tpA&&!r.TRAT_PLAT_FIN)m.push('TRAT_PLAT_FIN');
+
+  // ── OBRIGATÓRIOS DEPENDENTES DE DISPUTA_ABERTA ───────────────────
+  const dA=(r.DISPUTA_ABERTA||'').trim()==='SIM';
   if(dA&&!r.REEMBOLSO_MKT)m.push('REEMBOLSO_MKT');
   if(dA&&!r.DISPUTA_FINALIZADA)m.push('DISPUTA_FINALIZADA');
+
+  // ── OBRIGATÓRIOS DEPENDENTES DE REEMBOLSO_MKT ────────────────────
+  // CREDITO_RECEBIDO — somente quando REEMBOLSO_MKT=SIM
+  if((r.REEMBOLSO_MKT||'').trim()==='SIM'&&!r.CREDITO_RECEBIDO)m.push('CREDITO_RECEBIDO');
+
   return m;
 }
 function fInp(id,lbl,val,type,req,ph,ro,isNew){
@@ -2388,7 +2421,7 @@ function fInpMoney(id,lbl,val){
 function fYN(id,lbl,val,req,fe){
   req=req||false;fe=fe||false;
   const rc=(req&&!val)||fe?'req-fld':'';
-  const mk=(v,l)=>'<div class="ro"><input type="radio" name="f_'+id+'" id="f_'+id+'_'+v+'" value="'+v+'" '+(val===v?'checked':'')+' ><label for="f_'+id+'_'+v+'">'+l+'</label></div>';
+  const mk=(v,l)=>'<div class="ro"><input type="radio" name="f_'+id+'" id="f_'+id+'_'+v+'" value="'+v+'" '+(val===v?'checked':'')+' onchange="fldChg(\''+id+'\',this.value)"><label for="f_'+id+'_'+v+'">'+l+'</label></div>';
   return '<div class="fld '+rc+'"><label>'+lbl+'</label><div class="rg">'+mk('SIM','SIM')+mk('NÃO','NÃO')+'</div></div>';
 }
 function fYN3(id,lbl,val,req,fe){req=req||false;fe=fe||false;const rc=(req&&!val)||fe?'req-fld':'';const mk=(v,l)=>'<div class="ro"><input type="radio" name="f_'+id+'" id="f_'+id+'_'+v+'" value="'+v+'" '+(val===v?'checked':'')+' onchange="fldChg(\''+id+'\',this.value)"><label for="f_'+id+'_'+v+'">'+l+'</label></div>';return '<div class="fld '+rc+'"><label>'+lbl+'</label><div class="rg">'+mk('SIM','SIM')+mk('NÃO','NÃO')+mk('Reaberto','Reaberto')+'</div></div>';}
@@ -2561,12 +2594,13 @@ function applyBF(){
 
 
 
-const DEFAULT_COL_WIDTHS={"MODALIDADE":180, "NOME": 150, "CANAL": 120, "EMPR": 65, "MODELO": 75, "DATA_VENDA": 100, "SKU": 130, "QT": 40, "RASTREIO": 120, "NF": 90, "NF_DEVOL": 90, "NF_DEVOL_EMISSAO": 130, "AUTOR": 80, "NEC_NF_DEVOL": 120, "DATA_CAMINHO_MKT": 130, "DATA_ENTREGUE_MKT": 140, "CHAMADO_ABERTO": 120, "MOTIVO": 130, "DETALHAMENTO": 130, "OBS_RECLAM": 140, "DATA_TRATATIVA": 110, "DEVOLUCAO_ABERTA": 135, "NEC_PECAS": 110, "PECAS_ENVIADAS": 120, "OBS_PECAS": 110, "REENVIO_RECEBIDO": 130, "CUSTO_ENVIO": 100, "PAGO_PLAT": 100, "VALOR_PAGO": 90, "CUSTOS_TOTAL": 105, "TRATATIVA_FINALIZADA": 145, "DATA_PREVISTA_RETORNO": 150, "STATUS_FULL": 130, "CHEGOU_CARDEX": 120, "DISPUTA_ABERTA": 110, "PLAT_DISPUTA": 135, "CREDITO": 90, "ID_TRANSACAO": 120, "REEMBOLSO_MKT": 120, "DISPUTA_FINALIZADA": 140, "CREDITO_RECEBIDO_VALOR": 155, "CREDITO_RECEBIDO": 130, "OBS_DISPUTA": 120};
+const DEFAULT_COL_WIDTHS={"MODALIDADE":180, "NOME": 150, "CANAL": 120, "EMPR": 65, "MODELO": 75, "DATA_VENDA": 100, "SKU": 130, "QT": 40, "RASTREIO": 120, "NF": 90, "NF_DEVOL": 90, "NF_DEVOL_EMISSAO": 130, "AUTOR": 80, "NEC_NF_DEVOL": 120, "DATA_CAMINHO_MKT": 130, "DATA_ENTREGUE_MKT": 140, "CHAMADO_ABERTO": 120, "MOTIVO": 130, "DETALHAMENTO": 130, "OBS_RECLAM": 140, "DATA_TRATATIVA": 110, "DEVOLUCAO_ABERTA": 135, "NEC_PECAS": 110, "PECAS_ENVIADAS": 120, "OBS_PECAS": 110, "REENVIO_RECEBIDO": 130, "CUSTO_ENVIO": 100, "PAGO_PLAT": 100, "VALOR_PAGO": 90, "CUSTOS_TOTAL": 105, "TRATATIVA_FINALIZADA": 145, "DATA_PREVISTA_RETORNO": 150, "STATUS_FULL": 130, "CHEGOU_CARDEX": 120, "DISPUTA_ABERTA": 110, "PLAT_DISPUTA": 135, "CREDITO": 90, "REEMBOLSO_MKT": 120, "DISPUTA_FINALIZADA": 140, "CREDITO_RECEBIDO_VALOR": 155, "CREDITO_RECEBIDO": 130, "OBS_DISPUTA": 120};
 function buildBulkHead(thead){
   if(!thead)return;
   const visID=ID_COLS.filter(c=>!hiddenCols.has(c.k));
   const visTR=TC.filter(c=>!hiddenCols.has(c.k));
   const visDI=DC.filter(c=>!hiddenCols.has(c.k));
+  const visFS=(typeof FS!=='undefined'?FS:[]).filter(c=>!hiddenCols.has(c.k));
 
   function mkTh(c,secCls){
     const lCls='th-label'+(c.req?' req-lbl':'');
@@ -2641,10 +2675,10 @@ function buildBulkHead(thead){
   r0+=mkFixed('ID_VENDA','ID Venda','col-id-venda');
   // Seção Identificação
   visID.forEach((c,i)=>{r0+=mkThWithSec(c,'sec-id',i===0?'📦 Identificação':null,'id');});
-  // Seção Tratativa
-  visTR.forEach((c,i)=>{r0+=mkThWithSec(c,'sec-trat',i===0?'🗂 Tratativa':null,'trat');});
-  // Seção Disputa
-  visDI.forEach((c,i)=>{r0+=mkThWithSec(c,'sec-disp',i===0?'⚖️ Disputa':null,'disp');});
+  // Seção Tratativa Cliente
+  visTR.forEach((c,i)=>{r0+=mkThWithSec(c,'sec-trat',i===0?'📋 Tratativa Cliente':null,'trat');});
+  // Seção Tratativa Plataforma
+  visDI.forEach((c,i)=>{r0+=mkThWithSec(c,'sec-disp',i===0?'⚖️ Tratativa Plataforma':null,'disp');});
   r0+='</tr>';
   thead.innerHTML=r0;
 }
@@ -3233,6 +3267,30 @@ function checkAllDups(){
 function fldChg(id,val){
   // Atualizar validação visual em tempo real
   updateReqVisual();
+  if(id==='ABERTO_TRAT_PLAT'){
+    var te=document.getElementById('tpExtra');
+    var show=['SIM','Reaberto','REABERTA'].includes((val||'').trim());
+    if(te)te.style.display=show?'contents':'none';
+  }
+  if(id==='DISPUTA_ABERTA'){
+    var de=document.getElementById('disputaExtra');
+    if(de)de.style.display=(val||'')==='SIM'?'block':'none';
+  }
+  // Auto-preencher DISPUTA_ABERTA=SIM quando Modalidade Plat. = Disputa
+  if(id==='MOD_TRAT_PLAT1'||id==='MOD_TRAT_PLAT2'){
+    if((val||'')==='Disputa'){
+      // Marcar radio DISPUTA_ABERTA=SIM
+      var rSIM=document.getElementById('f_DISPUTA_ABERTA_SIM');
+      if(rSIM){rSIM.checked=true;
+        // Desmarcar NÃO se estava marcado
+        var rNAO=document.getElementById('f_DISPUTA_ABERTA_NÃO');
+        if(rNAO)rNAO.checked=false;
+        var de2=document.getElementById('disputaExtra');
+        if(de2)de2.style.display='block';
+        updateReqVisual();
+      }
+    }
+  }
   // Atualizar mensagem de campos obrigatórios se ela estiver visível
   var mm=document.getElementById('dlgMissMsg');
   if(mm&&mm.style.display!=='none'){
@@ -3253,6 +3311,10 @@ function fldChg(id,val){
 function updateReqVisual(){
   var dAv=document.querySelector('input[name="f_DISPUTA_ABERTA"]:checked')?.value||'';
   var isDA=dAv==='SIM';
+  var mktV=document.querySelector('input[name="f_REEMBOLSO_MKT"]:checked')?.value||'';
+  var isMKT=mktV==='SIM';
+  var tpV=document.querySelector('input[name="f_ABERTO_TRAT_PLAT"]:checked')?.value||'';
+  var isTP=['SIM','Reaberto','REABERTA'].includes(tpV);
 
   // Obter valor de um campo (input ou radio)
   function getVal(fid){
@@ -3273,8 +3335,8 @@ function updateReqVisual(){
     fld.classList.toggle('req-ok',!!val);
   }
 
-  // Campos sempre obrigatórios
-  ['MODALIDADE','ID_VENDA','CANAL','EMPR','MODELO'].forEach(function(f){
+  // Campos sempre obrigatórios (texto)
+  ['MOD_TRAT_CLIENTE','ID_VENDA','CANAL','EMPR','MODELO'].forEach(function(f){
     var el=document.getElementById('f_'+f);if(!el)return;
     var fld=el.closest('.fld');if(!fld)return;
     fld.classList.toggle('req-fld',!el.value);
@@ -3282,16 +3344,23 @@ function updateReqVisual(){
   });
   setReq('NEC_PECAS', true);
   setReq('TRATATIVA_FINALIZADA', true);
-  // MOTIVO: obrigatório quando MODALIDADE é Devolução, Mensagem ou Reclamação
-  var modalVal=getVal('MODALIDADE');
+  // MOTIVO: obrigatório quando MOD_TRAT_CLIENTE é Devolução, Mensagem ou Reclamação
+  var modalVal=getVal('MOD_TRAT_CLIENTE');
   var motivoReq=['Devolução','Mensagem','Reclamação'].includes(modalVal);
   setReq('MOTIVO', motivoReq);
-  // DEVOLUCAO_ABERTA e DISPUTA_ABERTA sempre obrigatórios
+  // DEVOLUCAO_ABERTA sempre obrigatório
   setReq('DEVOLUCAO_ABERTA', true);
-  setReq('DISPUTA_ABERTA', true);
-  // Disputa condicional
+  // ABERTO_TRAT_PLAT — obrigatório original → verde quando preenchido
+  setReq('ABERTO_TRAT_PLAT', true);
+  // TRAT_PLAT_FIN — obrigatório dependente de ABERTO_TRAT_PLAT ativo
+  setReq('TRAT_PLAT_FIN', isTP);
+  // Disputa: DISPUTA_ABERTA obrigatório quando tpA ativo
+  setReq('DISPUTA_ABERTA', isTP);
+  // Disputa condicional (quando DISPUTA_ABERTA=SIM)
   setReq('REEMBOLSO_MKT', isDA);
   setReq('DISPUTA_FINALIZADA', isDA);
+  // CREDITO_RECEBIDO — obrigatório quando REEMBOLSO_MKT=SIM
+  setReq('CREDITO_RECEBIDO', isMKT);
 }
 function openModal(rec){
   // Resetar mensagem de validação ao abrir popup
@@ -3307,7 +3376,9 @@ function openModal(rec){
   if(_ds)_ds.textContent=isNew?'Preencha os campos obrigatórios':'Linha '+r._row+' — '+r.ID_VENDA;
 
   const miss=rec?getMiss(rec):[];
-  const dA=r.DISPUTA_ABERTA==='SIM';
+  const tpA=['SIM','Reaberto','REABERTA'].includes((r.ABERTO_TRAT_PLAT||'').trim());
+  const t2A=!!(r.MOD_TRAT_PLAT2||r.MOTIVO_TRAT2||r.PROTOCOLO2);
+  const dA=(r.DISPUTA_ABERTA||'')==='SIM';
   const pA=r.NEC_PECAS==='SIM';
   const mktA=r.REEMBOLSO_MKT==='SIM';
   const credA=r.CREDITO_RECEBIDO==='SIM';
@@ -3370,13 +3441,11 @@ function openModal(rec){
           fSel('MOTIVO','Motivo Tratativa do Cliente',r.MOTIVO,MOTIVOS,false,isErr('MOTIVO')),
           fSel('DETALHAMENTO','Detalhamento da Tratativa',r.DETALHAMENTO,DETALHAMENTOS),
         '</div>',
-        '<div class="fg" style="grid-template-columns:2fr 1fr">',
+        '<div class="fg" style="grid-template-columns:2fr">',
           fInp('OBS_RECLAM','Observações da Tratativa',r.OBS_RECLAM),
-          fYN('TRAT_CLIENTE_FIN_REP','Impacto na Reputação?',r.TRAT_CLIENTE_FIN_REP||''),
         '</div>',
         '<div class="fg">',
           fYN('NEC_PECAS','Nec. Enviar Peças?',r.NEC_PECAS,true,isErr('NEC_PECAS')),
-          fYN('DEVOLUCAO_ABERTA','Aberto processo de devolução?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA')),
         '</div>',
         '<div class="fg3 '+(pA?'show ':'')+'" id="pecasExtra">',
           fYN('PECAS_ENVIADAS','Enviadas Peças p/ Cliente?',r.PECAS_ENVIADAS),
@@ -3389,6 +3458,10 @@ function openModal(rec){
         '<div class="fg" style="grid-template-columns:1fr 1fr 1fr">',
           fInp('PAGO_PLAT','Pago a Plataforma ou Cliente',r.PAGO_PLAT,'text',false,'R$ 0,00'),
           fInp('CUSTOS_TOTAL','Custos Total',r.CUSTOS_TOTAL,'text',false,'R$ 0,00'),
+        '</div>',
+        '<div class="fg" style="grid-template-columns:1fr 1fr 1fr">',
+          fYN('TRAT_CLIENTE_FIN_REP','Impacto na Reputação?',r.TRAT_CLIENTE_FIN_REP||''),
+          fYN('DEVOLUCAO_ABERTA','Aberto processo de devolução?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA')),
           fYN('TRATATIVA_FINALIZADA','Tratativa Cliente FINALIZADA?',r.TRATATIVA_FINALIZADA,true,isErr('TRATATIVA_FINALIZADA')),
         '</div>',
       '</div>',
@@ -3401,43 +3474,55 @@ function openModal(rec){
         '<button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button>',
       '</div>',
       '<div class="fsec-body">',
-        '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:4px 0 2px">Tratativa 1</div>',
         '<div class="fg3">',
-          fSel('MOD_TRAT_PLAT1','Modalidade Trat. Plat. 1',r.MOD_TRAT_PLAT1||'',MODALIDADES),
-          fInp('MOTIVO_TRAT1','Motivo da Tratativa 1',r.MOTIVO_TRAT1||''),
-          fInp('DATA_TRAT1','Data da Tratativa 1',r.DATA_TRAT1||'','text',false,'DD/MM/AAAA'),
+          fYN3('ABERTO_TRAT_PLAT','Aberto Tratativa Plataforma?',r.ABERTO_TRAT_PLAT||'',true,isErr('ABERTO_TRAT_PLAT')),
         '</div>',
-        '<div class="fg" style="grid-template-columns:1fr 2fr">',
-          fInp('PROTOCOLO1','Protocolo 1',r.PROTOCOLO1||''),
-          fInp('OBS_TRAT1','Observações da Tratativa 1',r.OBS_TRAT1||''),
-        '</div>',
-        '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:8px 0 2px">Tratativa 2</div>',
-        '<div class="fg3">',
-          fSel('MOD_TRAT_PLAT2','Modalidade Trat. Plat. 2',r.MOD_TRAT_PLAT2||'',MODALIDADES),
-          fInp('MOTIVO_TRAT2','Motivo da Tratativa 2',r.MOTIVO_TRAT2||''),
-          fInp('DATA_TRAT2','Data da Tratativa 2',r.DATA_TRAT2||'','text',false,'DD/MM/AAAA'),
-        '</div>',
-        '<div class="fg" style="grid-template-columns:1fr 2fr">',
-          fInp('PROTOCOLO2','Protocolo 2',r.PROTOCOLO2||''),
-          fInp('OBS_TRAT2','Observações da Tratativa 2',r.OBS_TRAT2||''),
-        '</div>',
-        '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:8px 0 2px">Disputa</div>',
-        '<div class="fg">',
-          fYN('DISPUTA_ABERTA','Disputa Aberta?',r.DISPUTA_ABERTA,true,isErr('DISPUTA_ABERTA')),
-          fInp('PLAT_DISPUTA','Plataforma Disputa',r.PLAT_DISPUTA),
-        '</div>',
-        '<div class="fg" style="grid-template-columns:1fr 2fr" id="mktExtra">',
-          fInp('ID_TRANSACAO','ID Transação',r.ID_TRANSACAO),
-          fYN('REEMBOLSO_MKT','Reembolso do Marketplace?',r.REEMBOLSO_MKT,true,isErr('REEMBOLSO_MKT')),
-        '</div>',
-        '<div class="fg3">',
-          fYN('DISPUTA_FINALIZADA','Disputa Finalizada?',r.DISPUTA_FINALIZADA,true,isErr('DISPUTA_FINALIZADA')),
-          fInp('CREDITO_RECEBIDO_VALOR','R$ Crédito Recebido',r.CREDITO_RECEBIDO_VALOR,'text',false,'R$ 0,00'),
-          fYN('CREDITO_RECEBIDO','Crédito Recebido?',r.CREDITO_RECEBIDO),
-        '</div>',
-        '<div class="fg3">',
-          fInp('OBS_DISPUTA','Observações da Disputa',r.OBS_DISPUTA),
-          fYN('TRAT_PLAT_FIN','Tratativa Plataforma FINALIZADA?',r.TRAT_PLAT_FIN||''),
+        '<div id="tpExtra" style="display:'+(tpA?'contents':'none')+'">',
+          '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:4px 0 2px">Tratativa 1</div>',
+          '<div class="fg3">',
+            fSel('MOD_TRAT_PLAT1','Modalidade Trat. Plat. 1',r.MOD_TRAT_PLAT1||'',MODALIDADES_PLAT),
+            fSel('MOTIVO_TRAT1','Motivo da Tratativa 1',r.MOTIVO_TRAT1||'',MOTIVOS_TRAT),
+            fInp('DATA_TRAT1','Data da Tratativa 1',r.DATA_TRAT1||'','text',false,'DD/MM/AAAA'),
+          '</div>',
+          '<div class="fg" style="grid-template-columns:1fr 2fr">',
+            fInp('PROTOCOLO1','Protocolo 1',r.PROTOCOLO1||''),
+            fInp('OBS_TRAT1','Observações da Tratativa 1',r.OBS_TRAT1||''),
+          '</div>',
+          '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:8px 0 2px;display:flex;align-items:center;gap:8px">Tratativa 2 <button type="button" class="btn-sm" style="padding:1px 7px;font-size:12px;border-radius:4px;border:1px solid var(--pri);color:var(--pri);background:transparent;cursor:pointer" onclick="var el=document.getElementById(&quot;trat2Extra&quot;);el.style.display=el.style.display===&quot;none&quot;?&quot;contents&quot;:&quot;none&quot;" title="Expandir Tratativa 2">+</button></div>',
+          '<div id="trat2Extra" style="display:'+(t2A?'contents':'none')+'">',
+            '<div class="fg3">',
+              fSel('MOD_TRAT_PLAT2','Modalidade Trat. Plat. 2',r.MOD_TRAT_PLAT2||'',MODALIDADES_PLAT),
+              fSel('MOTIVO_TRAT2','Motivo da Tratativa 2',r.MOTIVO_TRAT2||'',MOTIVOS_TRAT),
+              fInp('DATA_TRAT2','Data da Tratativa 2',r.DATA_TRAT2||'','text',false,'DD/MM/AAAA'),
+            '</div>',
+            '<div class="fg" style="grid-template-columns:1fr 2fr">',
+              fInp('PROTOCOLO2','Protocolo 2',r.PROTOCOLO2||''),
+              fInp('OBS_TRAT2','Observações da Tratativa 2',r.OBS_TRAT2||''),
+            '</div>',
+          '</div>',
+          '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:8px 0 2px">Disputa</div>',
+          '<div class="fg3">',
+            fYN('DISPUTA_ABERTA','Disputa Aberta?',r.DISPUTA_ABERTA),
+          '</div>',
+          '<div id="disputaExtra" style="display:'+(dA?'block':'none')+'">',
+            '<div class="fg" style="grid-template-columns:1fr 1fr">',
+              fInp('PLAT_DISPUTA','Plataforma Disputa',r.PLAT_DISPUTA),
+              fYN('REEMBOLSO_MKT','Reembolso do Marketplace?',r.REEMBOLSO_MKT),
+            '</div>',
+            '<div class="fg" style="grid-template-columns:1fr 1fr">',
+              fInp('CREDITO_RECEBIDO_VALOR','R$ Crédito Recebido',r.CREDITO_RECEBIDO_VALOR,'text',false,'R$ 0,00'),
+              fYN('CREDITO_RECEBIDO','Crédito Recebido?',r.CREDITO_RECEBIDO),
+            '</div>',
+            '<div class="fg" style="grid-template-columns:1fr">',
+              fInp('OBS_DISPUTA','Observações da Disputa',r.OBS_DISPUTA),
+            '</div>',
+            '<div class="fg3">',
+              fYN('DISPUTA_FINALIZADA','Disputa Finalizada?',r.DISPUTA_FINALIZADA),
+            '</div>',
+          '</div>',
+          '<div class="fg3">',
+            fYN('TRAT_PLAT_FIN','Tratativa Plataforma FINALIZADA?',r.TRAT_PLAT_FIN||'',true,isErr('TRAT_PLAT_FIN')),
+          '</div>',
         '</div>',
       '</div>',
     '</div>',
@@ -3445,7 +3530,7 @@ function openModal(rec){
         // ── SEÇÃO: Full / Estoque ─────────────────────────────────────────
         '<div class="fsec fsec-full">',
           '<div class="fsec-tit-row">',
-            '<div class="fsec-tit">🏭 Full / Estoque</div>',
+            '<div class="fsec-tit">🏭 Retorno</div>',
             '<button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button>',
           '</div>',
           '<div class="fsec-body">',
