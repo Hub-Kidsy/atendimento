@@ -1604,32 +1604,166 @@ document.addEventListener('mousemove', e=>{if(!drag)return;const dy=e.clientY-sy
 document.addEventListener('mouseup', ()=>{drag=false;thumb.classList.remove('dragging');});
 track.addEventListener('click', e=>{if(e.target===thumb)return;const r=(e.clientY-track.getBoundingClientRect().top)/track.clientHeight;col.scrollTop=r*(col.scrollHeight-col.clientHeight);});
 
+
+// ══════════════════════════════════════════════════════════════════════
+// COLUMNSMAP — Mapeamento dinâmico de colunas da planilha raiz
+// Permite compatibilidade com nomes antigos e novos automaticamente.
+// ══════════════════════════════════════════════════════════════════════
+
+// Mapeamento: chave interna → lista de nomes possíveis na planilha
+// (primeiro = nome atual; demais = aliases/nomes antigos aceitos)
+const COLUMN_NAMES = {
+  STATUS:               ['STATUS','Status'],
+  ID_VENDA:             ['ID Venda','ID_VENDA','Id Venda','ID de Venda','ID VENDA'],
+  NOME:                 ['Nome','NOME','Nome do Cliente'],
+  CANAL:                ['Canal De Venda','CANAL','Canal','Canal de Venda'],
+  EMPR:                 ['EMPR.','EMPR','Empresa'],
+  MODELO:               ['Modelo','MODELO'],
+  DATA_VENDA:           ['Data da Venda','DATA_VENDA','DATA VENDA','Data Venda'],
+  SKU:                  ['SKU','Sku'],
+  QT:                   ['QT','QT.','Quantidade'],
+  RASTREIO:             ['Rastreio','RASTREIO','Código de Rastreio'],
+  NF:                   ['NF','Nota Fiscal'],
+  NF_DEVOL:             ['NF DEVOL','NF_DEVOL','NF Devolução'],
+  NF_DEVOL_EMISSAO:     ['NF DEVOL (Emissão)','NF_DEVOL_EMISSAO','NF DEVOL Emissão'],
+  AUTOR:                ['AUTOR','Autor','Responsável'],
+  NEC_NF_DEVOL:         ['Necessário NF Devol?','NEC_NF_DEVOL','NEC NF DEVOL'],
+  DATA_CAMINHO_MKT:     ['Data a Caminho Marketplace','DATA_CAMINHO_MKT','DATA CAMINHO MKT'],
+  DATA_ENTREGUE_MKT:    ['Data Entregue Marketplace','DATA_ENTREGUE_MKT','DATA ENTREGUE MKT'],
+  MOD_TRAT_CLIENTE:     ['Modalidade Tratattiva Cliente','Modalidade Tratativa Cliente','MOD_TRAT_CLIENTE'],
+  MOTIVO:               ['Motivo Tratativa do Cliente','MOTIVO TRATATIVA DO CLIENTE','Motivo Reclamação','MOTIVO','Motivo'],
+  DETALHAMENTO:         ['Detalhamento da Tratatativa','Detalhamento da Tratativa','DETALHAMENTO','Detalhamento'],
+  OBS_RECLAM:           ['Observações da Tratativa','OBSERVAÇÕES DA TRATATIVA','Observações da Reclamação','OBS_RECLAM','OBS RECLAM'],
+  TRAT_CLIENTE_FIN_REP: ['Impacto na Reputação?','Impacto na Reputacao?','IMPACTO NA REPUTAÇÃO'],
+  CHAMADO_ABERTO:       ['Aberto Atendimento?','CHAMADO_ABERTO','CHAMADO ABERTO','Chamado Aberto?'],
+  DATA_TRATATIVA:       ['DATA Atendimento','Data Atendimento','DATA_TRATATIVA','DATA TRATATIVA','Data Tratativa'],
+  NEC_PECAS:            ['Necessário Enviar Peças?','NEC_PECAS','NEC PECAS','Necessita Peças?'],
+  PECAS_ENVIADAS:       ['Enviadas Peças para Cliente?','PECAS_ENVIADAS','PECAS ENVIADAS','Peças Enviadas?'],
+  OBS_PECAS:            ['Observação do envio de peças','OBS_PECAS','OBS PECAS','Obs Peças'],
+  REENVIO_RECEBIDO:     ['Reenvio recebido pelo cliente?','REENVIO_RECEBIDO','REENVIO RECEBIDO'],
+  DEVOLUCAO_ABERTA:     ['Aberto o processo de devolução?','DEVOLUCAO_ABERTA','DEVOLUCAO ABERTA','Devolução Aberta?'],
+  CUSTO_ENVIO:          ['Custo de Envio','CUSTO_ENVIO','CUSTO ENVIO'],
+  PAGO_PLAT:            ['Pago a Plataforma ou Cliente','PAGO_PLAT','PAGO PLAT','Pago Plataforma'],
+  CUSTOS_TOTAL:         ['Custos Total','CUSTOS TOTAL','CUSTOS_TOTAL'],
+  TRATATIVA_FINALIZADA: ['Tratativa Cliente FINALIZADA?','TRATATIVA CLIENTE FINALIZADA?','Tratativa Finalizada?','TRATATIVA_FINALIZADA'],
+  MOD_TRAT_PLAT1:       ['Modalidade Tratativa Plataforma 1','MOD_TRAT_PLAT1'],
+  MOTIVO_TRAT1:         ['Motivo da Tratativa 1?','Motivo Tratativa 1','MOTIVO_TRAT1'],
+  DATA_TRAT1:           ['Data da Tratativa 1','DATA_TRAT1'],
+  PROTOCOLO1:           ['Protocolo 1','PROTOCOLO1'],
+  OBS_TRAT1:            ['Observações da Tratativa 1','OBS_TRAT1'],
+  MOD_TRAT_PLAT2:       ['Modalidade Tratativa Plataforma 2','MOD_TRAT_PLAT2'],
+  MOTIVO_TRAT2:         ['Motivo da Tratativa 2?','Motivo Tratativa 2','MOTIVO_TRAT2'],
+  DATA_TRAT2:           ['Data da Tratativa 2','DATA_TRAT2'],
+  PROTOCOLO2:           ['Protocolo 2','PROTOCOLO2'],
+  OBS_TRAT2:            ['Observações da Tratativa 2','OBS_TRAT2'],
+  DISPUTA_ABERTA:       [' Disputa Aberta?','Disputa Aberta?','DISPUTA_ABERTA','DISPUTA ABERTA'],
+  PLAT_DISPUTA:         ['Plataforma Disputa','PLAT_DISPUTA','PLAT DISPUTA'],
+  ID_TRANSACAO:         ['ID Transação','ID_TRANSACAO','ID TRANSACAO'],
+  REEMBOLSO_MKT:        ['Reembolso do Marketplace?','REEMBOLSO_MKT','REEMBOLSO MKT','Reembolso MKT?'],
+  DISPUTA_FINALIZADA:   ['Disputa Finalizada?','DISPUTA_FINALIZADA','DISPUTA FINALIZADA'],
+  CREDITO_RECEBIDO_VALOR:['R$ Crédito Recebido','CREDITO_RECEBIDO_VALOR','Crédito Recebido R$'],
+  CREDITO_RECEBIDO:     ['Crédito Recebido?','CREDITO_RECEBIDO','CREDITO RECEBIDO'],
+  OBS_DISPUTA:          ['Observações da Disputa','OBS_DISPUTA','OBS DISPUTA'],
+  TRAT_PLAT_FIN:        ['Tratativa Plataofrma FINALIZADA?','Tratativa Plataforma FINALIZADA?','TRAT_PLAT_FIN'],
+  DATA_PREVISTA_RETORNO:['Data Prevista de Retorno','DATA_PREVISTA_RETORNO','DATA PREVISTA RETORNO'],
+  STATUS_FULL:          ['STATUS FINAL FULL','STATUS_FULL','STATUS FULL'],
+  CHEGOU_CARDEX:        ['CHEGOU NA CARDEX?','CHEGOU_CARDEX','CHEGOU CARDEX','Chegou na Cardex?'],
+  NF_TOTAL:             ['NFs Devolução Total','NF_TOTAL','NF TOTAL','NF Total'],
+  VALOR_NF:             ['Valor da NF','VALOR_NF','VALOR NF'],
+  IMPOSTO_RESGATADO:    ['Imposto Resgatado','IMPOSTO_RESGATADO','IMPOSTO RESGATADO'],
+  CUSTOS_TOTAIS:        ['Custos','CUSTOS_TOTAIS','CUSTOS TOTAIS'],
+  REEMBOLSO:            ['Reembolso','REEMBOLSO'],
+  RESULTADO_FIN:        ['Resultado FInanceiro da Reclamação','Resultado Financeiro da Reclamação','RESULTADO_FIN','RESULTADO FIN'],
+  STATUS2:              ['STATUS 2','STATUS2','Status 2'],
+};
+
+// Normaliza string de header para comparação
+function _normalizeHeader(h){
+  return(h||'').toString().trim()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'') // remove acentos
+    .replace(/[^a-zA-Z0-9 ]/g,' ')                    // char especial → espaço
+    .replace(/\s+/g,' ').trim().toUpperCase();
+}
+
+// Constrói COL dinamicamente a partir dos headers reais da planilha
+// Recebe: array de strings (linha 1 da planilha)
+// Retorna: objeto {CHAVE: índice} — compatível com o COL estático atual
+function buildCOL(headers){
+  const normalized=headers.map(_normalizeHeader);
+  const result={};
+  Object.entries(COLUMN_NAMES).forEach(([key,candidates])=>{
+    // Tentar cada alias em ordem
+    for(const cand of candidates){
+      const nc=_normalizeHeader(cand);
+      const idx=normalized.indexOf(nc);
+      if(idx>=0){result[key]=idx;break;}
+    }
+    // Se não encontrou pelo nome, manter o índice do COL estático (fallback)
+    if(result[key]===undefined&&COL[key]!==undefined){
+      result[key]=COL[key];
+      console.warn('[ColumnsMap] Coluna "'+key+'" não encontrada nos headers — usando índice fixo '+COL[key]);
+    }
+  });
+  return result;
+}
+
+// Aplica o mapeamento dinâmico ao COL global
+// Chamado pelo loadData após ler os headers
+function applyColumnsMap(headers){
+  if(!headers||!headers.length)return;
+  const dynamic=buildCOL(headers);
+  Object.assign(COL,dynamic);
+  // Recalcular FORMULA_COLS com índices reais
+  FORMULA_COLS=new Set(FORMULA_KEYS.map(function(k){return COL[k];}).filter(function(v){return v!==undefined;}));
+  console.info('[ColumnsMap] COL atualizado. '+Object.keys(dynamic).length+' colunas de '+headers.length+'.');
+}
+
+// ══════════════════════════════════════════════════════════════════════
 const COL={
   // ── Identificação ──────────────────────────────────────────────
-  STATUS:0, MODALIDADE:1, ID_VENDA:2, NOME:3, CANAL:4,
-  EMPR:5, MODELO:6, DATA_VENDA:7, SKU:8, QT:9,
-  RASTREIO:10, NF:11, NF_DEVOL:12, NF_DEVOL_EMISSAO:13, AUTOR:14,
-  NEC_NF_DEVOL:15,
+  STATUS:0, ID_VENDA:1, NOME:2, CANAL:3, EMPR:4,
+  MODELO:5, DATA_VENDA:6, SKU:7, QT:8,
+  RASTREIO:9, NF:10, NF_DEVOL:11, NF_DEVOL_EMISSAO:12, AUTOR:13,
+  NEC_NF_DEVOL:14,
   // ── Logística ──────────────────────────────────────────────────
-  DATA_CAMINHO_MKT:16, DATA_ENTREGUE_MKT:17,
-  // ── Tratativa ──────────────────────────────────────────────────
-  CHAMADO_ABERTO:18,
-  MOTIVO:19, DETALHAMENTO:20, OBS_RECLAM:21,
-  DATA_TRATATIVA:22, DEVOLUCAO_ABERTA:23, NEC_PECAS:24,
-  PECAS_ENVIADAS:25, OBS_PECAS:26, REENVIO_RECEBIDO:27,
-  CUSTO_ENVIO:28, PAGO_PLAT:29, VALOR_PAGO:30, CUSTOS_TOTAL:31,
-  TRATATIVA_FINALIZADA:32, DATA_PREVISTA_RETORNO:33,
-  // ── Full/Estoque ───────────────────────────────────────────────
-  STATUS_FULL:34, CHEGOU_CARDEX:35,
+  DATA_CAMINHO_MKT:15, DATA_ENTREGUE_MKT:16,
+  // ── Tratativa Cliente ──────────────────────────────────────────
+  MOD_TRAT_CLIENTE:17,
+  MOTIVO:18, DETALHAMENTO:19, OBS_RECLAM:20,
+  TRAT_CLIENTE_FIN_REP:21,   // Impacto na Reputação?
+  CHAMADO_ABERTO:22,          // Aberto Atendimento?
+  DATA_TRATATIVA:23,
+  NEC_PECAS:24, PECAS_ENVIADAS:25, OBS_PECAS:26, REENVIO_RECEBIDO:27,
+  DEVOLUCAO_ABERTA:28,
+  CUSTO_ENVIO:29, PAGO_PLAT:30, CUSTOS_TOTAL:31,
+  TRATATIVA_FINALIZADA:32,    // Tratativa Cliente FINALIZADA?
+  // ── Tratativa Plataforma 1 ─────────────────────────────────────
+  MOD_TRAT_PLAT1:33,
+  MOTIVO_TRAT1:34,
+  DATA_TRAT1:35,
+  PROTOCOLO1:36,
+  OBS_TRAT1:37,
+  // ── Tratativa Plataforma 2 ─────────────────────────────────────
+  MOD_TRAT_PLAT2:38,
+  MOTIVO_TRAT2:39,
+  DATA_TRAT2:40,
+  PROTOCOLO2:41,
+  OBS_TRAT2:42,
   // ── Disputa ────────────────────────────────────────────────────
-  DISPUTA_ABERTA:36, PLAT_DISPUTA:37, CREDITO:38, ID_TRANSACAO:39,
-  REEMBOLSO_MKT:40, DISPUTA_FINALIZADA:41,
-  CREDITO_RECEBIDO_VALOR:42, CREDITO_RECEBIDO:43, OBS_DISPUTA:44,
+  DISPUTA_ABERTA:43, PLAT_DISPUTA:44, ID_TRANSACAO:45,
+  REEMBOLSO_MKT:46, DISPUTA_FINALIZADA:47,
+  CREDITO_RECEBIDO_VALOR:48, CREDITO_RECEBIDO:49, OBS_DISPUTA:50,
+  TRAT_PLAT_FIN:51,           // Tratativa Plataforma FINALIZADA?
+  // ── Full/Estoque ───────────────────────────────────────────────
+  DATA_PREVISTA_RETORNO:52,
+  STATUS_FULL:53, CHEGOU_CARDEX:54,
   // ── Financeiro (calculado) ─────────────────────────────────────
-  NF_TOTAL:45, VALOR_NF:46, IMPOSTO_RESGATADO:47,
-  CUSTOS_TOTAIS:48, REEMBOLSO:49, RESULTADO_FIN:50, STATUS2:51
+  NF_TOTAL:55, VALOR_NF:56, IMPOSTO_RESGATADO:57,
+  CUSTOS_TOTAIS:58, REEMBOLSO:59, RESULTADO_FIN:60, STATUS2:61
 };
-const FORMULA_COLS=new Set([0,48,49,50,51]);
+// Colunas calculadas por fórmula — derivadas dos índices reais do COL
+const FORMULA_KEYS=['STATUS','CUSTOS_TOTAIS','REEMBOLSO','RESULTADO_FIN','STATUS2']; // colunas fórmula da planilha
+let FORMULA_COLS=new Set(FORMULA_KEYS.map(k=>COL[k]).filter(v=>v!==undefined));
 // Labels de exibição para cada campo (usado em chips de erro e tooltips)
 const ML={
   STATUS:'Status',MODALIDADE:'Modalidade',ID_VENDA:'ID Venda',NOME:'Nome',
@@ -1652,7 +1786,17 @@ const ML={
   CREDITO_RECEBIDO:'Crédito Recebido?',OBS_DISPUTA:'Obs. Disputa',
   NF_TOTAL:'NFs Devol. Total',VALOR_NF:'Valor NF',IMPOSTO_RESGATADO:'Imposto Resgatado',
   CUSTOS_TOTAIS:'Custos (F)',REEMBOLSO:'Reembolso (F)',
-  RESULTADO_FIN:'Resultado Fin. (F)',STATUS2:'Status 2 (F)'
+  RESULTADO_FIN:'Resultado Fin. (F)',STATUS2:'Status 2 (F)',
+  MOD_TRAT_CLIENTE:'Modalidade Tratativa Cliente',
+  MOTIVO_TRAT_CLIENTE:'Motivo Tratativa',
+  OBS_TRAT_CLIENTE:'Obs. Tratativa',
+  TRAT_CLIENTE_FIN:'Tratativa Cliente Finalizada?',
+  MOD_TRAT_PLAT1:'Mod. Trat. Plat. 1',
+  MOD_TRAT_PLAT2:'Mod. Trat. Plat. 2',
+  TRAT_PLAT_FIN:'Tratativa Plat. Finalizada?',
+  TRAT_CLIENTE_FIN_REP:'Impacto na Reputação?',
+  MOTIVO_TRAT1:'Motivo Trat. 1',DATA_TRAT1:'Data Trat. 1',PROTOCOLO1:'Protocolo 1',OBS_TRAT1:'Obs. Trat. 1',
+  MOTIVO_TRAT2:'Motivo Trat. 2',DATA_TRAT2:'Data Trat. 2',PROTOCOLO2:'Protocolo 2',OBS_TRAT2:'Obs. Trat. 2'
 };
 const EDIT_COLS=Object.entries(COL).filter(([,i])=>!FORMULA_COLS.has(i)).map(([k,i])=>({key:k,idx:i}));
 const BANCO_ID='1JF2Yf2rHz_yBwlrpB5Mjnf9Zam1z2Uwdgo8RqFzyARs';
@@ -1661,7 +1805,7 @@ const IGNORADOS_BULK=['CONCLUÍDO',''];
 const MOTIVOS=['','Arrependimento','Atraso na entrega','Caixa Danificada','Defeito','Envio atrasado','Falta de Peça','Motivo desconhecido','Não Recebido','Produto Danificado','Produto Errado','Qualidade Ruim'];
 const MODALIDADES=['','Devolução','Reclamação','Mensagem','Cancelado','Em Atraso','Não Entregue','Resolvido'];
 const DETALHAMENTOS=['','Alça','Bandeja','Barras','Capuz','Conexão','Corpo do Produto','Danificado pela transportadora','Entrega atrasada','Ferramentas','Hastes dobráveis','Kit de parafusos e porcas','Manual','Mosquiteiro','Não especificado','Pernas','Roda','Saboneteira','Silicone','Suporte','Trava','Zíper'];
-const OBRIG_KEYS=['MODALIDADE','ID_VENDA','CANAL','EMPR','MODELO'];
+const OBRIG_KEYS=['MOD_TRAT_CLIENTE','ID_VENDA','CANAL','EMPR','MODELO'];
 
 function cN(s){s=s.toUpperCase();let n=0;for(let i=0;i<s.length;i++)n=n*26+(s.charCodeAt(i)-64);return n-1;}
 const BANCO_MAP={
@@ -1805,7 +1949,7 @@ async function loadDataPreservingState(){
   sortDir=_sortD;
   // Restaurar ícones de sort
   if(sortCol){
-    ['MODALIDADE','ID_VENDA','NOME','STATUS','EMPR','CANAL','SKU','DATA_VENDA'].forEach(function(c){
+    ['MOD_TRAT_CLIENTE','ID_VENDA','NOME','STATUS','EMPR','CANAL','SKU','DATA_VENDA'].forEach(function(c){
       var el=document.getElementById('sort_'+c);
       if(!el)return;
       el.textContent=c===sortCol?(sortDir===1?'↑':'↓'):'';
@@ -1824,10 +1968,15 @@ async function loadData(){
   if(!cfg.sheetId||!cfg.apiKey){if(typeof sidebarNav==='function')sidebarNav(4);snack('Configure a planilha','warn');return;}
   document.getElementById('tbody').innerHTML='<tr><td colspan="9"><div class="state-box"><div class="spinner"></div><span>Carregando...</span></div></td></tr>';
   try{
-    const rng=encodeURIComponent(cfg.sheetName+'!A2:AZ');
+    // Buscar A1:AZ para incluir cabeçalhos na linha 1
+    const rng=encodeURIComponent(cfg.sheetName+'!A1:AZ');
     const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values/'+rng+'?key='+cfg.apiKey);
     if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}
-    const rows=(await res.json()).values||[];
+    const allRows=(await res.json()).values||[];
+    // Linha 0 = headers; dados a partir da linha 1
+    const headers=allRows[0]||[];
+    applyColumnsMap(headers); // atualiza COL dinamicamente
+    const rows=allRows.slice(1);
     allData=rows.map((row,i)=>{const r={_row:i+2,_raw:[...row]};Object.entries(COL).forEach(([k,ci])=>{r[k]=row[ci]||'';});return r;});
     dashData=allData;
     const ativos=allData.filter(r=>!IGNORADOS_BULK.includes(r.STATUS));
@@ -2163,7 +2312,7 @@ function sortBy(col){
     if(sortDir===0)sortCol=null;
   }else{sortCol=col;sortDir=1;}
   // Atualizar ícones
-  ['MODALIDADE','ID_VENDA','NOME','STATUS','EMPR','CANAL','SKU','DATA_VENDA'].forEach(function(c){
+  ['MOD_TRAT_CLIENTE','ID_VENDA','NOME','STATUS','EMPR','CANAL','SKU','DATA_VENDA'].forEach(function(c){
     var el=document.getElementById('sort_'+c);
     if(!el)return;
     el.textContent=c===sortCol?(sortDir===1?'↑':'↓'):'';
@@ -2178,14 +2327,14 @@ function render(){
   function _parseDate(s){if(!s)return null;var p=s.split('/');if(p.length===3)return new Date(p[2],p[1]-1,p[0]);return new Date(s);}
   const _dIni=_di?new Date(_di):null;
   const _dFim=_df?new Date(_df):null;
-  filtered=allData.filter(r=>{if(!sf&&!s&&IGNORADOS.includes(r.STATUS))return false;if(sf&&r.STATUS!==sf)return false;if(cf&&r.CANAL!==cf)return false;if(ef&&r.EMPR!==ef)return false;if(missOnly&&getMiss(r).length===0)return false;if(s&&!(r.ID_VENDA+' '+r.NOME+' '+r.SKU+' '+r.CANAL+' '+r.MODALIDADE).toLowerCase().includes(s))return false;if(_dIni||_dFim){var _rd=_parseDate(r.DATA_VENDA);if(!_rd)return false;if(_dIni&&_rd<_dIni)return false;if(_dFim&&_rd>_dFim)return false;}return true;});
+  filtered=allData.filter(r=>{if(!sf&&!s&&IGNORADOS.includes(r.STATUS))return false;if(sf&&r.STATUS!==sf)return false;if(cf&&r.CANAL!==cf)return false;if(ef&&r.EMPR!==ef)return false;if(missOnly&&getMiss(r).length===0)return false;if(s&&!(r.ID_VENDA+' '+r.NOME+' '+r.SKU+' '+r.CANAL+' '+r.MOD_TRAT_CLIENTE).toLowerCase().includes(s))return false;if(_dIni||_dFim){var _rd=_parseDate(r.DATA_VENDA);if(!_rd)return false;if(_dIni&&_rd<_dIni)return false;if(_dFim&&_rd>_dFim)return false;}return true;});
   if(sortCol&&sortDir!==0){filtered.sort(function(a,b){var av=a[sortCol]||'',bv=b[sortCol]||'';if(sortCol==='DATA_VENDA'){var ad=_parseDate(av),bd=_parseDate(bv);return sortDir*((!ad&&!bd)?0:!ad?1:!bd?-1:ad-bd);}if(sortCol==='ID_VENDA'){var an=parseFloat(av),bn=parseFloat(bv);if(!isNaN(an)&&!isNaN(bn))return sortDir*(an-bn);}return sortDir*av.toString().localeCompare(bv.toString(),'pt-BR',{sensitivity:'base'});});}
   const tot=filtered.length;const tp=Math.ceil(tot/PG)||1;if(curPage>tp)curPage=1;const st=(curPage-1)*PG;const pg=filtered.slice(st,st+PG);
   if(!pg.length){document.getElementById('tbody').innerHTML='<tr><td colspan="9"><div class="state-box"><div style="font-size:28px">📭</div><div>Nenhum registro</div></div></td></tr>';document.getElementById('pag').innerHTML='';return;}
   let h='';
   const cell_style='style="cursor:pointer" title="Clique para editar"';
   pg.forEach(r=>{const m=getMiss(r).length;const cc=CC[r.STATUS]||'chip';const enc=encodeURIComponent(JSON.stringify(r));
-    h+='<tr><td '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.MODALIDADE+'</td><td class="mono" '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.ID_VENDA+'</td><td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer" title="Clique para editar" onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.NOME+'</td><td '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))"><span class="'+cc+'">'+r.STATUS+'</span>'+(m?'<div class="miss-badge">⚠ '+m+'</div>':'')+'</td><td '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.EMPR+'</td><td '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))"><span class="chip chip-canal">'+r.CANAL+'</span></td><td class="mono" style="font-size:10px;cursor:pointer" title="Clique para editar" onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.SKU+'</td><td style="color:var(--on-sur-v);font-size:11px;cursor:pointer" title="Clique para editar" onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.DATA_VENDA+'</td><td><button class="btn btn-outlined btn-sm" onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">✏</button></td></tr>';
+    h+='<tr><td '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.MOD_TRAT_CLIENTE+'</td><td class="mono" '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.ID_VENDA+'</td><td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer" title="Clique para editar" onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.NOME+'</td><td '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))"><span class="'+cc+'">'+r.STATUS+'</span>'+(m?'<div class="miss-badge">⚠ '+m+'</div>':'')+'</td><td '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.EMPR+'</td><td '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))"><span class="chip chip-canal">'+r.CANAL+'</span></td><td class="mono" style="font-size:10px;cursor:pointer" title="Clique para editar" onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.SKU+'</td><td style="color:var(--on-sur-v);font-size:11px;cursor:pointer" title="Clique para editar" onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.DATA_VENDA+'</td><td><button class="btn btn-outlined btn-sm" onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">✏</button></td></tr>';
   });
   document.getElementById('tbody').innerHTML=h;
   let p='<span class="pg-info">'+(st+1)+'–'+Math.min(st+PG,tot)+' de '+tot+'</span>';
@@ -2250,9 +2399,15 @@ const bancoCache={};
 async function fetchBanco(aba){if(bancoCache[aba])return bancoCache[aba];try{const maxCol={'Mercado Livre':'BQ','Shopee':'BP','Magalu':'AV','Amazon':'AO'}[aba]||'AZ';const url='https://sheets.googleapis.com/v4/spreadsheets/'+BANCO_ID+'/values/'+encodeURIComponent(aba+'!A:'+maxCol)+'?key='+cfg.apiKey;const res=await fetch(url);if(!res.ok)return null;const data=await res.json();bancoCache[aba]=data.values||[];return bancoCache[aba];}catch(e){return null;}}
 async function autoFill(idVenda,canal){const m=BANCO_MAP[canal];if(!m)return;snack('Buscando...','');const rows=await fetchBanco(canal);if(!rows){snack('Banco inacessível','error');return;}const found=rows.slice(1).find(r=>(r[m.buscaCol]||'').trim()===idVenda.trim());if(!found){snack('ID não encontrado','error');return;}const g=i=>found[i]||'';let sku=g(m.SKU);if(canal==='Amazon')sku=sku.replace(/_FBA_PC1/g,'').replace(/_FBA/g,'');const setRO=(id,v)=>{const el=document.getElementById('f_'+id);if(el){el.value=v;el.classList.toggle('af',!!v);if(typeof fldChg==='function')fldChg(id,v);}};const setSel=(id,v)=>{const el=document.getElementById('f_'+id);if(el&&v){el.value=v;el.classList.add('af');}};setRO('NOME',g(m.NOME));setRO('DATA_VENDA',g(m.DATA_VENDA));setRO('SKU',sku);setRO('QT',g(m.QT));setRO('RASTREIO',g(m.RASTREIO));setRO('ID_BLING',g(m.ID_BLING));setRO('DESC_STATUS',g(m.DESC));setSel('EMPR',g(m.EMPR));setSel('MODELO',g(m.MODELO));const mod=detectModal(g(m.DESC));if(mod)setSel('MODALIDADE',mod);const nfd=g(m.NF_DEVOL);if(nfd){const el=document.getElementById('f_NF_DEVOL');if(el&&!el.value)el.value=nfd;}snack('✓ Preenchido: '+idVenda,'success');}
 
+
+// Converte índice 0-based para letra de coluna da planilha (A, B, ..., Z, AA, ...)
+function _idxToCol(n){var r='';n++;while(n){var m=(n-1)%26;r=String.fromCharCode(65+m)+r;n=Math.floor((n-1)/26);}return r;}
 async function saveRecord(){
+  // Recalcular com COL atualizado pelo applyColumnsMap
+  FORMULA_COLS=new Set(FORMULA_KEYS.map(k=>COL[k]).filter(v=>v!==undefined));
+  const _editCols=Object.entries(COL).filter(([,i])=>!FORMULA_COLS.has(i)).map(([k,i])=>({key:k,idx:i}));
   const get=id=>{const el=document.getElementById('f_'+id);if(el)return el.value;for(const r of document.querySelectorAll('input[name="f_'+id+'"]'))if(r.checked)return r.value;return'';};
-  const novos={};EDIT_COLS.forEach(({key})=>{novos[key]=get(key)||'';});
+  const novos={};_editCols.forEach(({key})=>{novos[key]=get(key)||'';});
   const miss=OBRIG_KEYS.filter(f=>!novos[f]);if(['Devolução','Mensagem','Reclamação'].includes(novos.MODALIDADE)&&!novos.MOTIVO)miss.push('MOTIVO');if(novos.DISPUTA_ABERTA==='SIM'&&!novos.DISPUTA_FINALIZADA)miss.push('DISPUTA_FINALIZADA');if(novos.DISPUTA_FINALIZADA==='SIM'&&!novos.REEMBOLSO_MKT)miss.push('REEMBOLSO_MKT');if(novos.REEMBOLSO_MKT==='SIM'&&!novos.CREDITO)miss.push('CREDITO');
   if(miss.length){
     var mm=document.getElementById('dlgMissMsg');
@@ -2276,7 +2431,7 @@ async function saveRecord(){
       // Passo 1: Ler colunas C e D para localizar primeira linha preparada (vazia)
       const scanRes=await fetch(
         'https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values/'
-        +encodeURIComponent(cfg.sheetName+'!C:D')+'?key='+cfg.apiKey);
+        +encodeURIComponent(cfg.sheetName+'!'+_idxToCol(COL.ID_VENDA)+':'+_idxToCol(COL.NOME))+'?key='+cfg.apiKey);
       if(!scanRes.ok){const e=await scanRes.json();throw new Error(e.error?.message||scanRes.statusText);}
       const scanData=(await scanRes.json()).values||[];
       let targetRow=-1;
@@ -2289,7 +2444,7 @@ async function saveRecord(){
       // Passo 2: Montar batchUpdate com SOMENTE as células preenchidas
       // — igual à lógica de edição, preservando fórmulas das células não enviadas
       const batchData=[];
-      EDIT_COLS.forEach(({key,idx})=>{
+      _editCols.forEach(({key,idx})=>{
         const val=novos[key]||'';
         if(!val)return; // não enviar campos vazios — preserva fórmulas
         batchData.push({range:cfg.sheetName+'!'+n2c(idx)+targetRow,values:[[val]]});
@@ -3167,18 +3322,8 @@ function openModal(rec){
   document.getElementById('dlgBody').innerHTML=[
     mH,nH,
 
-    // ── SEÇÃO: Modalidade ────────────────────────────────────────────
-    '<div class="fsec fsec-id">',
-      '<div class="fsec-tit-row">',
-        '<div class="fsec-tit">🗂 Modalidade</div>',
-        '<button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button>',
-      '</div>',
-      '<div class="fsec-body">',
-        '<div class="fg3">',fSel('MODALIDADE','Modalidade',r.MODALIDADE,MODALIDADES),'</div>',
-      '</div>',
-    '</div>',
 
-    // ── SEÇÃO: Identificação ─────────────────────────────────────────
+        // ── SEÇÃO: Identificação ─────────────────────────────────────────
     '<div class="fsec fsec-id">',
       '<div class="fsec-tit-row">',
         '<div class="fsec-tit">📦 Identificação</div>',
@@ -3209,50 +3354,94 @@ function openModal(rec){
       '</div>',
     '</div>',
 
-    // ── SEÇÃO: Tratativa ─────────────────────────────────────────────
-    // DEVOLUCAO_ABERTA removido da planilha — campos sempre visíveis
+    // ── SEÇÃO: Tratativa Cliente ────────────────────────────────────────
     '<div class="fsec fsec-trat">',
       '<div class="fsec-tit-row">',
-        '<div class="fsec-tit">📋 Tratativa</div>',
+        '<div class="fsec-tit">📋 Tratativa Cliente</div>',
         '<button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button>',
       '</div>',
       '<div class="fsec-body">',
-        // CHAMADO_ABERTO: 3 opções (SIM / NÃO / Reaberto)
-        '<div class="fg">',
-          fYN3('CHAMADO_ABERTO','Tratativa Aberta?',r.CHAMADO_ABERTO),
-          fYN('DEVOLUCAO_ABERTA','Aberto o processo de devolução?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA')),
+        '<div class="fg" style="grid-template-columns:2fr 1fr">',
+          fSel('MOD_TRAT_CLIENTE','Modalidade Tratativa',r.MOD_TRAT_CLIENTE,MODALIDADES),
+          fYN3('CHAMADO_ABERTO','Aberto Atendimento?',r.CHAMADO_ABERTO),
         '</div>',
         '<div class="fg3">',
-          fInp('DATA_TRATATIVA','Data Tratativa',r.DATA_TRATATIVA,'text',false,'DD/MM/AAAA'),
-          fSel('MOTIVO','Motivo',r.MOTIVO,MOTIVOS,false,isErr('MOTIVO')),
-          fSel('DETALHAMENTO','Detalhamento',r.DETALHAMENTO,DETALHAMENTOS),
+          fInp('DATA_TRATATIVA','DATA Atendimento',r.DATA_TRATATIVA,'text',false,'DD/MM/AAAA'),
+          fSel('MOTIVO','Motivo Tratativa do Cliente',r.MOTIVO,MOTIVOS,false,isErr('MOTIVO')),
+          fSel('DETALHAMENTO','Detalhamento da Tratativa',r.DETALHAMENTO,DETALHAMENTOS),
         '</div>',
         '<div class="fg" style="grid-template-columns:2fr 1fr">',
-          fInp('OBS_RECLAM','Obs. Reclamação',r.OBS_RECLAM),
-          fInp('PAGO_PLAT','Pago Plat/Cliente',r.PAGO_PLAT,'text',false,'R$ 0,00'),
+          fInp('OBS_RECLAM','Observações da Tratativa',r.OBS_RECLAM),
+          fYN('TRAT_CLIENTE_FIN_REP','Impacto na Reputação?',r.TRAT_CLIENTE_FIN_REP||''),
         '</div>',
-        '<div class="fg3">',
-        '</div>',
-        // Peças — condicional por NEC_PECAS (sem dependência de DEVOLUCAO_ABERTA)
         '<div class="fg">',
           fYN('NEC_PECAS','Nec. Enviar Peças?',r.NEC_PECAS,true,isErr('NEC_PECAS')),
+          fYN('DEVOLUCAO_ABERTA','Aberto processo de devolução?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA')),
         '</div>',
         '<div class="fg3 '+(pA?'show ':'')+'" id="pecasExtra">',
-          fYN('PECAS_ENVIADAS','Peças Enviadas?',r.PECAS_ENVIADAS),
-          fYN('REENVIO_RECEBIDO','Reenvio Recebido?',r.REENVIO_RECEBIDO),
+          fYN('PECAS_ENVIADAS','Enviadas Peças p/ Cliente?',r.PECAS_ENVIADAS),
+          fYN('REENVIO_RECEBIDO','Reenvio recebido pelo cliente?',r.REENVIO_RECEBIDO),
         '</div>',
         '<div class="fg '+(pA?'show ':'')+'" style="grid-template-columns:2fr 1fr">',
-          fInp('OBS_PECAS','Obs. Peças',r.OBS_PECAS),
-          fInp('CUSTO_ENVIO','Custo Envio',r.CUSTO_ENVIO,'text',false,'R$ 0,00'),
+          fInp('OBS_PECAS','Observação do envio de peças',r.OBS_PECAS),
+          fInp('CUSTO_ENVIO','Custo de Envio',r.CUSTO_ENVIO,'text',false,'R$ 0,00'),
         '</div>',
-        '<div class="fg3">',
-          fYN('TRATATIVA_FINALIZADA','Tratativa Finalizada?',r.TRATATIVA_FINALIZADA,true,isErr('TRATATIVA_FINALIZADA')),
+        '<div class="fg" style="grid-template-columns:1fr 1fr 1fr">',
+          fInp('PAGO_PLAT','Pago a Plataforma ou Cliente',r.PAGO_PLAT,'text',false,'R$ 0,00'),
+          fInp('CUSTOS_TOTAL','Custos Total',r.CUSTOS_TOTAL,'text',false,'R$ 0,00'),
+          fYN('TRATATIVA_FINALIZADA','Tratativa Cliente FINALIZADA?',r.TRATATIVA_FINALIZADA,true,isErr('TRATATIVA_FINALIZADA')),
         '</div>',
       '</div>',
     '</div>',
 
-    // ── SEÇÃO: Disputa (SEPARADA e INDEPENDENTE) ─────────────────────
-    
+    // ── SEÇÃO: Tratativa Plataforma ──────────────────────────────────────
+    '<div class="fsec fsec-disp">',
+      '<div class="fsec-tit-row">',
+        '<div class="fsec-tit">⚖️ Tratativa Plataforma</div>',
+        '<button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button>',
+      '</div>',
+      '<div class="fsec-body">',
+        '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:4px 0 2px">Tratativa 1</div>',
+        '<div class="fg3">',
+          fSel('MOD_TRAT_PLAT1','Modalidade Trat. Plat. 1',r.MOD_TRAT_PLAT1||'',MODALIDADES),
+          fInp('MOTIVO_TRAT1','Motivo da Tratativa 1',r.MOTIVO_TRAT1||''),
+          fInp('DATA_TRAT1','Data da Tratativa 1',r.DATA_TRAT1||'','text',false,'DD/MM/AAAA'),
+        '</div>',
+        '<div class="fg" style="grid-template-columns:1fr 2fr">',
+          fInp('PROTOCOLO1','Protocolo 1',r.PROTOCOLO1||''),
+          fInp('OBS_TRAT1','Observações da Tratativa 1',r.OBS_TRAT1||''),
+        '</div>',
+        '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:8px 0 2px">Tratativa 2</div>',
+        '<div class="fg3">',
+          fSel('MOD_TRAT_PLAT2','Modalidade Trat. Plat. 2',r.MOD_TRAT_PLAT2||'',MODALIDADES),
+          fInp('MOTIVO_TRAT2','Motivo da Tratativa 2',r.MOTIVO_TRAT2||''),
+          fInp('DATA_TRAT2','Data da Tratativa 2',r.DATA_TRAT2||'','text',false,'DD/MM/AAAA'),
+        '</div>',
+        '<div class="fg" style="grid-template-columns:1fr 2fr">',
+          fInp('PROTOCOLO2','Protocolo 2',r.PROTOCOLO2||''),
+          fInp('OBS_TRAT2','Observações da Tratativa 2',r.OBS_TRAT2||''),
+        '</div>',
+        '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:8px 0 2px">Disputa</div>',
+        '<div class="fg">',
+          fYN('DISPUTA_ABERTA','Disputa Aberta?',r.DISPUTA_ABERTA,true,isErr('DISPUTA_ABERTA')),
+          fInp('PLAT_DISPUTA','Plataforma Disputa',r.PLAT_DISPUTA),
+        '</div>',
+        '<div class="fg" style="grid-template-columns:1fr 2fr" id="mktExtra">',
+          fInp('ID_TRANSACAO','ID Transação',r.ID_TRANSACAO),
+          fYN('REEMBOLSO_MKT','Reembolso do Marketplace?',r.REEMBOLSO_MKT,true,isErr('REEMBOLSO_MKT')),
+        '</div>',
+        '<div class="fg3">',
+          fYN('DISPUTA_FINALIZADA','Disputa Finalizada?',r.DISPUTA_FINALIZADA,true,isErr('DISPUTA_FINALIZADA')),
+          fInp('CREDITO_RECEBIDO_VALOR','R$ Crédito Recebido',r.CREDITO_RECEBIDO_VALOR,'text',false,'R$ 0,00'),
+          fYN('CREDITO_RECEBIDO','Crédito Recebido?',r.CREDITO_RECEBIDO),
+        '</div>',
+        '<div class="fg3">',
+          fInp('OBS_DISPUTA','Observações da Disputa',r.OBS_DISPUTA),
+          fYN('TRAT_PLAT_FIN','Tratativa Plataforma FINALIZADA?',r.TRAT_PLAT_FIN||''),
+        '</div>',
+      '</div>',
+    '</div>',
+
         // ── SEÇÃO: Full / Estoque ─────────────────────────────────────────
         '<div class="fsec fsec-full">',
           '<div class="fsec-tit-row">',
@@ -3269,37 +3458,7 @@ function openModal(rec){
         '</div>',
         
 '<div class="fsec fsec-disp">',
-      '<div class="fsec-tit-row">',
-        '<div class="fsec-tit">⚖️ Disputa</div>',
-        '<button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button>',
-      '</div>',
-      '<div class="fsec-body">',
-        '<div class="fg3" id="dBase">',
-          fYN('DISPUTA_ABERTA','Disputa Aberta?',r.DISPUTA_ABERTA,true,isErr('DISPUTA_ABERTA')),
-        '</div>',
-                '<div class="fg" style="grid-template-columns:2fr 1fr">',
-          fInp('OBS_DISPUTA','Obs. Disputa',r.OBS_DISPUTA),
-          fSel('PLAT_DISPUTA','Plataforma',r.PLAT_DISPUTA,['','Mercado Livre','Shopee','Amazon','Magalu','TikTok']),
-        '</div>',
-        '<div class="fg3 '+(dA?'show ':'')+'" id="dX3">',
-          fYN('REEMBOLSO_MKT','Reembolso do Marketplace?',r.REEMBOLSO_MKT,true,isErr('REEMBOLSO_MKT')),
-        '</div>',
-        '<div class="fg3 '+(dA&&mktA?'show ':'')+'" id="mktExtra">',
-          fInp('ID_TRANSACAO','ID Transação',r.ID_TRANSACAO),
-          fInp('CREDITO','R$ Crédito',r.CREDITO,'text',false,'R$ 0,00'),
-        '</div>',
-        '<div class="fg3 '+(dA?'show ':'')+'" id="credRecebidoBox">',
-          fYN('CREDITO_RECEBIDO','Crédito Recebido?',r.CREDITO_RECEBIDO),
-        '</div>',
-        '<div class="fg3 '+(dA&&credA?'show ':'')+'" id="credExtra">',
-          fInp('CREDITO_RECEBIDO_VALOR','R$ Créd. Recebido',r.CREDITO_RECEBIDO_VALOR,'text',false,'R$ 0,00'),
-        '</div>',
-        '<div class="fg3 '+(dA?'show ':'')+'" id="dX1">',
-          fYN('DISPUTA_FINALIZADA','Disputa Finalizada?',r.DISPUTA_FINALIZADA,true,isErr('DISPUTA_FINALIZADA')),
-        '</div>',
-      '</div>',
-    '</div>',
-
+      
   ].join('');
 
   var _dlg=document.getElementById('dlgOv');
