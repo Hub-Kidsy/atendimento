@@ -168,6 +168,12 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
   background:#f3f4f6;
   border-right:1px solid var(--out);border-bottom:1px solid var(--out-v);
 }
+.bt .col-id-venda{
+  position:sticky;left:164px;z-index:3;
+  width:140px;min-width:140px;
+  background:#f3f4f6;
+  border-right:1px solid var(--out);border-bottom:1px solid var(--out-v);
+}
 
 
 /* ── THEAD — UMA ÚNICA ROW ───────────────────────────────────────── */
@@ -1564,10 +1570,7 @@ body{
     </div>
   </div>
 </div>
-
 <script>
-
-
 // ═══ HOME PAGE SCRIPT ═══
 const quotes = [{"greeting": "Bom dia! Que hoje seja produtivo.", "quote": "O sucesso é a soma de pequenos esforços repetidos dia após dia.", "author": "Robert Collier"}, {"greeting": "Bem-vindo! Você está no caminho certo.", "quote": "A única maneira de fazer um ótimo trabalho é amar o que você faz.", "author": "Steve Jobs"}, {"greeting": "Mais um dia incrível começa agora.", "quote": "Não é sobre ter tempo, é sobre criar tempo.", "author": "Oprah Winfrey"}, {"greeting": "Que a sua energia hoje mova montanhas.", "quote": "O segredo para seguir em frente é começar.", "author": "Mark Twain"}, {"greeting": "Hoje é uma nova oportunidade de brilhar.", "quote": "Sonhos não funcionam a menos que você trabalhe.", "author": "John C. Maxwell"}, {"greeting": "Olá! Vamos conquistar mais um dia juntos.", "quote": "A persistência é o caminho do êxito.", "author": "Charles Chaplin"}, {"greeting": "Energia positiva para mais um dia de vitórias.", "quote": "Tudo parece impossível até que seja feito.", "author": "Nelson Mandela"}];
 function updateDateTime() {
@@ -1666,7 +1669,7 @@ const COLUMN_NAMES = {
   OBS_DISPUTA:          ['Observações da Disputa','OBS_DISPUTA','OBS DISPUTA'],
   TRAT_PLAT_FIN:        ['Tratativa Plataofrma FINALIZADA?','Tratativa Plataforma FINALIZADA?','TRAT_PLAT_FIN'],
   DATA_PREVISTA_RETORNO:['Data Prevista de Retorno','DATA_PREVISTA_RETORNO','DATA PREVISTA RETORNO'],
-  STATUS_FULL:          ['STATUS FINAL FULL','STATUS_FULL','STATUS FULL'],
+  STATUS_FULL:          ['STATUS FINAL PLATAFORMA','STATUS FINAL FULL','STATUS_FULL','STATUS FULL'],
   CHEGOU_CARDEX:        ['CHEGOU NA CARDEX?','CHEGOU_CARDEX','CHEGOU CARDEX','Chegou na Cardex?'],
   NF_TOTAL:             ['NFs Devolução Total','NF_TOTAL','NF TOTAL','NF Total'],
   VALOR_NF:             ['Valor da NF','VALOR_NF','VALOR NF'],
@@ -1822,8 +1825,9 @@ let hiddenSections=new Set(); // 'id','trat','disp'
 // IDENTIFICAÇÃO: Status(ro), Modalidade, Nome(ro), Canal(ro), EMPR, Modelo,
 //                NF, NF_DEVOL, NF_DEVOL_EMISSAO, NEC_NF_DEVOL, AUTOR
 const ID_COLS=[
-  // Identificação — ordem da planilha raiz cols 1-16
-  {k:'ID_VENDA',         l:'ID Venda',                t:'txt'},
+  // Identificação — cols 0-16 (STATUS e ID_VENDA readonly)
+  {k:'STATUS',           l:'Status',                  t:'ro'},
+  {k:'ID_VENDA',         l:'ID Venda',                t:'ro'},
   {k:'NOME',             l:'Nome',                    t:'txt'},
   {k:'CANAL',            l:'Canal De Venda',          t:'sel', opts:['','Mercado Livre','Shopee','Amazon','Magalu','TikTok','Cardex']},
   {k:'EMPR',             l:'EMPR.',                   t:'sel', opts:['','JLD','DGL'], req:true},
@@ -1885,11 +1889,12 @@ const DC=[
   {k:'TRAT_PLAT_FIN',         l:'Trat. Plataforma FINALIZADA?', t:'sel', opts:['','SIM','NÃO']},
 ];
 const FS=[
-  // Full / Estoque — cols 53-54
+  // Retorno — cols 52-54
   {k:'DATA_PREVISTA_RETORNO',l:'Data Prevista de Retorno',  t:'txt'},
-  {k:'STATUS_FULL',          l:'STATUS FINAL FULL',         t:'sel', opts:['','OK Estoque Full','Aguardando Retirada','Em Troca','Cliente c/ Produto','Descarte Estoque Full','Não foi identificado']},
+  {k:'STATUS_FULL',          l:'STATUS FINAL PLATAFORMA',   t:'sel', opts:['','OK Estoque Full','Aguardando Retirada','Em Troca','Cliente c/ Produto','Descarte Estoque Full','Não foi identificado']},
   {k:'CHEGOU_CARDEX',        l:'CHEGOU NA CARDEX?',         t:'sel', opts:['','SIM','NÃO']},
 ];
+// Seção Financeiro removida da Edição em Massa
 
 
 window.addEventListener('beforeunload',e=>{
@@ -1906,7 +1911,6 @@ window.onload=()=>{
   if(cfg.sheetId&&cfg.apiKey){switchPage(0);loadData();}
   else{switchPage(4);}
 };
-function toggleCfg(){sidebarNav(3);}
 function saveCfg(){
   ['sheetId','sheetName','apiKey','clientId'].forEach(k=>{
     var el=document.getElementById(k);if(el){cfg[k]=el.value.trim();localStorage.setItem(k,cfg[k]);}
@@ -2441,7 +2445,8 @@ async function saveRecord(){
   const _editCols=Object.entries(COL).filter(([,i])=>!FORMULA_COLS.has(i)).map(([k,i])=>({key:k,idx:i}));
   const get=id=>{const el=document.getElementById('f_'+id);if(el)return el.value;for(const r of document.querySelectorAll('input[name="f_'+id+'"]'))if(r.checked)return r.value;return'';};
   const novos={};_editCols.forEach(({key})=>{novos[key]=get(key)||'';});
-  const miss=OBRIG_KEYS.filter(f=>!novos[f]);if(['Devolução','Mensagem','Reclamação'].includes(novos.MODALIDADE)&&!novos.MOTIVO)miss.push('MOTIVO');if(novos.DISPUTA_ABERTA==='SIM'&&!novos.DISPUTA_FINALIZADA)miss.push('DISPUTA_FINALIZADA');if(novos.DISPUTA_FINALIZADA==='SIM'&&!novos.REEMBOLSO_MKT)miss.push('REEMBOLSO_MKT');if(novos.REEMBOLSO_MKT==='SIM'&&!novos.CREDITO)miss.push('CREDITO');
+  // Usar getMiss com os novos valores do formulário (objeto novos)
+  const miss=getMiss(novos);
   if(miss.length){
     var mm=document.getElementById('dlgMissMsg');
     if(mm){mm.style.display='block';mm.innerHTML='&#9888;&#65039; Preencha os seguintes campos obrigatórios:<br>&#8226; '+miss.map(f=>ML[f]||f).join('<br>&#8226; ');}
@@ -2456,7 +2461,15 @@ async function saveRecord(){
     if(!confirm(dupMsg))return; // usuário cancelou
   }
   // ────────────────────────────────────────────────────────────────
-  const tkn=await getToken();if(!tkn)return;
+  const tkn=await getToken();
+  if(!tkn){
+    snack('Autenticação necessária. Faça login nas Configurações.','error');
+    if(typeof sidebarNav==='function'){
+      if(confirm('Para salvar é necessário autenticar com o Google.\nAbrir Configurações?'))
+        sidebarNav(4);
+    }
+    return;
+  }
   const isNew=!curRec;
   if(isNew){
     // ── Localizar primeira linha livre (col C vazia E col D vazia/fórmula='') ────
@@ -2671,14 +2684,16 @@ function buildBulkHead(thead){
   let r0='<tr>';
   // Colunas fixas: th-sec vazio (fundo escuro igual ao background)
   r0+='<th class="col-ln"><div class="th-sec"></div><div class="th-col"><div class="th-top"><span class="th-label">#</span><div class="th-controls"><button class="th-btn" onclick="setSortDir(\'_LN\',\'asc\')">↑</button><button class="th-btn" onclick="setSortDir(\'_LN\',\'desc\')">↓</button></div></div></div></th>';
-  r0+=mkFixed('STATUS','Status','col-status');
-  r0+=mkFixed('ID_VENDA','ID Venda','col-id-venda');
+  // STATUS e ID_VENDA agora fazem parte do visID (t:'ro' no ID_COLS)
   // Seção Identificação
   visID.forEach((c,i)=>{r0+=mkThWithSec(c,'sec-id',i===0?'📦 Identificação':null,'id');});
   // Seção Tratativa Cliente
   visTR.forEach((c,i)=>{r0+=mkThWithSec(c,'sec-trat',i===0?'📋 Tratativa Cliente':null,'trat');});
   // Seção Tratativa Plataforma
   visDI.forEach((c,i)=>{r0+=mkThWithSec(c,'sec-disp',i===0?'⚖️ Tratativa Plataforma':null,'disp');});
+  // Seção Retorno
+  visFS.forEach((c,i)=>{r0+=mkThWithSec(c,'sec-full',i===0?'🏭 Retorno':null,'full');});
+  // Seção Financeiro
   r0+='</tr>';
   thead.innerHTML=r0;
 }
@@ -2799,7 +2814,8 @@ function _renderVirtual(tbody,sheet){
   const visID=ID_COLS.filter(c=>!hiddenCols.has(c.k));
   const visTR=TC.filter(c=>!hiddenCols.has(c.k));
   const visDI=DC.filter(c=>!hiddenCols.has(c.k));
-  const colCount=3+visID.length+visTR.length+visDI.length;
+  const visFS=(typeof FS!=='undefined'?FS:[]).filter(c=>!hiddenCols.has(c.k));
+  const colCount=3+visID.length+visTR.length+visDI.length+visFS.length;
 
   const parts=[];
   // Spacer superior
@@ -2816,9 +2832,10 @@ function _renderVirtual(tbody,sheet){
       +'<td class="col-ln">'+r._row+'</td>'
       +'<td class="col-status"><span class="chip '+(CC[r.STATUS]||'')+'" style="font-size:10px;padding:2px 5px">'+(r.STATUS||'—')+'</span></td>'
       +'<td class="col-id-venda">'+(r.ID_VENDA||'—')+'</td>');
-    visID.forEach(c=>{parts.push(mkIDCell(r,i,c));});
+    visID.filter(c=>c.k!=='STATUS'&&c.k!=='ID_VENDA').forEach(c=>{parts.push(mkIDCell(r,i,c));});
     visTR.forEach(c=>{parts.push(mkEditCell(r,i,c,'sec-trat'));});
     visDI.forEach(c=>{parts.push(mkEditCell(r,i,c,'sec-disp'));});
+    visFS.forEach(c=>{parts.push(mkEditCell(r,i,c,'sec-full'));});
     parts.push('</tr>');
   }
   // Spacer inferior
@@ -2834,20 +2851,28 @@ function _renderAllRows(tbody){
   const visID=ID_COLS.filter(c=>!hiddenCols.has(c.k));
   const visTR=TC.filter(c=>!hiddenCols.has(c.k));
   const visDI=DC.filter(c=>!hiddenCols.has(c.k));
+    const visFS=(typeof FS!=='undefined'?FS:[]).filter(c=>!hiddenCols.has(c.k));
   const parts=[];
   bulkFiltered.forEach(i=>{
     const r=bulkOrig[i];
     parts.push('<tr id="br_'+i+'" class="'+(bulkChg[i]?'chg':'')+'">'
-      +'<td class="col-ln">'+r._row+'</td>'
-      +'<td class="col-status"><span class="chip '+(CC[r.STATUS]||'')+'" style="font-size:10px;padding:2px 5px">'+(r.STATUS||'—')+'</span></td>'
-      +'<td class="col-id-venda">'+(r.ID_VENDA||'—')+'</td>');
-    visID.forEach(c=>{parts.push(mkIDCell(r,i,c));});
+      +'<td class="col-ln">'+r._row+'</td>');
+    visID.forEach(c=>{
+      if(c.k==='STATUS'){
+        parts.push('<td class="sec-id col-status" data-row="'+i+'" data-col="STATUS" style="white-space:nowrap">'
+          +'<span class="chip '+(CC[r.STATUS]||'')+'" style="font-size:10px;padding:2px 5px">'+(r.STATUS||'—')+'</span></td>');
+      }else if(c.k==='ID_VENDA'){
+        parts.push('<td class="sec-id col-id-venda" data-row="'+i+'" data-col="ID_VENDA">'+(r.ID_VENDA||'—')+'</td>');
+      }else{
+        parts.push(mkIDCell(r,i,c));
+      }
+    });
     visTR.forEach(c=>{parts.push(mkEditCell(r,i,c,'sec-trat'));});
     visDI.forEach(c=>{parts.push(mkEditCell(r,i,c,'sec-disp'));});
+    visFS.forEach(c=>{parts.push(mkEditCell(r,i,c,'sec-full'));});
     parts.push('</tr>');
   });
   tbody.innerHTML=parts.join('');
-  // Resetar cache virtual para próxima chamada renderizar de novo
   _lastVStart=-1;_lastVEnd=-1;_lastVTarget=null;
 }
 
@@ -3620,6 +3645,13 @@ function clearToken(){
   _gisTokenClient = null;
   snack('Token removido. Faça login novamente ao salvar.', 'success');
 }
+function clearToken(){
+  sessionStorage.removeItem('gToken');
+  sessionStorage.removeItem('gTokenExp');
+  _gisTokenClient = null;
+  snack('Token removido. Faça login novamente ao salvar.', 'success');
+}
+
 </script>
 </body>
 </html>
