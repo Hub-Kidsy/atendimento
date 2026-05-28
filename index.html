@@ -184,10 +184,11 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 }
 /* Colunas fixas no thead têm z-index maior */
 .bt thead .col-ln,.bt thead .col-status,.bt thead .col-id-venda{
-  z-index:10;
+  position:sticky; top:0; z-index:12;
 }
-.bt thead .col-ln   {left:0;   background:#374151;}
-.bt thead .col-status{left:36px; background:#374151;}
+.bt thead .col-ln      {left:0px;   background:#374151;}
+.bt thead .col-status  {left:36px;  background:#374151;}
+.bt thead .col-id-venda{left:164px; background:#374151;}
 
 /* ── th-sec: tarja de seção (topo do TH, fundo colorido) ──────────── */
 
@@ -196,9 +197,16 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .bt thead th.sec-trat 
 .bt thead th.sec-disp 
 /* Colunas fixas: th-sec escuro e vazio */
-.bt thead .col-ln     .th-sec,
+.bt thead .col-ln     .th-sec{
+  display:flex;align-items:center;gap:4px;
+  min-height:22px;padding:2px 4px;
+  font-size:10px;font-weight:600;letter-spacing:.5px;
+  white-space:nowrap;overflow:hidden;
+}
 .bt thead .col-status .th-sec,
-.bt thead .col-id-venda .th-sec
+.bt thead .col-id-venda .th-sec{
+  display:none;
+}
 
 /* ── th-col: área com label + filtro ──────────────────────────────── */
 
@@ -801,11 +809,13 @@ body{
 .bt th.sec-id        { background:#374151; color:#fff; }
 .bt th.sec-trat      { background:#1a73e8; color:#fff; }
 .bt th.sec-disp      { background:#ea580c; color:#fff; }
+.bt th.sec-full      { background:#16a34a; color:#fff; }
 
 /* ── Cores de seção (célula) ─────────────────────────────────────── */
 .bt td.sec-id        { background:#f0f6ff; }
 .bt td.sec-trat      { background:#f5f3ff; }
 .bt td.sec-disp      { background:#fff7ed; }
+.bt td.sec-full      { background:#f0fdf4; }
 
 /* Seleção */
 .bt td.sel           { background:#dbeafe!important; outline:2px solid #2563eb; outline-offset:-2px; overflow:visible!important; z-index:1; }
@@ -986,6 +996,7 @@ body{
 .bt th.sec-id   .th-sec { background:#1f2937; }
 .bt th.sec-trat .th-sec { background:#1d4ed8; }
 .bt th.sec-disp .th-sec { background:#c2410c; }
+.sec-full .th-sec { background:#166534; }
 
 
 /* ── col-id-venda: alinhado com padrão de col-status ── */
@@ -1234,16 +1245,16 @@ body{
     <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
   </button>
   <nav class="sidebar-nav" role="navigation" aria-label="Menu principal">
-    <button class="sidebar-item active" id="snav0" data-page="0" data-tooltip="Home" onclick="sidebarNav(0)">
+    <button class="sidebar-item active" id="snav0" data-page="0" data-tooltip="Home" onclick="if(typeof sidebarNav==='function')sidebarNav(0)">
       <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg> <span class="sidebar-label">Home</span>
     </button>
-    <button class="sidebar-item" id="snav1" data-page="1" data-tooltip="Dashboard" onclick="sidebarNav(1)">
+    <button class="sidebar-item" id="snav1" data-page="1" data-tooltip="Dashboard" onclick="if(typeof sidebarNav==='function')sidebarNav(1)">
       <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg> <span class="sidebar-label">Dashboard</span>
     </button>
-    <button class="sidebar-item" id="snav2" data-page="2" data-tooltip="Atendimentos" onclick="sidebarNav(2)">
+    <button class="sidebar-item" id="snav2" data-page="2" data-tooltip="Atendimentos" onclick="if(typeof sidebarNav==='function')sidebarNav(2)">
       <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg> <span class="sidebar-label">Atendimentos <span class="sidebar-badge" id="snav2Count">0</span></span>
     </button>
-    <button class="sidebar-item" id="snav3" data-page="3" data-tooltip="Edição em Massa" onclick="sidebarNav(3)">
+    <button class="sidebar-item" id="snav3" data-page="3" data-tooltip="Edição em Massa" onclick="if(typeof sidebarNav==='function')sidebarNav(3)">
       <svg viewBox="0 0 24 24"><path d="M3 3h8v8H3V3zm0 10h8v8H3v-8zm10-10h8v8h-8V3zm0 10h8v8h-8v-8z"/></svg> <span class="sidebar-label">Edição em Massa <span class="sidebar-badge" id="snav3Count">0</span></span>
     </button>
     <div class="sidebar-sep"></div>
@@ -1251,7 +1262,7 @@ body{
       <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> <span class="sidebar-label">Novo Registro</span>
     </button>
     <div class="sidebar-sep"></div>
-    <button class="sidebar-item" id="snavCfg" data-page="4" data-tooltip="Configurações" onclick="sidebarNav(4)">
+    <button class="sidebar-item" id="snavCfg" data-page="4" data-tooltip="Configurações" onclick="if(typeof sidebarNav==='function')sidebarNav(4)">
       <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg> <span class="sidebar-label">Configurações</span>
     </button>
   </nav>
@@ -1566,12 +1577,283 @@ body{
     <div class="dlg-body" id="dlgBody"></div>
     <div class="dlg-ftr">
       <button class="btn btn-outlined" onclick="closeDlg()">Cancelar</button>
-      <button class="btn btn-filled" onclick="saveRecord()">Salvar</button>
+      <button class="btn btn-filled"   onclick="saveRecord()">Salvar</button>
     </div>
   </div>
 </div>
 <script>
 // ═══ HOME PAGE SCRIPT ═══
+// ── STUB: captura chamadas antes do JS carregar ──────────────────
+
+function sidebarNav(n){switchPage(n);if(window.innerWidth<=600)closeMobileSidebar();}
+
+function toggleCfg(){sidebarNav(3);}
+function openModal(rec){
+  // Resetar mensagem de validação ao abrir popup
+  var _mm=document.getElementById('dlgMissMsg');if(_mm){_mm.style.display='none';_mm.innerHTML='';}
+  // Limpar marcações de duplicidade
+  document.querySelectorAll('.dup-warn').forEach(function(el){el.classList.remove('dup-warn');});
+  // POPUP REFATORADO — sincronizado com planilha 52 colunas
+  curRec=rec;const isNew=!rec;const r=rec||{};
+
+  var _dt=document.getElementById('dlgTit');
+  if(_dt)_dt.textContent=isNew?'Novo Registro':'Editar Registro';
+  var _ds=document.getElementById('dlgSub');
+  if(_ds)_ds.textContent=isNew?'Preencha os campos obrigatórios':'Linha '+r._row+' — '+r.ID_VENDA;
+
+  const miss=rec?getMiss(rec):[];
+  const tpA=['SIM','Reaberto','REABERTA'].includes((r.ABERTO_TRAT_PLAT||'').trim());
+  const t2A=!!(r.MOD_TRAT_PLAT2||r.MOTIVO_TRAT2||r.PROTOCOLO2);
+  const dA=(r.DISPUTA_ABERTA||'')==='SIM';
+  const pA=r.NEC_PECAS==='SIM';
+  const mktA=r.REEMBOLSO_MKT==='SIM';
+  const credA=r.CREDITO_RECEBIDO==='SIM';
+  const isErr=k=>!isNew&&miss.includes(k);
+
+  // Alertas
+  const mH=miss.length&&!isNew
+    ?'<div class="alert-b a-err"><span>⚠</span><span><strong>Campos em falta:</strong> '+miss.map(f=>ML[f]||f).join(' • ')+'</span></div>':'' ;
+  const nH=isNew
+    ?'<div class="alert-b a-inf"><span>💡</span><span>Digite o ID — Canal, EMPR. e dados serão preenchidos automaticamente.</span></div>':'';
+
+  document.getElementById('dlgBody').innerHTML=[
+    mH,nH,
+
+
+        // ── SEÇÃO: Identificação ─────────────────────────────────────────
+    '<div class="fsec fsec-id">',
+      '<div class="fsec-tit-row">',
+        '<div class="fsec-tit">📦 Identificação</div>',
+        '<button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button>',
+      '</div>',
+      '<div class="fsec-body">',
+        '<div class="fg">',
+          fInp('ID_VENDA','ID Venda',r.ID_VENDA,'text',true,false,false,isNew),
+          fSel('CANAL','Canal',r.CANAL,['','Mercado Livre','Shopee','Amazon','Magalu','TikTok','Cardex'],true,isErr('CANAL')),
+          fSel('EMPR','EMPR.',r.EMPR,['','JLD','DGL'],true,isErr('EMPR')),
+          fSel('MODELO','Modelo',r.MODELO,['','Full','Normal','Flex','NE'],true,isErr('MODELO')),
+        '</div>',
+        '<div class="fg3">',
+          fInp('NOME','Nome',r.NOME),
+          fInp('DATA_VENDA','Data Venda',r.DATA_VENDA,'text',false,'DD/MM/AAAA'),
+          fInp('SKU','SKU',r.SKU),
+          fInp('QT','QT',r.QT),
+        '</div>',
+        '<div class="fg3">',
+          fInp('RASTREIO','Rastreio',r.RASTREIO),
+          fInp('NF','NF',r.NF),
+          fInp('NF_DEVOL','NF Devol.',r.NF_DEVOL),
+        '</div>',
+        '<div class="fg3">',
+          '<div class="fld"><label>Autor</label><div class="mdi" style="background:#f8f9fa;color:#5f6368;height:34px;line-height:34px;font-size:13px;padding:0 9px;border-radius:6px;border:1px solid var(--out-v)">'+(r.AUTOR||'APP')+'</div></div>',
+        '</div>',
+        // Full/Estoque subsecção
+      '</div>',
+    '</div>',
+
+    // ── SEÇÃO: Tratativa Cliente ────────────────────────────────────────
+    '<div class="fsec fsec-trat">',
+      '<div class="fsec-tit-row">',
+        '<div class="fsec-tit">📋 Tratativa Cliente</div>',
+        '<button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button>',
+      '</div>',
+      '<div class="fsec-body">',
+        '<div class="fg" style="grid-template-columns:2fr 1fr">',
+          fSel('MOD_TRAT_CLIENTE','Modalidade Tratativa',r.MOD_TRAT_CLIENTE,MODALIDADES),
+          fYN3('CHAMADO_ABERTO','Aberto Atendimento?',r.CHAMADO_ABERTO),
+        '</div>',
+        '<div class="fg3">',
+          fInp('DATA_TRATATIVA','DATA Atendimento',r.DATA_TRATATIVA,'text',false,'DD/MM/AAAA'),
+          fSel('MOTIVO','Motivo Tratativa do Cliente',r.MOTIVO,MOTIVOS,false,isErr('MOTIVO')),
+          fSel('DETALHAMENTO','Detalhamento da Tratativa',r.DETALHAMENTO,DETALHAMENTOS),
+        '</div>',
+        '<div class="fg" style="grid-template-columns:2fr">',
+          fInp('OBS_RECLAM','Observações da Tratativa',r.OBS_RECLAM),
+        '</div>',
+        '<div class="fg">',
+          fYN('NEC_PECAS','Nec. Enviar Peças?',r.NEC_PECAS,true,isErr('NEC_PECAS')),
+        '</div>',
+        '<div class="fg3 '+(pA?'show ':'')+'" id="pecasExtra">',
+          fYN('PECAS_ENVIADAS','Enviadas Peças p/ Cliente?',r.PECAS_ENVIADAS),
+          fYN('REENVIO_RECEBIDO','Reenvio recebido pelo cliente?',r.REENVIO_RECEBIDO),
+        '</div>',
+        '<div class="fg '+(pA?'show ':'')+'" style="grid-template-columns:2fr 1fr">',
+          fInp('OBS_PECAS','Observação do envio de peças',r.OBS_PECAS),
+          fInp('CUSTO_ENVIO','Custo de Envio',r.CUSTO_ENVIO,'text',false,'R$ 0,00'),
+        '</div>',
+        '<div class="fg" style="grid-template-columns:1fr 1fr 1fr">',
+          fInp('PAGO_PLAT','Pago a Plataforma ou Cliente',r.PAGO_PLAT,'text',false,'R$ 0,00'),
+          fInp('CUSTOS_TOTAL','Custos Total',r.CUSTOS_TOTAL,'text',false,'R$ 0,00'),
+        '</div>',
+        '<div class="fg" style="grid-template-columns:1fr 1fr 1fr">',
+          fYN('TRAT_CLIENTE_FIN_REP','Impacto na Reputação?',r.TRAT_CLIENTE_FIN_REP||''),
+          fYN('DEVOLUCAO_ABERTA','Aberto processo de devolução?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA')),
+          fYN('TRATATIVA_FINALIZADA','Tratativa Cliente FINALIZADA?',r.TRATATIVA_FINALIZADA,true,isErr('TRATATIVA_FINALIZADA')),
+        '</div>',
+      '</div>',
+    '</div>',
+
+    // ── SEÇÃO: Tratativa Plataforma ──────────────────────────────────────
+    '<div class="fsec fsec-disp">',
+      '<div class="fsec-tit-row">',
+        '<div class="fsec-tit">⚖️ Tratativa Plataforma</div>',
+        '<button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button>',
+      '</div>',
+      '<div class="fsec-body">',
+        '<div class="fg3">',
+          fYN3('ABERTO_TRAT_PLAT','Aberto Tratativa Plataforma?',r.ABERTO_TRAT_PLAT||'',true,isErr('ABERTO_TRAT_PLAT')),
+        '</div>',
+        '<div id="tpExtra" style="display:'+(tpA?'contents':'none')+'">',
+          '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:4px 0 2px">Tratativa 1</div>',
+          '<div class="fg3">',
+            fSel('MOD_TRAT_PLAT1','Modalidade Trat. Plat. 1',r.MOD_TRAT_PLAT1||'',MODALIDADES_PLAT),
+            fSel('MOTIVO_TRAT1','Motivo da Tratativa 1',r.MOTIVO_TRAT1||'',MOTIVOS_TRAT),
+            fInp('DATA_TRAT1','Data da Tratativa 1',r.DATA_TRAT1||'','text',false,'DD/MM/AAAA'),
+          '</div>',
+          '<div class="fg" style="grid-template-columns:1fr 2fr">',
+            fInp('PROTOCOLO1','Protocolo 1',r.PROTOCOLO1||''),
+            fInp('OBS_TRAT1','Observações da Tratativa 1',r.OBS_TRAT1||''),
+          '</div>',
+          '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:8px 0 2px;display:flex;align-items:center;gap:8px">Tratativa 2 <button type="button" class="btn-sm" style="padding:1px 7px;font-size:12px;border-radius:4px;border:1px solid var(--pri);color:var(--pri);background:transparent;cursor:pointer" onclick="var el=document.getElementById(&quot;trat2Extra&quot;);el.style.display=el.style.display===&quot;none&quot;?&quot;contents&quot;:&quot;none&quot;" title="Expandir Tratativa 2">+</button></div>',
+          '<div id="trat2Extra" style="display:'+(t2A?'contents':'none')+'">',
+            '<div class="fg3">',
+              fSel('MOD_TRAT_PLAT2','Modalidade Trat. Plat. 2',r.MOD_TRAT_PLAT2||'',MODALIDADES_PLAT),
+              fSel('MOTIVO_TRAT2','Motivo da Tratativa 2',r.MOTIVO_TRAT2||'',MOTIVOS_TRAT),
+              fInp('DATA_TRAT2','Data da Tratativa 2',r.DATA_TRAT2||'','text',false,'DD/MM/AAAA'),
+            '</div>',
+            '<div class="fg" style="grid-template-columns:1fr 2fr">',
+              fInp('PROTOCOLO2','Protocolo 2',r.PROTOCOLO2||''),
+              fInp('OBS_TRAT2','Observações da Tratativa 2',r.OBS_TRAT2||''),
+            '</div>',
+          '</div>',
+          '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:8px 0 2px">Disputa</div>',
+          '<div class="fg3">',
+            fYN('DISPUTA_ABERTA','Disputa Aberta?',r.DISPUTA_ABERTA),
+          '</div>',
+          '<div id="disputaExtra" style="display:'+(dA?'block':'none')+'">',
+            '<div class="fg" style="grid-template-columns:1fr 1fr">',
+              fInp('PLAT_DISPUTA','Plataforma Disputa',r.PLAT_DISPUTA),
+              fYN('REEMBOLSO_MKT','Reembolso do Marketplace?',r.REEMBOLSO_MKT),
+            '</div>',
+            '<div class="fg" style="grid-template-columns:1fr 1fr">',
+              fInp('CREDITO_RECEBIDO_VALOR','R$ Crédito Recebido',r.CREDITO_RECEBIDO_VALOR,'text',false,'R$ 0,00'),
+              fYN('CREDITO_RECEBIDO','Crédito Recebido?',r.CREDITO_RECEBIDO),
+            '</div>',
+            '<div class="fg" style="grid-template-columns:1fr">',
+              fInp('OBS_DISPUTA','Observações da Disputa',r.OBS_DISPUTA),
+            '</div>',
+            '<div class="fg3">',
+              fYN('DISPUTA_FINALIZADA','Disputa Finalizada?',r.DISPUTA_FINALIZADA),
+            '</div>',
+          '</div>',
+          '<div class="fg3">',
+            fYN('TRAT_PLAT_FIN','Tratativa Plataforma FINALIZADA?',r.TRAT_PLAT_FIN||'',true,isErr('TRAT_PLAT_FIN')),
+          '</div>',
+        '</div>',
+      '</div>',
+    '</div>',
+
+        // ── SEÇÃO: Full / Estoque ─────────────────────────────────────────
+        '<div class="fsec fsec-full">',
+          '<div class="fsec-tit-row">',
+            '<div class="fsec-tit">🏭 Retorno</div>',
+            '<button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button>',
+          '</div>',
+          '<div class="fsec-body">',
+            '<div class="fg3">',
+              fYN('CHEGOU_CARDEX','Chegou na Cardex?',r.CHEGOU_CARDEX),
+              fSel('STATUS_FULL','Status Full',r.STATUS_FULL,['','OK Estoque Full','Aguardando Retirada','Em Troca','Cliente c/ Produto','Descarte Estoque']),
+              fInp('DATA_PREVISTA_RETORNO','Data Prev. Retorno',r.DATA_PREVISTA_RETORNO,'text',false,'DD/MM/AAAA'),
+            '</div>',
+          '</div>',
+        '</div>',
+        
+'<div class="fsec fsec-disp">',
+      
+  ].join('');
+
+  var _dlg=document.getElementById('dlgOv');
+  if(_dlg)_dlg.classList.add('open');
+
+  setTimeout(function(){
+    // Wire NEC_PECAS → pecasExtra
+    ['SIM','NÃO'].forEach(function(v){
+      document.getElementById('f_NEC_PECAS_'+v)?.addEventListener('change',function(){
+        document.getElementById('pecasExtra')?.classList.toggle('show',v==='SIM');
+        updateReqVisual();
+      });
+    });
+
+    // Wire REEMBOLSO_MKT → mktExtra
+    document.querySelectorAll('input[name="f_REEMBOLSO_MKT"]').forEach(function(radio){
+      radio.addEventListener('change',function(){
+        var mkt=document.querySelector('input[name="f_REEMBOLSO_MKT"]:checked')?.value==='SIM';
+        var da=document.querySelector('input[name="f_DISPUTA_ABERTA"]:checked')?.value==='SIM';
+        document.getElementById('mktExtra')?.classList.toggle('show',da&&mkt);
+        updateReqVisual();
+      });
+    });
+
+
+    // Wire CREDITO_RECEBIDO → credExtra
+    document.querySelectorAll('input[name="f_CREDITO_RECEBIDO"]').forEach(function(radio){
+      radio.addEventListener('change',function(){
+        var cred=document.querySelector('input[name="f_CREDITO_RECEBIDO"]:checked')?.value==='SIM';
+        var da2=document.querySelector('input[name="f_DISPUTA_ABERTA"]:checked')?.value==='SIM';
+        document.getElementById('credExtra')?.classList.toggle('show',da2&&cred);
+        updateReqVisual();
+      });
+    });
+    // Wire DISPUTA_ABERTA → extras de disputa
+    document.querySelectorAll('input[name="f_DISPUTA_ABERTA"]').forEach(function(radio){
+      radio.addEventListener('change',function(){
+        var sim=document.querySelector('input[name="f_DISPUTA_ABERTA"]:checked')?.value==='SIM';
+        ['dX1','dX2','dX3','dX4','credRecebidoBox'].forEach(function(id){
+          document.getElementById(id)?.classList.toggle('show',sim);
+        });
+        if(!sim){document.getElementById('mktExtra')?.classList.remove('show');document.getElementById('credExtra')?.classList.remove('show');}
+        if(!sim)document.getElementById('mktExtra')?.classList.remove('show');
+        updateReqVisual();
+      });
+    });
+
+    // Novo registro: auto-detectar canal pelo ID
+    if(isNew){
+      var idEl=document.getElementById('f_ID_VENDA');
+      if(idEl){
+        idEl.addEventListener('blur',async function(){
+          var id=idEl.value.trim();if(!id||id.length<4)return;
+          var canal=detectCanal(id);
+          var cSel=document.getElementById('f_CANAL');
+          if(canal&&cSel){cSel.value=canal;cSel.classList.add('af');}
+          var c=cSel?.value||canal;if(c)await autoFill(id,c);
+        });
+        document.getElementById('f_CANAL')?.addEventListener('change',async function(){
+          var id=idEl.value.trim();
+          var c=document.getElementById('f_CANAL').value;
+          if(id&&c)await autoFill(id,c);
+        });
+      }
+    }
+    updateReqVisual();
+  },0);
+}
+
+
+function clearToken(){
+  sessionStorage.removeItem('gToken');
+  sessionStorage.removeItem('gTokenExp');
+  _gisTokenClient = null;
+  snack('Token removido. Faça login novamente ao salvar.', 'success');
+}
+function clearToken(){
+  sessionStorage.removeItem('gToken');
+  sessionStorage.removeItem('gTokenExp');
+  _gisTokenClient = null;
+  snack('Token removido. Faça login novamente ao salvar.', 'success');
+}
+
+
 const quotes = [{"greeting": "Bom dia! Que hoje seja produtivo.", "quote": "O sucesso é a soma de pequenos esforços repetidos dia após dia.", "author": "Robert Collier"}, {"greeting": "Bem-vindo! Você está no caminho certo.", "quote": "A única maneira de fazer um ótimo trabalho é amar o que você faz.", "author": "Steve Jobs"}, {"greeting": "Mais um dia incrível começa agora.", "quote": "Não é sobre ter tempo, é sobre criar tempo.", "author": "Oprah Winfrey"}, {"greeting": "Que a sua energia hoje mova montanhas.", "quote": "O segredo para seguir em frente é começar.", "author": "Mark Twain"}, {"greeting": "Hoje é uma nova oportunidade de brilhar.", "quote": "Sonhos não funcionam a menos que você trabalhe.", "author": "John C. Maxwell"}, {"greeting": "Olá! Vamos conquistar mais um dia juntos.", "quote": "A persistência é o caminho do êxito.", "author": "Charles Chaplin"}, {"greeting": "Energia positiva para mais um dia de vitórias.", "quote": "Tudo parece impossível até que seja feito.", "author": "Nelson Mandela"}];
 function updateDateTime() {
   const now = new Date();
@@ -2607,7 +2889,27 @@ function applyBF(){
 
 
 
-const DEFAULT_COL_WIDTHS={"MODALIDADE":180, "NOME": 150, "CANAL": 120, "EMPR": 65, "MODELO": 75, "DATA_VENDA": 100, "SKU": 130, "QT": 40, "RASTREIO": 120, "NF": 90, "NF_DEVOL": 90, "NF_DEVOL_EMISSAO": 130, "AUTOR": 80, "NEC_NF_DEVOL": 120, "DATA_CAMINHO_MKT": 130, "DATA_ENTREGUE_MKT": 140, "CHAMADO_ABERTO": 120, "MOTIVO": 130, "DETALHAMENTO": 130, "OBS_RECLAM": 140, "DATA_TRATATIVA": 110, "DEVOLUCAO_ABERTA": 135, "NEC_PECAS": 110, "PECAS_ENVIADAS": 120, "OBS_PECAS": 110, "REENVIO_RECEBIDO": 130, "CUSTO_ENVIO": 100, "PAGO_PLAT": 100, "VALOR_PAGO": 90, "CUSTOS_TOTAL": 105, "TRATATIVA_FINALIZADA": 145, "DATA_PREVISTA_RETORNO": 150, "STATUS_FULL": 130, "CHEGOU_CARDEX": 120, "DISPUTA_ABERTA": 110, "PLAT_DISPUTA": 135, "CREDITO": 90, "REEMBOLSO_MKT": 120, "DISPUTA_FINALIZADA": 140, "CREDITO_RECEBIDO_VALOR": 155, "CREDITO_RECEBIDO": 130, "OBS_DISPUTA": 120};
+const DEFAULT_COL_WIDTHS={
+  "STATUS":160,"ID_VENDA":180,"NOME":200,
+  "CANAL":130,"EMPR":70,"MODELO":80,"DATA_VENDA":105,"SKU":150,
+  "QT":45,"RASTREIO":160,"NF":95,"NF_DEVOL":95,"NF_DEVOL_EMISSAO":140,
+  "AUTOR":90,"NEC_NF_DEVOL":125,"DATA_CAMINHO_MKT":140,"DATA_ENTREGUE_MKT":150,
+  "MOD_TRAT_CLIENTE":180,"MOTIVO":140,"DETALHAMENTO":150,"OBS_RECLAM":200,
+  "CHAMADO_ABERTO":125,"DATA_TRATATIVA":115,"TRAT_CLIENTE_FIN_REP":140,
+  "DEVOLUCAO_ABERTA":140,"NEC_PECAS":115,"PECAS_ENVIADAS":125,
+  "OBS_PECAS":150,"REENVIO_RECEBIDO":135,"CUSTO_ENVIO":105,
+  "PAGO_PLAT":160,"CUSTOS_TOTAL":110,"TRATATIVA_FINALIZADA":150,
+  "ABERTO_TRAT_PLAT":155,"MOD_TRAT_PLAT1":170,"MOTIVO_TRAT1":140,
+  "DATA_TRAT1":115,"PROTOCOLO1":120,"OBS_TRAT1":160,
+  "MOD_TRAT_PLAT2":170,"MOTIVO_TRAT2":140,"DATA_TRAT2":115,
+  "PROTOCOLO2":120,"OBS_TRAT2":160,
+  "DISPUTA_ABERTA":115,"PLAT_DISPUTA":140,
+  "REEMBOLSO_MKT":135,"DISPUTA_FINALIZADA":145,
+  "CREDITO_RECEBIDO_VALOR":160,"CREDITO_RECEBIDO":135,"OBS_DISPUTA":180,
+  "TRAT_PLAT_FIN":155,
+  "DATA_PREVISTA_RETORNO":155,"STATUS_FULL":175,"CHEGOU_CARDEX":125,
+  "MODALIDADE":180,"VALOR_PAGO":95,"CUSTOS_TOTAL":110
+};
 function buildBulkHead(thead){
   if(!thead)return;
   const visID=ID_COLS.filter(c=>!hiddenCols.has(c.k));
@@ -2659,7 +2961,9 @@ function buildBulkHead(thead){
   function mkThWithSec(c,secCls,secLabel,secKey){
     const lCls='th-label'+(c.req?' req-lbl':'');
     const fv=colFilters[c.k]||'';
-    const _w=colWidths[c.k]||(DEFAULT_COL_WIDTHS[c.k]||80);const cw='width:'+_w+'px;';
+    const _wBase=colWidths[c.k]||(DEFAULT_COL_WIDTHS[c.k]||80);
+    const _w=secLabel?Math.max(_wBase,190):_wBase;
+    const cw='width:'+_w+'px;';
     const hideBtn='<button class="th-btn" onclick="hideCol(\''+c.k+'\')" title="Ocultar">✕</button>';
     const secContent=secLabel
       ?secLabel+'<button class="sec-hide-btn" onclick="hideSection(\''+secKey+'\')" title="Ocultar seção">✕</button>'
@@ -2684,9 +2988,25 @@ function buildBulkHead(thead){
   let r0='<tr>';
   // Colunas fixas: th-sec vazio (fundo escuro igual ao background)
   r0+='<th class="col-ln"><div class="th-sec"></div><div class="th-col"><div class="th-top"><span class="th-label">#</span><div class="th-controls"><button class="th-btn" onclick="setSortDir(\'_LN\',\'asc\')">↑</button><button class="th-btn" onclick="setSortDir(\'_LN\',\'desc\')">↓</button></div></div></div></th>';
-  // STATUS e ID_VENDA agora fazem parte do visID (t:'ro' no ID_COLS)
-  // Seção Identificação
-  visID.forEach((c,i)=>{r0+=mkThWithSec(c,'sec-id',i===0?'📦 Identificação':null,'id');});
+  // STATUS: TH sticky com col-status (mesma classe dos TD)
+  const _stW=colWidths['STATUS']||(DEFAULT_COL_WIDTHS['STATUS']||128);
+  r0+='<th class="col-status" data-colkey="STATUS" style="width:'+_stW+'px">'
+    +'<div class="th-sec"></div>'
+    +'<div class="th-col"><div class="th-top">'
+    +'<span class="th-label">Status</span>'
+    +'<div class="th-controls"><button class="th-btn" onclick="setSortDir(\'STATUS\',\'asc\')">↑</button><button class="th-btn" onclick="setSortDir(\'STATUS\',\'desc\')">↓</button></div>'
+    +'</div></div></th>';
+  // ID_VENDA: TH sticky com col-id-venda (mesma classe dos TD)
+  const _idW=colWidths['ID_VENDA']||(DEFAULT_COL_WIDTHS['ID_VENDA']||180);
+  r0+='<th class="col-id-venda" data-colkey="ID_VENDA" style="width:'+_idW+'px">'
+    +'<div class="th-sec"></div>'
+    +'<div class="th-col"><div class="th-top">'
+    +'<span class="th-label">ID Venda</span>'
+    +'<div class="th-controls"><button class="th-btn" onclick="setSortDir(\'ID_VENDA\',\'asc\')">↑</button><button class="th-btn" onclick="setSortDir(\'ID_VENDA\',\'desc\')">↓</button></div>'
+    +'</div></div></th>';
+  // Restante de Identificação (sem STATUS e ID_VENDA — já gerados acima)
+  const visIDRest=visID.filter(c=>c.k!=='STATUS'&&c.k!=='ID_VENDA');
+  visIDRest.forEach((c,i)=>{r0+=mkThWithSec(c,'sec-id',i===0?'📦 Identificação':null,'id');});
   // Seção Tratativa Cliente
   visTR.forEach((c,i)=>{r0+=mkThWithSec(c,'sec-trat',i===0?'📋 Tratativa Cliente':null,'trat');});
   // Seção Tratativa Plataforma
@@ -3103,7 +3423,7 @@ async function getToken(){
   // 3. Validar configuração
   if(!cfg.clientId){
     snack('Configure o Client ID OAuth 2.0 nas Configurações','error');
-    sidebarNav(3);
+    if(typeof sidebarNav==='function')sidebarNav(3);
     return null;
   }
 
@@ -3140,10 +3460,10 @@ function clearBulkFilters(){
 // ── HIDE SECTION ──────────────────────────────────────────────────────────
 function hideSection(sec){
   // sec = 'id' | 'trat' | 'disp'
-  const secCols={'id':ID_COLS,'trat':TC,'disp':DC};
+  const secCols={'id':ID_COLS,'trat':TC,'disp':DC,'full':FS};
   const cols=secCols[sec];if(!cols)return;
-  // Para seção 'id': manter apenas MODALIDADE, NOME, CANAL, EMPR, DATA_VENDA, SKU
-  const keepWhenClosed=new Set(['MODALIDADE','NOME','CANAL','EMPR','DATA_VENDA','SKU']);
+  // Para seção 'id': manter colunas estruturais sempre visíveis
+  const keepWhenClosed=new Set(['STATUS','ID_VENDA','NOME','CANAL','EMPR','DATA_VENDA','SKU']);
   cols.forEach(c=>{
     if(sec==='id'){
       if(!keepWhenClosed.has(c.k))hiddenCols.add(c.k);
@@ -3218,7 +3538,6 @@ function snack(msg,type){type=type||'';const t=document.getElementById('snack');
 // ── Sidebar ──────────────────────────────────────────────────────────
 function toggleSidebar(){var sb=document.getElementById('sidebar');if(!sb)return;var c=sb.classList.toggle('collapsed');try{localStorage.setItem('sidebarCollapsed',c?'1':'0');}catch(e){}}
 function closeMobileSidebar(){var sb=document.getElementById('sidebar');if(sb)sb.classList.remove('mobile-open');var ov=document.getElementById('sidebarOverlay');if(ov)ov.classList.add('hidden');}
-function sidebarNav(n){switchPage(n);if(window.innerWidth<=600)closeMobileSidebar();}
 function updateSidebarActive(n){
   // Atualizar itens 0 (Home), 1 (Dashboard), 2 (Atendimentos), 3 (Edição em Massa)
   for(var i=0;i<=3;i++){
@@ -3232,7 +3551,6 @@ function updateSidebarActive(n){
   var novoEl=document.getElementById('snavNovo');
   if(novoEl)novoEl.classList.remove('active');
 }
-function toggleCfg(){sidebarNav(3);}
 function saveCfgPage(){saveCfg();}
 
 // Rastrear último evento de mouse para CTRL detection em onclick
@@ -3386,270 +3704,6 @@ function updateReqVisual(){
   setReq('DISPUTA_FINALIZADA', isDA);
   // CREDITO_RECEBIDO — obrigatório quando REEMBOLSO_MKT=SIM
   setReq('CREDITO_RECEBIDO', isMKT);
-}
-function openModal(rec){
-  // Resetar mensagem de validação ao abrir popup
-  var _mm=document.getElementById('dlgMissMsg');if(_mm){_mm.style.display='none';_mm.innerHTML='';}
-  // Limpar marcações de duplicidade
-  document.querySelectorAll('.dup-warn').forEach(function(el){el.classList.remove('dup-warn');});
-  // POPUP REFATORADO — sincronizado com planilha 52 colunas
-  curRec=rec;const isNew=!rec;const r=rec||{};
-
-  var _dt=document.getElementById('dlgTit');
-  if(_dt)_dt.textContent=isNew?'Novo Registro':'Editar Registro';
-  var _ds=document.getElementById('dlgSub');
-  if(_ds)_ds.textContent=isNew?'Preencha os campos obrigatórios':'Linha '+r._row+' — '+r.ID_VENDA;
-
-  const miss=rec?getMiss(rec):[];
-  const tpA=['SIM','Reaberto','REABERTA'].includes((r.ABERTO_TRAT_PLAT||'').trim());
-  const t2A=!!(r.MOD_TRAT_PLAT2||r.MOTIVO_TRAT2||r.PROTOCOLO2);
-  const dA=(r.DISPUTA_ABERTA||'')==='SIM';
-  const pA=r.NEC_PECAS==='SIM';
-  const mktA=r.REEMBOLSO_MKT==='SIM';
-  const credA=r.CREDITO_RECEBIDO==='SIM';
-  const isErr=k=>!isNew&&miss.includes(k);
-
-  // Alertas
-  const mH=miss.length&&!isNew
-    ?'<div class="alert-b a-err"><span>⚠</span><span><strong>Campos em falta:</strong> '+miss.map(f=>ML[f]||f).join(' • ')+'</span></div>':'' ;
-  const nH=isNew
-    ?'<div class="alert-b a-inf"><span>💡</span><span>Digite o ID — Canal, EMPR. e dados serão preenchidos automaticamente.</span></div>':'';
-
-  document.getElementById('dlgBody').innerHTML=[
-    mH,nH,
-
-
-        // ── SEÇÃO: Identificação ─────────────────────────────────────────
-    '<div class="fsec fsec-id">',
-      '<div class="fsec-tit-row">',
-        '<div class="fsec-tit">📦 Identificação</div>',
-        '<button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button>',
-      '</div>',
-      '<div class="fsec-body">',
-        '<div class="fg">',
-          fInp('ID_VENDA','ID Venda',r.ID_VENDA,'text',true,false,false,isNew),
-          fSel('CANAL','Canal',r.CANAL,['','Mercado Livre','Shopee','Amazon','Magalu','TikTok','Cardex'],true,isErr('CANAL')),
-          fSel('EMPR','EMPR.',r.EMPR,['','JLD','DGL'],true,isErr('EMPR')),
-          fSel('MODELO','Modelo',r.MODELO,['','Full','Normal','Flex','NE'],true,isErr('MODELO')),
-        '</div>',
-        '<div class="fg3">',
-          fInp('NOME','Nome',r.NOME),
-          fInp('DATA_VENDA','Data Venda',r.DATA_VENDA,'text',false,'DD/MM/AAAA'),
-          fInp('SKU','SKU',r.SKU),
-          fInp('QT','QT',r.QT),
-        '</div>',
-        '<div class="fg3">',
-          fInp('RASTREIO','Rastreio',r.RASTREIO),
-          fInp('NF','NF',r.NF),
-          fInp('NF_DEVOL','NF Devol.',r.NF_DEVOL),
-        '</div>',
-        '<div class="fg3">',
-          '<div class="fld"><label>Autor</label><div class="mdi" style="background:#f8f9fa;color:#5f6368;height:34px;line-height:34px;font-size:13px;padding:0 9px;border-radius:6px;border:1px solid var(--out-v)">'+(r.AUTOR||'APP')+'</div></div>',
-        '</div>',
-        // Full/Estoque subsecção
-      '</div>',
-    '</div>',
-
-    // ── SEÇÃO: Tratativa Cliente ────────────────────────────────────────
-    '<div class="fsec fsec-trat">',
-      '<div class="fsec-tit-row">',
-        '<div class="fsec-tit">📋 Tratativa Cliente</div>',
-        '<button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button>',
-      '</div>',
-      '<div class="fsec-body">',
-        '<div class="fg" style="grid-template-columns:2fr 1fr">',
-          fSel('MOD_TRAT_CLIENTE','Modalidade Tratativa',r.MOD_TRAT_CLIENTE,MODALIDADES),
-          fYN3('CHAMADO_ABERTO','Aberto Atendimento?',r.CHAMADO_ABERTO),
-        '</div>',
-        '<div class="fg3">',
-          fInp('DATA_TRATATIVA','DATA Atendimento',r.DATA_TRATATIVA,'text',false,'DD/MM/AAAA'),
-          fSel('MOTIVO','Motivo Tratativa do Cliente',r.MOTIVO,MOTIVOS,false,isErr('MOTIVO')),
-          fSel('DETALHAMENTO','Detalhamento da Tratativa',r.DETALHAMENTO,DETALHAMENTOS),
-        '</div>',
-        '<div class="fg" style="grid-template-columns:2fr">',
-          fInp('OBS_RECLAM','Observações da Tratativa',r.OBS_RECLAM),
-        '</div>',
-        '<div class="fg">',
-          fYN('NEC_PECAS','Nec. Enviar Peças?',r.NEC_PECAS,true,isErr('NEC_PECAS')),
-        '</div>',
-        '<div class="fg3 '+(pA?'show ':'')+'" id="pecasExtra">',
-          fYN('PECAS_ENVIADAS','Enviadas Peças p/ Cliente?',r.PECAS_ENVIADAS),
-          fYN('REENVIO_RECEBIDO','Reenvio recebido pelo cliente?',r.REENVIO_RECEBIDO),
-        '</div>',
-        '<div class="fg '+(pA?'show ':'')+'" style="grid-template-columns:2fr 1fr">',
-          fInp('OBS_PECAS','Observação do envio de peças',r.OBS_PECAS),
-          fInp('CUSTO_ENVIO','Custo de Envio',r.CUSTO_ENVIO,'text',false,'R$ 0,00'),
-        '</div>',
-        '<div class="fg" style="grid-template-columns:1fr 1fr 1fr">',
-          fInp('PAGO_PLAT','Pago a Plataforma ou Cliente',r.PAGO_PLAT,'text',false,'R$ 0,00'),
-          fInp('CUSTOS_TOTAL','Custos Total',r.CUSTOS_TOTAL,'text',false,'R$ 0,00'),
-        '</div>',
-        '<div class="fg" style="grid-template-columns:1fr 1fr 1fr">',
-          fYN('TRAT_CLIENTE_FIN_REP','Impacto na Reputação?',r.TRAT_CLIENTE_FIN_REP||''),
-          fYN('DEVOLUCAO_ABERTA','Aberto processo de devolução?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA')),
-          fYN('TRATATIVA_FINALIZADA','Tratativa Cliente FINALIZADA?',r.TRATATIVA_FINALIZADA,true,isErr('TRATATIVA_FINALIZADA')),
-        '</div>',
-      '</div>',
-    '</div>',
-
-    // ── SEÇÃO: Tratativa Plataforma ──────────────────────────────────────
-    '<div class="fsec fsec-disp">',
-      '<div class="fsec-tit-row">',
-        '<div class="fsec-tit">⚖️ Tratativa Plataforma</div>',
-        '<button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button>',
-      '</div>',
-      '<div class="fsec-body">',
-        '<div class="fg3">',
-          fYN3('ABERTO_TRAT_PLAT','Aberto Tratativa Plataforma?',r.ABERTO_TRAT_PLAT||'',true,isErr('ABERTO_TRAT_PLAT')),
-        '</div>',
-        '<div id="tpExtra" style="display:'+(tpA?'contents':'none')+'">',
-          '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:4px 0 2px">Tratativa 1</div>',
-          '<div class="fg3">',
-            fSel('MOD_TRAT_PLAT1','Modalidade Trat. Plat. 1',r.MOD_TRAT_PLAT1||'',MODALIDADES_PLAT),
-            fSel('MOTIVO_TRAT1','Motivo da Tratativa 1',r.MOTIVO_TRAT1||'',MOTIVOS_TRAT),
-            fInp('DATA_TRAT1','Data da Tratativa 1',r.DATA_TRAT1||'','text',false,'DD/MM/AAAA'),
-          '</div>',
-          '<div class="fg" style="grid-template-columns:1fr 2fr">',
-            fInp('PROTOCOLO1','Protocolo 1',r.PROTOCOLO1||''),
-            fInp('OBS_TRAT1','Observações da Tratativa 1',r.OBS_TRAT1||''),
-          '</div>',
-          '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:8px 0 2px;display:flex;align-items:center;gap:8px">Tratativa 2 <button type="button" class="btn-sm" style="padding:1px 7px;font-size:12px;border-radius:4px;border:1px solid var(--pri);color:var(--pri);background:transparent;cursor:pointer" onclick="var el=document.getElementById(&quot;trat2Extra&quot;);el.style.display=el.style.display===&quot;none&quot;?&quot;contents&quot;:&quot;none&quot;" title="Expandir Tratativa 2">+</button></div>',
-          '<div id="trat2Extra" style="display:'+(t2A?'contents':'none')+'">',
-            '<div class="fg3">',
-              fSel('MOD_TRAT_PLAT2','Modalidade Trat. Plat. 2',r.MOD_TRAT_PLAT2||'',MODALIDADES_PLAT),
-              fSel('MOTIVO_TRAT2','Motivo da Tratativa 2',r.MOTIVO_TRAT2||'',MOTIVOS_TRAT),
-              fInp('DATA_TRAT2','Data da Tratativa 2',r.DATA_TRAT2||'','text',false,'DD/MM/AAAA'),
-            '</div>',
-            '<div class="fg" style="grid-template-columns:1fr 2fr">',
-              fInp('PROTOCOLO2','Protocolo 2',r.PROTOCOLO2||''),
-              fInp('OBS_TRAT2','Observações da Tratativa 2',r.OBS_TRAT2||''),
-            '</div>',
-          '</div>',
-          '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:8px 0 2px">Disputa</div>',
-          '<div class="fg3">',
-            fYN('DISPUTA_ABERTA','Disputa Aberta?',r.DISPUTA_ABERTA),
-          '</div>',
-          '<div id="disputaExtra" style="display:'+(dA?'block':'none')+'">',
-            '<div class="fg" style="grid-template-columns:1fr 1fr">',
-              fInp('PLAT_DISPUTA','Plataforma Disputa',r.PLAT_DISPUTA),
-              fYN('REEMBOLSO_MKT','Reembolso do Marketplace?',r.REEMBOLSO_MKT),
-            '</div>',
-            '<div class="fg" style="grid-template-columns:1fr 1fr">',
-              fInp('CREDITO_RECEBIDO_VALOR','R$ Crédito Recebido',r.CREDITO_RECEBIDO_VALOR,'text',false,'R$ 0,00'),
-              fYN('CREDITO_RECEBIDO','Crédito Recebido?',r.CREDITO_RECEBIDO),
-            '</div>',
-            '<div class="fg" style="grid-template-columns:1fr">',
-              fInp('OBS_DISPUTA','Observações da Disputa',r.OBS_DISPUTA),
-            '</div>',
-            '<div class="fg3">',
-              fYN('DISPUTA_FINALIZADA','Disputa Finalizada?',r.DISPUTA_FINALIZADA),
-            '</div>',
-          '</div>',
-          '<div class="fg3">',
-            fYN('TRAT_PLAT_FIN','Tratativa Plataforma FINALIZADA?',r.TRAT_PLAT_FIN||'',true,isErr('TRAT_PLAT_FIN')),
-          '</div>',
-        '</div>',
-      '</div>',
-    '</div>',
-
-        // ── SEÇÃO: Full / Estoque ─────────────────────────────────────────
-        '<div class="fsec fsec-full">',
-          '<div class="fsec-tit-row">',
-            '<div class="fsec-tit">🏭 Retorno</div>',
-            '<button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button>',
-          '</div>',
-          '<div class="fsec-body">',
-            '<div class="fg3">',
-              fYN('CHEGOU_CARDEX','Chegou na Cardex?',r.CHEGOU_CARDEX),
-              fSel('STATUS_FULL','Status Full',r.STATUS_FULL,['','OK Estoque Full','Aguardando Retirada','Em Troca','Cliente c/ Produto','Descarte Estoque']),
-              fInp('DATA_PREVISTA_RETORNO','Data Prev. Retorno',r.DATA_PREVISTA_RETORNO,'text',false,'DD/MM/AAAA'),
-            '</div>',
-          '</div>',
-        '</div>',
-        
-'<div class="fsec fsec-disp">',
-      
-  ].join('');
-
-  var _dlg=document.getElementById('dlgOv');
-  if(_dlg)_dlg.classList.add('open');
-
-  setTimeout(function(){
-    // Wire NEC_PECAS → pecasExtra
-    ['SIM','NÃO'].forEach(function(v){
-      document.getElementById('f_NEC_PECAS_'+v)?.addEventListener('change',function(){
-        document.getElementById('pecasExtra')?.classList.toggle('show',v==='SIM');
-        updateReqVisual();
-      });
-    });
-
-    // Wire REEMBOLSO_MKT → mktExtra
-    document.querySelectorAll('input[name="f_REEMBOLSO_MKT"]').forEach(function(radio){
-      radio.addEventListener('change',function(){
-        var mkt=document.querySelector('input[name="f_REEMBOLSO_MKT"]:checked')?.value==='SIM';
-        var da=document.querySelector('input[name="f_DISPUTA_ABERTA"]:checked')?.value==='SIM';
-        document.getElementById('mktExtra')?.classList.toggle('show',da&&mkt);
-        updateReqVisual();
-      });
-    });
-
-
-    // Wire CREDITO_RECEBIDO → credExtra
-    document.querySelectorAll('input[name="f_CREDITO_RECEBIDO"]').forEach(function(radio){
-      radio.addEventListener('change',function(){
-        var cred=document.querySelector('input[name="f_CREDITO_RECEBIDO"]:checked')?.value==='SIM';
-        var da2=document.querySelector('input[name="f_DISPUTA_ABERTA"]:checked')?.value==='SIM';
-        document.getElementById('credExtra')?.classList.toggle('show',da2&&cred);
-        updateReqVisual();
-      });
-    });
-    // Wire DISPUTA_ABERTA → extras de disputa
-    document.querySelectorAll('input[name="f_DISPUTA_ABERTA"]').forEach(function(radio){
-      radio.addEventListener('change',function(){
-        var sim=document.querySelector('input[name="f_DISPUTA_ABERTA"]:checked')?.value==='SIM';
-        ['dX1','dX2','dX3','dX4','credRecebidoBox'].forEach(function(id){
-          document.getElementById(id)?.classList.toggle('show',sim);
-        });
-        if(!sim){document.getElementById('mktExtra')?.classList.remove('show');document.getElementById('credExtra')?.classList.remove('show');}
-        if(!sim)document.getElementById('mktExtra')?.classList.remove('show');
-        updateReqVisual();
-      });
-    });
-
-    // Novo registro: auto-detectar canal pelo ID
-    if(isNew){
-      var idEl=document.getElementById('f_ID_VENDA');
-      if(idEl){
-        idEl.addEventListener('blur',async function(){
-          var id=idEl.value.trim();if(!id||id.length<4)return;
-          var canal=detectCanal(id);
-          var cSel=document.getElementById('f_CANAL');
-          if(canal&&cSel){cSel.value=canal;cSel.classList.add('af');}
-          var c=cSel?.value||canal;if(c)await autoFill(id,c);
-        });
-        document.getElementById('f_CANAL')?.addEventListener('change',async function(){
-          var id=idEl.value.trim();
-          var c=document.getElementById('f_CANAL').value;
-          if(id&&c)await autoFill(id,c);
-        });
-      }
-    }
-    updateReqVisual();
-  },0);
-}
-
-
-function clearToken(){
-  sessionStorage.removeItem('gToken');
-  sessionStorage.removeItem('gTokenExp');
-  _gisTokenClient = null;
-  snack('Token removido. Faça login novamente ao salvar.', 'success');
-}
-function clearToken(){
-  sessionStorage.removeItem('gToken');
-  sessionStorage.removeItem('gTokenExp');
-  _gisTokenClient = null;
-  snack('Token removido. Faça login novamente ao salvar.', 'success');
 }
 
 </script>
