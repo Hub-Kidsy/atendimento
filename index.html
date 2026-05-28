@@ -2525,7 +2525,7 @@ const COL={
   CUSTOS_TOTAIS:58, REEMBOLSO:59, RESULTADO_FIN:60, STATUS2:61
 };
 // Colunas calculadas por fórmula — derivadas dos índices reais do COL
-const FORMULA_KEYS=['STATUS','CUSTOS_TOTAIS','REEMBOLSO','RESULTADO_FIN','STATUS2']; // colunas fórmula da planilha
+const FORMULA_KEYS=['STATUS','CUSTOS_TOTAIS','REEMBOLSO','RESULTADO_FIN','STATUS2','NEC_NF_DEVOL','IMPOSTO_RESGATADO','NF_TOTAL','VALOR_NF']; // colunas fórmula da planilha
 let FORMULA_COLS=new Set(FORMULA_KEYS.map(k=>COL[k]).filter(v=>v!==undefined));
 // Labels de exibição para cada campo (usado em chips de erro e tooltips)
 const ML={
@@ -3281,7 +3281,10 @@ async function saveRecord(){
       if(!saveRes.ok){const e=await saveRes.json();throw new Error(e.error?.message||saveRes.statusText);}
       snack('Criado na linha '+targetRow+'!','success');closeDlg();loadDataPreservingState();
     }catch(e){snack('Erro: '+e.message,'error');}
-  }else{const rowN=curRec._row;const data=[];EDIT_COLS.forEach(({key,idx})=>{const o=curRec[key]||'';const n=novos[key]||'';if(o===n)return;data.push({range:cfg.sheetName+'!'+n2c(idx)+rowN,values:[[n]]});});if(!data.length){snack('Sem alterações','success');closeDlg();return;}
+  }else{const rowN=curRec._row;const data=[];EDIT_COLS.forEach(({key,idx})=>{const o=curRec[key]||'';const n=novos[key]||'';if(o===n)return;// Proteger campos sem UI no popup — get() retorna '' falso positivo
+    const _hasEl=k=>!!document.getElementById('f_'+k)||!!document.querySelector('input[name="f_'+k+'"]');
+    if(n===''&&o!==''&&!_hasEl(key))return; // campo sem elemento no DOM — preserva fórmula
+    data.push({range:cfg.sheetName+'!'+n2c(idx)+rowN,values:[[n]]});});if(!data.length){snack('Sem alterações','success');closeDlg();return;}
     try{const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values:batchUpdate',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},body:JSON.stringify({valueInputOption:'USER_ENTERED',data})});if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}snack(data.length+' campo(s) salvos!','success');closeDlg();loadDataPreservingState();}catch(e){snack('Erro: '+e.message,'error');}
   }
 }
