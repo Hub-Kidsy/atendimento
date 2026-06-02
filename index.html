@@ -1958,7 +1958,7 @@ body{
           <svg viewBox="0 0 24 24"><path d="M3 10h11v2H3v-2zm0-4h11v2H3V6zm0 8h7v2H3v-2zm13 1.41L14.59 14 13 15.59 16.41 19 22 13.41 20.59 12 16 16.41z"/></svg>
           <span class="sidebar-label">Edição em Massa <span class="sidebar-badge" id="snavR3Count">0</span></span>
         </button>
-        <button class="sidebar-item" id="snavRNovo" data-tooltip="Novo Registro Retornos" onclick="if(typeof navRetorn==='function'){navRetorn(7);openModal(null)}">
+        <button class="sidebar-item" id="snavRNovo" data-tooltip="Novo Registro Retornos" onclick="if(_activeSection!=='retorn'){navRetorn(7);}openModal(null)">
           <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
           <span class="sidebar-label">Novo Registro</span>
         </button>
@@ -2282,7 +2282,7 @@ body{
       <span style="font-size:11px;color:var(--on-sur-v)" id="bulkInfo_r"></span>
       <button class="btn btn-outlined btn-sm" onclick="bulkReset()">↺ Desfazer</button>
       <button class="btn btn-filled btn-sm" onclick="bulkSave()">💾 Salvar</button>
-      <button class="btn btn-filled btn-lg" onclick="if(typeof navRetorn==='function'){navRetorn(8);}openModal(null)">＋ Novo Registro</button>
+      <button class="btn btn-filled btn-lg" onclick="openModal(null)">＋ Novo Registro</button>
     </div>
   </div>
   <div class="bulk-filters-row">
@@ -2506,13 +2506,23 @@ function openModal(rec){
   if(_ds)_ds.textContent=isNew?'Preencha os campos obrigatórios':'Linha '+r._row+' — '+r.ID_VENDA;
 
   const miss=rec?getMiss(rec):[];
-  const tpA=['SIM','Reaberto','REABERTA'].includes((r.ABERTO_TRAT_PLAT||'').trim());
+  const tpA=['SIM','Reaberto','REABERTA'].includes((r.ABERTO_TRAT_PLAT||'').trim())
+    ||!!(r.MOD_TRAT_PLAT1||r.MOTIVO_TRAT1||r.DATA_TRAT1||r.PROTOCOLO1||r.OBS_TRAT1
+       ||r.MOD_TRAT_PLAT2||r.MOTIVO_TRAT2||r.PROTOCOLO2
+       ||r.DISPUTA_ABERTA||r.PLAT_DISPUTA||r.REEMBOLSO_MKT
+       ||r.CREDITO_RECEBIDO_VALOR||r.OBS_DISPUTA||r.DISPUTA_FINALIZADA);
   const t2A=!!(r.MOD_TRAT_PLAT2||r.MOTIVO_TRAT2||r.PROTOCOLO2);
-  const dA=(r.DISPUTA_ABERTA||'')==='SIM';
-  const cA=['SIM','Reaberto','REABERTA'].includes((r.CHAMADO_ABERTO||'').trim());
-  const pA=r.NEC_PECAS==='SIM';
-  const mktA=r.REEMBOLSO_MKT==='SIM';
-  const credA=r.CREDITO_RECEBIDO==='SIM';
+  const dA=(r.DISPUTA_ABERTA||'')==='SIM'
+    ||!!(r.PLAT_DISPUTA||r.REEMBOLSO_MKT||r.CREDITO_RECEBIDO_VALOR
+        ||r.CREDITO_RECEBIDO||r.OBS_DISPUTA||r.DISPUTA_FINALIZADA);
+  const cA=['SIM','Reaberto','REABERTA'].includes((r.CHAMADO_ABERTO||'').trim())
+    ||!!(r.DATA_TRATATIVA||r.MOD_TRAT_CLIENTE||r.MOTIVO||r.DETALHAMENTO||r.OBS_RECLAM);
+  const pA=r.NEC_PECAS==='SIM'
+    ||!!(r.PECAS_ENVIADAS||r.OBS_PECAS||r.REENVIO_RECEBIDO||r.CUSTO_ENVIO);
+  const mktA=r.REEMBOLSO_MKT==='SIM'
+    ||!!(r.CREDITO_RECEBIDO_VALOR||r.CREDITO_RECEBIDO);
+  const credA=r.CREDITO_RECEBIDO==='SIM'
+    ||!!(r.CREDITO_RECEBIDO_VALOR);
   const isErr=k=>!isNew&&miss.includes(k);
 
   // Alertas
@@ -3072,7 +3082,8 @@ const SECTIONS={
     apiKey:localStorage.getItem('apiKey')||'',
     clientId:localStorage.getItem('clientId')||'',
     _data:[],_dash:[],_bulk:[],_bulkChg:{},_bulkFiltered:[],
-    _missOnly:false,_curPage:1,_filtered:[],_sortCol:null,_sortDir:0
+    _missOnly:false,_curPage:1,_filtered:[],_sortCol:null,_sortDir:0,
+    _dashState:{canal:'',sku:'',periodo:0,dtDe:'',dtAte:'',filtered:null}
   },
   retorn:{key:'retorn',label:'RETORNOS',
     sheetId:localStorage.getItem('retorn_sheetId')||'',
@@ -3080,7 +3091,8 @@ const SECTIONS={
     apiKey:localStorage.getItem('retorn_apiKey')||'',
     clientId:localStorage.getItem('retorn_clientId')||'',
     _data:[],_dash:[],_bulk:[],_bulkChg:{},_bulkFiltered:[],
-    _missOnly:false,_curPage:1,_filtered:[],_sortCol:null,_sortDir:0
+    _missOnly:false,_curPage:1,_filtered:[],_sortCol:null,_sortDir:0,
+    _dashState:{canal:'',sku:'',periodo:0,dtDe:'',dtAte:'',filtered:null}
   }
 };
 let _activeSection='atend';
@@ -3405,8 +3417,14 @@ function switchPage(n){
       SECTIONS.retorn._dash=SECTIONS.retorn._data;
     _dashFiltered=null;
   }
-  if(n===1)renderDashboard();   // Dashboard ATENDIMENTOS
-  if(n===6)renderDashboard();   // Dashboard RETORNOS
+  if(n===1){
+    restoreDashFilterState(); // restaurar filtros salvos de ATENDIMENTOS
+    renderDashboard();
+  }
+  if(n===6){
+    restoreDashFilterState(); // restaurar filtros salvos de RETORNOS
+    renderDashboard();
+  }
   if(n===2||n===7){render();renderSummary();}
   if(n===3||n===8){
     _resetVCache();
@@ -3544,9 +3562,16 @@ function openModalRetorn(rec){
   if(_ds)_ds.textContent=isNew?'Preencha os campos obrigatórios':'Linha '+r._row+' — '+r.ID_VENDA;
 
   const miss=rec?getMissRetorn(rec):[];
-  const tpA=['SIM','Reaberto','REABERTA'].includes((r.ABERTO_TRAT_PLAT||'').trim());
-  const t2A=!!(r.MOD_TRAT_PLAT2||r.MOTIVO_TRAT2||r.PROTOCOLO2);
-  const dA=(r.DISPUTA_ABERTA||'')==='SIM';
+  const tpA=['SIM','Reaberto','REABERTA'].includes((r.ABERTO_TRAT_PLAT||'').trim())
+    ||!!(r.MOD_TRAT_PLAT1||r.MOTIVO_TRAT1||r.DATA_TRAT1||r.PROTOCOLO1||r.OBS_TRAT1
+       ||r.MOD_TRAT_PLAT2||r.MOTIVO_TRAT2||r.PROTOCOLO2
+       ||r.DISPUTA_ABERTA||r.PLAT_DISPUTA||r.REEMBOLSO_MKT
+       ||r.CREDITO_RECEBIDO_VALOR||r.OBS_DISPUTA||r.DISPUTA_FINALIZADA);
+  const t2A=!!(r.MOD_TRAT_PLAT2||r.MOTIVO_TRAT2||r.PROTOCOLO2
+              ||r.DATA_TRAT2||r.OBS_TRAT2);
+  const dA=(r.DISPUTA_ABERTA||'')==='SIM'
+    ||!!(r.PLAT_DISPUTA||r.REEMBOLSO_MKT||r.CREDITO_RECEBIDO_VALOR
+        ||r.CREDITO_RECEBIDO||r.OBS_DISPUTA||r.DISPUTA_FINALIZADA);
   const mktA=r.REEMBOLSO_MKT==='SIM';
   const credA=r.CREDITO_RECEBIDO==='SIM';
   const isErr=k=>!isNew&&miss.includes(k);
@@ -3758,7 +3783,42 @@ function applyDashFilter(){
   _dashFiltered=base;
   renderDashboard(true);
   if(!dtDe&&!dtAte&&!fCanal&&!fSku){_dashFiltered=null;}
+  saveDashFilterState();
 }
+// ── Salvar estado dos filtros do dashboard da seção ativa ───────────
+function saveDashFilterState(){
+  var _isR=_activeSection==='retorn';
+  var _sfx=_isR?'_r':'';
+  var sec=SECTIONS[_activeSection];
+  sec._dashState={
+    canal: document.getElementById('dashCanal'+_sfx)?.value||'',
+    sku:   document.getElementById('dashSku'+_sfx)?.value||'',
+    dtDe:  document.getElementById('dtDe'+_sfx)?.value||'',
+    dtAte: document.getElementById('dtAte'+_sfx)?.value||'',
+    filtered: _dashFiltered?[..._dashFiltered]:null
+  };
+}
+// ── Restaurar estado dos filtros do dashboard da seção ativa ─────────
+function restoreDashFilterState(){
+  var _isR=_activeSection==='retorn';
+  var _sfx=_isR?'_r':'';
+  var sec=SECTIONS[_activeSection];
+  var st=sec._dashState;
+  if(!st)return;
+  var cEl=document.getElementById('dashCanal'+_sfx);
+  var sEl=document.getElementById('dashSku'+_sfx);
+  var dEl=document.getElementById('dtDe'+_sfx);
+  var aEl=document.getElementById('dtAte'+_sfx);
+  if(cEl&&st.canal)cEl.value=st.canal;
+  if(sEl&&st.sku)sEl.value=st.sku;
+  if(dEl&&st.dtDe)dEl.value=st.dtDe;
+  if(aEl&&st.dtAte)aEl.value=st.dtAte;
+  // Restaurar dataset filtrado se havia filtros ativos
+  if(st.filtered!==null){
+    _dashFiltered=st.filtered;
+  }
+}
+
 
 
 function clearDashFilters(){
@@ -5032,16 +5092,24 @@ async function bulkSave(){
     +'• Campos: '+camposList+'\n\n'
     +'Esta ação irá atualizar a planilha Google Sheets.';
   if(!confirm(msg))return;
+  // ── cfg e COL da seção ativa ─────────────────────────────────────
+  var _isR=_activeSection==='retorn';
+  var _sec=SECTIONS[_activeSection];
+  var _cfg={sheetId:_sec.sheetId,sheetName:_sec.sheetName,apiKey:_sec.apiKey};
+  var _activeCOL=_isR?COL_RETORN:COL;
+  var _activeFKEYS=_isR?FORMULA_KEYS_RETORN:FORMULA_KEYS;
+  var _FCOLS=new Set(_activeFKEYS.map(function(k){return _activeCOL[k];}).filter(function(v){return v!==undefined;}));
+  var _sfx=_isR?'_r':'';
   // ────────────────────────────────────────────────────────────────
   const tkn=await getToken();if(!tkn)return;
-  const data=[];keys.forEach(i=>{const r=bulkOrig[i];Object.entries(bulkChg[i]).forEach(([key,val])=>{const idx=COL[key];if(idx===undefined||FORMULA_COLS.has(idx))return;data.push({range:cfg.sheetName+'!'+n2c(idx)+r._row,values:[[val]]});});});
+  const data=[];keys.forEach(i=>{const r=bulkOrig[i];Object.entries(bulkChg[i]).forEach(([key,val])=>{const idx=_activeCOL[key];if(idx===undefined||_FCOLS.has(idx))return;data.push({range:_cfg.sheetName+'!'+n2c(idx)+r._row,values:[[val]]});});});
   if(!data.length){snack('Nenhum campo editável');return;}
-  try{const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values:batchUpdate',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},body:JSON.stringify({valueInputOption:'USER_ENTERED',data})});if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}snack(data.length+' célula(s) salvas!','success');
+  try{const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+_cfg.sheetId+'/values:batchUpdate',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},body:JSON.stringify({valueInputOption:'USER_ENTERED',data})});if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}snack(data.length+' célula(s) salvas!','success');
       // Save current filters before reload
-      const savedSF=$el('bfStatus')?.value||'';
-      const savedCF=$el('bfCanal')?.value||'';
-      const savedMF=$el('bfModal')?.value||'';
-      const savedSku=$el('bfSku')?.value||'';
+      const savedSF=document.getElementById('bfStatus'+_sfx)?.value||'';
+      const savedCF=document.getElementById('bfCanal'+_sfx)?.value||'';
+      const savedMF=document.getElementById('bfModal'+_sfx)?.value||'';
+      const savedSku=document.getElementById('bfSku'+_sfx)?.value||'';
       const savedMiss=missFilter;
       const savedColFilters={...colFilters};
       const savedColSort={...colSortState};
@@ -5049,10 +5117,10 @@ async function bulkSave(){
       await loadData();
       buildBulk();
       // Restore filters after rebuild
-      if(savedSF){const el=$el('bfStatus');if(el){el.value=savedSF;el.classList.add('active');}}
-      if(savedCF){const el=$el('bfCanal');if(el){el.value=savedCF;el.classList.add('active');}}
-      if(savedMF){const el=$el('bfModal');if(el){el.value=savedMF;el.classList.add('active');}}
-      if(savedSku){const el=$el('bfSku');if(el){el.value=savedSku;el.classList.add('active');}}
+      if(savedSF){const el=document.getElementById('bfStatus'+_sfx);if(el){el.value=savedSF;el.classList.add('active');}}
+      if(savedCF){const el=document.getElementById('bfCanal'+_sfx);if(el){el.value=savedCF;el.classList.add('active');}}
+      if(savedMF){const el=document.getElementById('bfModal'+_sfx);if(el){el.value=savedMF;el.classList.add('active');}}
+      if(savedSku){const el=document.getElementById('bfSku'+_sfx);if(el){el.value=savedSku;el.classList.add('active');}}
       missFilter=savedMiss;
       colFilters=savedColFilters;
       colSortState=savedColSort;
