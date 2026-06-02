@@ -855,13 +855,13 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .kpi-badge.purple{background:#f3e8fd;color:#7627bb;}
 /* ── page3 configurações ─────────────────────────────────────── */
 
-#page3 .cfg-card,#page8 .cfg-card,#page9 .cfg-card{background:var(--sur);border:1px solid var(--out);border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:18px;margin-bottom:16px;}
-#page3 .cfg-section-title,#page8 .cfg-section-title,#page9 .cfg-section-title{font-family:'Google Sans',sans-serif;font-size:11px;font-weight:600;color:var(--on-sur-v);text-transform:uppercase;letter-spacing:.5px;padding-bottom:10px;border-bottom:1px solid var(--out-v);}
-#page3 .cfg-f,#page8 .cfg-f,#page9 .cfg-f{display:flex;flex-direction:column;gap:5px;}
-#page3 .cfg-f label,#page8 .cfg-f label,#page9 .cfg-f label{font-size:12px;font-weight:500;color:var(--on-sur);}
-#page3 .cfg-f input,#page8 .cfg-f input,#page9 .cfg-f input{height:38px;border:1px solid var(--out);border-radius:8px;padding:0 12px;font-size:14px;font-family:'Google Sans',sans-serif;color:var(--on-sur);background:var(--sur);outline:none;transition:border-color .15s,box-shadow .15s;box-sizing:border-box;width:100%;}
-#page3 .cfg-f input:focus,#page8 .cfg-f input:focus,#page9 .cfg-f input:focus{border-color:var(--pri);box-shadow:0 0 0 2px var(--pri-c);}
-#page3 .cfg-f small,#page8 .cfg-f small,#page9 .cfg-f small{font-size:11px;color:var(--on-sur-v);line-height:1.4;}
+#page3 #page4 .cfg-card,.cfg-card,#page8 .cfg-card,#page9 .cfg-card{background:var(--sur);border:1px solid var(--out);border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:18px;margin-bottom:16px;}
+#page3 #page4 .cfg-section-title,.cfg-section-title,#page8 .cfg-section-title,#page9 .cfg-section-title{font-family:'Google Sans',sans-serif;font-size:11px;font-weight:600;color:var(--on-sur-v);text-transform:uppercase;letter-spacing:.5px;padding-bottom:10px;border-bottom:1px solid var(--out-v);}
+#page3 #page4 .cfg-f,.cfg-f,#page8 .cfg-f,#page9 .cfg-f{display:flex;flex-direction:column;gap:5px;}
+#page3 #page4 .cfg-f label,.cfg-f label,#page8 .cfg-f label,#page9 .cfg-f label{font-size:12px;font-weight:500;color:var(--on-sur);}
+#page3 #page4 .cfg-f input,.cfg-f input,#page8 .cfg-f input,#page9 .cfg-f input{height:38px;border:1px solid var(--out);border-radius:8px;padding:0 12px;font-size:14px;font-family:'Google Sans',sans-serif;color:var(--on-sur);background:var(--sur);outline:none;transition:border-color .15s,box-shadow .15s;box-sizing:border-box;width:100%;}
+#page3 #page4 .cfg-f input:focus,.cfg-f input:focus,#page8 .cfg-f input:focus,#page9 .cfg-f input:focus{border-color:var(--pri);box-shadow:0 0 0 2px var(--pri-c);}
+#page3 #page4 .cfg-f small,.cfg-f small,#page8 .cfg-f small,#page9 .cfg-f small{font-size:11px;color:var(--on-sur-v);line-height:1.4;}
 #page3 .cfg-actions,#page8 .cfg-actions,#page9 .cfg-actions{display:flex;gap:10px;padding-top:12px;border-top:1px solid var(--out-v);flex-wrap:wrap;}
 /* ── popup dialog ────────────────────────────────────────────── */
 
@@ -1563,12 +1563,12 @@ body{
 .bt thead th.sec-r-id .th-filter{ background:rgba(0,0,0,.06); border-color:rgba(0,0,0,.15); color:#111827; }
 
 /* ESTOQUE — verde claro */
-.bt thead th.sec-r-estoque           { background:#f0fdf4; color:#14532d; }
-.bt thead th.sec-r-estoque .th-col   { background:#f0fdf4; }
-.bt thead th.sec-r-estoque .th-sec   { background:#86efac; color:#14532d; font-weight:700; }
-.bt thead th.sec-r-estoque .th-label { color:#14532d; font-size:11px; font-weight:500; }
-.bt thead th.sec-r-estoque .th-btn   { color:#166534; opacity:.7; }
-.bt thead th.sec-r-estoque .th-filter{ background:rgba(0,0,0,.05); border-color:rgba(20,83,45,.2); color:#14532d; }
+.bt thead th.sec-r-estoque           { background:#fdf8f4; color:#5c3317; }
+.bt thead th.sec-r-estoque .th-col   { background:#fdf8f4; }
+.bt thead th.sec-r-estoque .th-sec   { background:#d4a98a; color:#3b1f0e; font-weight:700; }
+.bt thead th.sec-r-estoque .th-label { color:#5c3317; font-size:11px; font-weight:500; }
+.bt thead th.sec-r-estoque .th-btn   { color:#7c4a28; opacity:.7; }
+.bt thead th.sec-r-estoque .th-filter{ background:rgba(0,0,0,.05); border-color:rgba(92,51,23,.2); color:#5c3317; }
 
 /* TRATATIVA PLATAFORMA — amarelo claro */
 .bt thead th.sec-r-trat-plat           { background:#fefce8; color:#713f12; }
@@ -1608,19 +1608,19 @@ body{
 
 /* ESTOQUE — verde pastel */
 .fsec-r-estoque{
-  background:#f0fdf4;
-  border:1px solid #bbf7d0;
+  background:#fdf8f4;
+  border:1px solid #d4b8a0;
 }
 .fsec-r-estoque .fsec-tit-row{
-  background:#dcfce7;
-  border-bottom:1px solid #bbf7d0;
+  background:#ede0d4;
+  border-bottom:1px solid #d4b8a0;
 }
 .fsec-r-estoque .fsec-tit{
-  color:#15803d;
+  color:#5c3317;
 }
 .fsec-r-estoque .fsec-collapse-btn{
-  border-color:#86efac;
-  color:#16a34a;
+  border-color:#c4956a;
+  color:#7c4a28;
 }
 
 /* TRATATIVA PLATAFORMA — âmbar pastel */
@@ -3488,19 +3488,28 @@ async function loadData(){
     SECTIONS[_loadSection]._data=_newData;
     SECTIONS[_loadSection]._dash=_newData; // garantir _dash sempre populado
     dashData=_newData;
-    const ativos=allData.filter(r=>!IGNORADOS_BULK.includes(r.STATUS));
-    var _t1=$el('tab1Count');if(_t1)_t1.textContent=ativos.length;
-    var _s1=$el('snav1Count');if(_s1)_s1.textContent=ativos.length;
-    var _s2=$el('snav2Count');if(_s2)_s2.textContent=ativos.length;var _t2=$el('tab2Count');if(_t2)_t2.textContent=ativos.length;var _s3=$el('snav3Count');if(_s3)_s3.textContent=ativos.length;
-    // Contadores exclusivos de RETORNOS
+    // ── Contadores sidebar — isolados por seção, sem contaminação cruzada ──
     if(_loadSection==='retorn'){
-      var _sR2=$el('snavR2Count');if(_sR2)_sR2.textContent=ativos.length;
-      var _sR3=$el('snavR3Count');if(_sR3)_sR3.textContent=ativos.length;
-      // Zerar contador de ATENDIMENTOS ao carregar RETORNOS
-      var _s2z=$el('snav2Count');if(_s2z&&!SECTIONS.atend._data.length)_s2z.textContent='0';
+      // RETORNOS → atualiza apenas badges de RETORNOS com IGNORADOS_RETORN
+      var _retAtivos=allData.filter(r=>!IGNORADOS_RETORN.includes(r.STATUS));
+      var _sR2=$el('snavR2Count');if(_sR2)_sR2.textContent=_retAtivos.length;
+      var _sR3=$el('snavR3Count');if(_sR3)_sR3.textContent=_retAtivos.length;
+      // Recompor badge ATENDIMENTOS com dados exclusivos de ATENDIMENTOS
+      var _atAtivos=SECTIONS.atend._data.filter(r=>!IGNORADOS_BULK.includes(r.STATUS));
+      var _s2a=$el('snav2Count');if(_s2a)_s2a.textContent=_atAtivos.length||'';
+      var _s3a=$el('snav3Count');if(_s3a)_s3a.textContent=_atAtivos.length||'';
     } else {
-      // Zerar contador de RETORNOS ao carregar ATENDIMENTOS
-      var _sRz=$el('snavR2Count');if(_sRz&&!SECTIONS.retorn._data.length)_sRz.textContent='0';
+      // ATENDIMENTOS → atualiza apenas badges de ATENDIMENTOS com IGNORADOS_BULK
+      var ativos=allData.filter(r=>!IGNORADOS_BULK.includes(r.STATUS));
+      var _t1=$el('tab1Count');if(_t1)_t1.textContent=ativos.length;
+      var _s1=$el('snav1Count');if(_s1)_s1.textContent=ativos.length;
+      var _s2=$el('snav2Count');if(_s2)_s2.textContent=ativos.length;
+      var _t2=$el('tab2Count');if(_t2)_t2.textContent=ativos.length;
+      var _s3=$el('snav3Count');if(_s3)_s3.textContent=ativos.length;
+      // Recompor badge RETORNOS com dados exclusivos de RETORNOS
+      var _retAtivos2=SECTIONS.retorn._data.filter(r=>!IGNORADOS_RETORN.includes(r.STATUS));
+      var _sR2a=$el('snavR2Count');if(_sR2a)_sR2a.textContent=_retAtivos2.length||'';
+      var _sR3a=$el('snavR3Count');if(_sR3a)_sR3a.textContent=_retAtivos2.length||'';
     }
     render();renderSummary();var _p3=document.getElementById('page3');var _p8=document.getElementById('page8');
     if((_p3&&_p3.style.display!=='none')||(_p8&&_p8.style.display!=='none')||bulkOrig.length>0)buildBulk();
@@ -4155,10 +4164,10 @@ const SL=[
 ];
 // ══ STATUS LIST RETORNOS ══
 const SL_RETORN=[
-  {k:'ACOMPANHAR DISPUTA',  c:'sc-blue', l:'ACOMP. DISPUTA'},
-  {k:'AGUARDANDO REEMBOLSO',c:'sc-pur',  l:'AG. REEMBOLSO'},
-  {k:'ENTRADA ATRASADA',    c:'sc-warn', l:'ENT. ATRASADA'},
-  {k:'ENTRADA PENDENTE',    c:'sc-red',  l:'ENT. PENDENTE'},
+  {k:'ACOMPANHAR DISPUTA',  c:'sc-blue', l:'ACOMPANHAR DISPUTA'},
+  {k:'AGUARDANDO REEMBOLSO',c:'sc-pur',  l:'AGUARDANDO REEMBOLSO'},
+  {k:'ENTRADA ATRASADA',    c:'sc-warn', l:'ENTRADA ATRASADA'},
+  {k:'ENTRADA PENDENTE',    c:'sc-red',  l:'ENTRADA PENDENTE'},
 ];
 
 function renderSummary(){
@@ -4408,10 +4417,13 @@ async function saveRecord(){
   var _activeFKEYS=_activeSection==='retorn'?FORMULA_KEYS_RETORN:FORMULA_KEYS;
   FORMULA_COLS=new Set(_activeFKEYS.map(function(k){return _activeCOL[k];}).filter(function(v){return v!==undefined;}));
   const _editCols=Object.entries(_activeCOL).filter(([,i])=>!FORMULA_COLS.has(i)).map(([k,i])=>({key:k,idx:i}));
+  // cfg da seção ativa — RETORNOS usa sua própria planilha
+  var _sec=SECTIONS[_activeSection];
+  var _cfg={sheetId:_sec.sheetId,sheetName:_sec.sheetName,apiKey:_sec.apiKey};
   const get=id=>{const el=document.getElementById('f_'+id);if(el)return el.value;for(const r of document.querySelectorAll('input[name="f_'+id+'"]'))if(r.checked)return r.value;return'';};
   const novos={};_editCols.forEach(({key})=>{novos[key]=get(key)||'';});
   // Usar getMiss com os novos valores do formulário (objeto novos)
-  const miss=getMiss(novos);
+  const miss=(_activeSection==='retorn'?getMissRetorn:getMiss)(novos);
   if(miss.length){
     var mm=document.getElementById('dlgMissMsg');
     if(mm){mm.style.display='block';mm.innerHTML='&#9888;&#65039; Preencha os seguintes campos obrigatórios:<br>&#8226; '+miss.map(f=>ML[f]||f).join('<br>&#8226; ');}
@@ -4441,8 +4453,8 @@ async function saveRecord(){
     try{
       // Passo 1: Ler colunas C e D para localizar primeira linha preparada (vazia)
       const scanRes=await fetch(
-        'https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values/'
-        +encodeURIComponent(cfg.sheetName+'!'+_idxToCol(COL.ID_VENDA)+':'+_idxToCol(COL.NOME))+'?key='+cfg.apiKey);
+        'https://sheets.googleapis.com/v4/spreadsheets/'+_cfg.sheetId+'/values/'
+        +encodeURIComponent(_cfg.sheetName+'!'+_idxToCol(_activeCOL.ID_VENDA)+':'+_idxToCol(_activeCOL.NOME))+'?key='+_cfg.apiKey);
       if(!scanRes.ok){const e=await scanRes.json();throw new Error(e.error?.message||scanRes.statusText);}
       const scanData=(await scanRes.json()).values||[];
       let targetRow=-1;
@@ -4458,22 +4470,22 @@ async function saveRecord(){
       _editCols.forEach(({key,idx})=>{
         const val=novos[key]||'';
         if(!val)return; // não enviar campos vazios — preserva fórmulas
-        batchData.push({range:cfg.sheetName+'!'+n2c(idx)+targetRow,values:[[val]]});
+        batchData.push({range:_cfg.sheetName+'!'+n2c(idx)+targetRow,values:[[val]]});
       });
       if(!batchData.length){snack('Nenhum campo preenchido','warn');return;}
       // Passo 3: Enviar apenas as células com valor via batchUpdate
       const saveRes=await fetch(
-        'https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values:batchUpdate',
+        'https://sheets.googleapis.com/v4/spreadsheets/'+_cfg.sheetId+'/values:batchUpdate',
         {method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},
         body:JSON.stringify({valueInputOption:'USER_ENTERED',data:batchData})});
       if(!saveRes.ok){const e=await saveRes.json();throw new Error(e.error?.message||saveRes.statusText);}
       snack('Criado na linha '+targetRow+'!','success');closeDlg();loadDataPreservingState();
     }catch(e){snack('Erro: '+e.message,'error');}
-  }else{const rowN=curRec._row;const data=[];EDIT_COLS.forEach(({key,idx})=>{const o=curRec[key]||'';const n=novos[key]||'';if(o===n)return;// Proteger campos sem UI no popup — get() retorna '' falso positivo
+  }else{const rowN=curRec._row;const data=[];_editCols.forEach(({key,idx})=>{const o=curRec[key]||'';const n=novos[key]||'';if(o===n)return;// Proteger campos sem UI no popup — get() retorna '' falso positivo
     const _hasEl=k=>!!document.getElementById('f_'+k)||!!document.querySelector('input[name="f_'+k+'"]');
     if(n===''&&o!==''&&!_hasEl(key))return; // campo sem elemento no DOM — preserva fórmula
-    data.push({range:cfg.sheetName+'!'+n2c(idx)+rowN,values:[[n]]});});if(!data.length){snack('Sem alterações','success');closeDlg();return;}
-    try{const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+cfg.sheetId+'/values:batchUpdate',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},body:JSON.stringify({valueInputOption:'USER_ENTERED',data})});if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}snack(data.length+' campo(s) salvos!','success');closeDlg();loadDataPreservingState();}catch(e){snack('Erro: '+e.message,'error');}
+    data.push({range:_cfg.sheetName+'!'+n2c(idx)+rowN,values:[[n]]});});if(!data.length){snack('Sem alterações','success');closeDlg();return;}
+    try{const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+_cfg.sheetId+'/values:batchUpdate',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},body:JSON.stringify({valueInputOption:'USER_ENTERED',data})});if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}snack(data.length+' campo(s) salvos!','success');closeDlg();loadDataPreservingState();}catch(e){snack('Erro: '+e.message,'error');}
   }
 }
 
