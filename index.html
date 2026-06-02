@@ -3839,7 +3839,12 @@ function renderDashboard(fromFilter){
     // ════════════════════════════════════════════════════════════════
     // DASHBOARD RETORNOS
     // ════════════════════════════════════════════════════════════════
-    var IGNORADOS_R=[''];  // não ignora CONCLUÍDO no dashboard de Retornos
+    var IGNORADOS_R=['CONCLUÍDO'];  // CONCLUÍDO excluído de STATUS ATIVOS
+
+    // Filtrar registros válidos: apenas linhas com ID_VENDA E NOME preenchidos
+    base=base.filter(function(r){
+      return !!(r.ID_VENDA||'').trim()&&!!(r.NOME||'').trim();
+    });
 
     // Popular SKU select
     (function(){
@@ -3854,7 +3859,7 @@ function renderDashboard(fromFilter){
 
     // ── STATUS ATIVOS (dinâmico) ──────────────────────────────────
     var statusMap={};
-    base.filter(function(r){return r.STATUS&&r.STATUS.trim()&&r.STATUS!=='';}).forEach(function(r){
+    base.filter(function(r){return r.STATUS&&r.STATUS.trim()&&r.STATUS!==''&&!IGNORADOS_R.includes(r.STATUS);}).forEach(function(r){
       statusMap[r.STATUS]=(statusMap[r.STATUS]||0)+1;
     });
     var statusColors={
@@ -4127,7 +4132,7 @@ function renderDashboard(fromFilter){
     const mesKeys12=[];
     for(let i=5;i>=0;i--){const d=new Date(todayMes.getFullYear(),todayMes.getMonth()-i,1);mesKeys12.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));}
     const mesMap={};
-    mesBase.forEach(r=>{const d=parseDate(r.DATA_VENDA);if(!d)return;const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');mesMap[key]=(mesMap[key]||0)+1;});
+    mesBase.forEach(r=>{const d=parseDate(r.DATA_RECEBIMENTO);if(!d)return;const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');mesMap[key]=(mesMap[key]||0)+1;});
     const mesLabels12=mesKeys12.map(k=>{const [y,m]=k.split('-');return MESES[+m-1]+'/'+y.slice(2);});
     const mesVals12=mesKeys12.map(k=>mesMap[k]||0);
     if(charts['chartMes']){try{charts['chartMes'].destroy();}catch(e){}delete charts['chartMes'];}
