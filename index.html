@@ -772,11 +772,34 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
   background:#eef0f2;
 }
 /* ── Zebra striping — Edição em Massa Retornos (page8) ─────────────── */
+/* ── Zebra + colunas fixas uniformes em Edição em Massa ─────────── */
+/* Linha ímpar: branco em todas as TDs incluindo sticky */
+#page3 .bt tbody tr td,
+#page8 .bt tbody tr td{
+  background:#ffffff;
+}
+/* Linha par: cinza muito suave uniforme */
+#page3 .bt tbody tr:nth-child(even) td,
 #page8 .bt tbody tr:nth-child(even) td{
   background:#f8f9fa;
 }
-#page8 .bt tbody tr:nth-child(even):hover td{
+/* Hover: cinza levemente mais escuro em toda a linha */
+#page3 .bt tbody tr:hover td,
+#page8 .bt tbody tr:hover td{
   background:#eef0f2;
+}
+/* Registro editado: amarelo tem prioridade máxima */
+#page3 .bt tbody tr.chg td,
+#page8 .bt tbody tr/* ── Destaque registros editados/confirmados (sessão atual) ────── */
+.row-edited td{background:#e8f5e9 !important;}
+.row-edited:hover td{background:#c8e6c9 !important;}
+
+.chg td{
+  background:#fffde7 !important;
+}
+#page3 .bt tbody tr.chg:hover td,
+#page8 .bt tbody tr.chg:hover td{
+  background:#fff9c4 !important;
 }
 /* Hierarquia: chg > hover > zebra — chg tem !important implícito por especificidade */
 
@@ -2259,6 +2282,11 @@ function navRetorn(pageN){
       SECTIONS.atend._bulk=[...bulkOrig];
     }
     switchSection('retorn');
+    // Garantir que allData e dashData estão sincronizados após switchSection
+    var _sr=SECTIONS.retorn;
+    allData=_sr._data||[];
+    dashData=(_sr._dash&&_sr._dash.length)?_sr._dash:allData;
+    SECTIONS.retorn._dash=dashData;
   }
   sidebarNav(pageN);
 }
@@ -2335,14 +2363,18 @@ function sidebarNav(n){
     }
   }
   if([6,7,8,9].includes(n)){
-    // Garantir seção RETORNOS ativa
+    // Garantir seção RETORNOS ativa e dados sincronizados
     if(_activeSection!=='retorn'){
       _activeSection='retorn';
       var _sr=SECTIONS.retorn;
       cfg.sheetId=_sr.sheetId;cfg.sheetName=_sr.sheetName;
       cfg.apiKey=_sr.apiKey;cfg.clientId=_sr.clientId;
-      allData=_sr._data||[];dashData=_sr._dash||[];
     }
+    // Sempre sincronizar dados de RETORNOS (independente de _activeSection)
+    var _srD=SECTIONS.retorn;
+    allData=_srD._data||[];
+    dashData=(_srD._dash&&_srD._dash.length)?_srD._dash:allData;
+    SECTIONS.retorn._dash=dashData;
     // Expandir RETORNOS e fechar ATENDIMENTOS
     var btnRT2=document.getElementById('sbGroupRetornBtn');
     var subRT2=document.getElementById('sbSubmenuRetorn');
@@ -3323,7 +3355,12 @@ function switchPage(n){
     renderDashboard();
   }
   if(n===6){
-    restoreDashFilterState(); // restaurar filtros salvos de RETORNOS
+    // Sincronizar dados de RETORNOS antes de renderizar
+    var _secR=SECTIONS.retorn;
+    allData=_secR._data||[];
+    dashData=(_secR._dash&&_secR._dash.length)?_secR._dash:allData;
+    SECTIONS.retorn._dash=dashData;
+    restoreDashFilterState();
     renderDashboard();
   }
   if(n===2||n===7){
@@ -3833,7 +3870,10 @@ function renderDashboard(fromFilter){
   var $=function(id){return document.getElementById(id+_sfx);};
 
   // ── base de dados ──────────────────────────────────────────────────
-  var base=dashData;  // já é dashData da seção ativa
+  // Usar _dash da seção ativa — sempre sincronizado
+  var _secDash=SECTIONS[_activeSection]._dash;
+  var base=(_dashFiltered&&_dashFiltered.length)?_dashFiltered
+    :(_secDash&&_secDash.length?_secDash:allData);
 
   if(_isR){
     // ════════════════════════════════════════════════════════════════
@@ -3841,9 +3881,9 @@ function renderDashboard(fromFilter){
     // ════════════════════════════════════════════════════════════════
     var IGNORADOS_R=['CONCLUÍDO'];  // CONCLUÍDO excluído de STATUS ATIVOS
 
-    // Filtrar registros válidos: apenas linhas com ID_VENDA E NOME preenchidos
+    // Filtrar registros válidos: linhas com ID_VENDA OU NOME preenchido
     base=base.filter(function(r){
-      return !!(r.ID_VENDA||'').trim()&&!!(r.NOME||'').trim();
+      return !!(r.ID_VENDA||'').trim()||!!(r.NOME||'').trim();
     });
 
     // Popular SKU select
@@ -3899,12 +3939,28 @@ function renderDashboard(fromFilter){
         +'</div>';
     }
     var kpiSecEl=$('kpiSectionRow');
+    // ── KPI helpers ─────────────────────────────────────────────────
+    function pct(num,den){if(!den)return'—';return(num/den*100).toFixed(1)+'%';}
+    // 1. Aptos p/ Estoque → percentual sobre total
+    var aptosEstoquePct=pct(aptosEstoque,totalRetornos);
+    // 2. Trat. Plat. Abertas → percentual sobre total com trat. plat. (abertas+finalizadas)
+    var totalTratPlat=tratPlatabertas+(base.filter(function(r){return(r.TRAT_PLAT_FIN||'')==='SIM';}).length);
+    var tratPlatabertas_total=base.filter(function(r){return !!(r.ABERTO_TRAT_PLAT||'').trim();}).length;
+    var tratAberPct=pct(tratPlatabertas,tratPlatabertas_total||totalRetornos);
+    // 4. Disputas Vencidas → reembolsos / disputas abertas
+    var disputasTotal=base.filter(function(r){return(r.DISPUTA_ABERTA||'').trim()==='SIM';}).length;
+    var disputasVencidas=base.filter(function(r){return(r.CREDITO_RECEBIDO||'').trim()==='SIM';}).length;
+    var dispVencPct=pct(disputasVencidas,disputasTotal);
+    // 5. Reembolso Plataforma x Custo → totalReemb / totalCusto
+    var totalCusto=base.reduce(function(s,r){return s+parseMoney(r.CUSTOS_TOTAL||'0');},0);
+    var totalReemb=base.reduce(function(s,r){return s+parseMoney(r.CREDITO_RECEBIDO_VALOR||'0');},0);
+    var reembCustoPct=totalCusto>0?pct(totalReemb,totalCusto):'—';
     if(kpiSecEl)kpiSecEl.innerHTML=
       kcard('📦','Total de Retornos',totalRetornos,'pri','no período')+
-      kcard('📥','Aptos p/ Estoque',aptosEstoque,'ok','OK p/ estoque ou entrada cardex')+
-      kcard('⚖️','Trat. Plat. Abertas',tratPlatabertas,'pur','ABERTO_TRAT_PLAT = SIM')+
-      kcard('🏁','Trat. Plat. Final.',tratPlatFin,'ok','TRAT_PLAT_FIN = SIM')+
-      kcard('💰','Reembolsos Rec.',reembolsosRec,'ok','R$ '+totalCredito.toFixed(2).replace('.',','));
+      kcard('📥','Aptos p/ Estoque',aptosEstoquePct,'ok','do total de retornos')+
+      kcard('⚖️','Trat. Plat. Abertas',tratAberPct,'pur','do total com tratativa')+
+      kcard('🏆','Disputas Vencidas',dispVencPct,'ok','reembolso / disputas abertas')+
+      kcard('💰','Reembolso x Custo',reembCustoPct,'pri','valor recuperado');
 
     // ── GRÁFICOS ────────────────────────────────────────────────────
     Object.keys(charts).filter(function(k){return k.endsWith('_r');}).forEach(function(k){
@@ -4132,7 +4188,7 @@ function renderDashboard(fromFilter){
     const mesKeys12=[];
     for(let i=5;i>=0;i--){const d=new Date(todayMes.getFullYear(),todayMes.getMonth()-i,1);mesKeys12.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));}
     const mesMap={};
-    mesBase.forEach(r=>{const d=parseDate(r.DATA_RECEBIMENTO);if(!d)return;const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');mesMap[key]=(mesMap[key]||0)+1;});
+    mesBase.forEach(r=>{const d=parseDate(r.DATA_VENDA);if(!d)return;const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');mesMap[key]=(mesMap[key]||0)+1;});
     const mesLabels12=mesKeys12.map(k=>{const [y,m]=k.split('-');return MESES[+m-1]+'/'+y.slice(2);});
     const mesVals12=mesKeys12.map(k=>mesMap[k]||0);
     if(charts['chartMes']){try{charts['chartMes'].destroy();}catch(e){}delete charts['chartMes'];}
@@ -4192,16 +4248,19 @@ function renderDashboard(fromFilter){
         function fmtR(v){return 'R$ '+(isNaN(v)?'0,00':Math.abs(v).toFixed(2).replace('.',','));}
         function badge(v,col){var colors={red:'#991b1b',green:'#166534',blue:'#1e3a8a',pur:'#6b21a8',warn:'#92400e'};var bg={red:'#fef2f2',green:'#f0fdf4',blue:'#eff6ff',pur:'#faf5ff',warn:'#fffbeb'};return '<span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;background:'+bg[col]+';color:'+colors[col]+'">'+v+'</span>';}
         function kcard2(icon,lbl,val,valStyle,badgeVal,badgeCol,sub){return '<div class="kpi"><div class="kpi-lbl">'+icon+' '+lbl+'</div><div class="kpi-val" style="'+valStyle+'">'+val+'</div><div style="margin:4px 0">'+badge(badgeVal,badgeCol)+'</div><div class="kpi-sub">'+sub+'</div></div>';}
+        // Completude: registros SEM campos em falta / total válido
+        var registrosCompletos=totalValido2-comFalta;
+        var pctCompletude=totalValido2>0?((registrosCompletos/totalValido2)*100).toFixed(1):'—';
         secEl.innerHTML=
-          kcard2('⚠️','Campos em Falta',comFalta,'font-size:26px;font-weight:600;color:var(--err)',pctFalta+'%','red','de '+totalValido+' registros')+
-          kcard2('✅','Concluídos',concluidosK,'font-size:26px;font-weight:600;color:var(--ok)',pctConc+'%','green','de '+totalValido+' registros')+
-          kcard2('💰','Reembolso Atendimento',pctReemb+'%','font-size:26px;font-weight:600;color:'+(totalReemb>=0?'var(--ok)':'var(--err)'),fmtR(totalReemb),'pur','custo AG: '+fmtR(totalCusto))+
-          kcard2('🏆','Crédito Recebido',credRec,'font-size:26px;font-weight:600;color:#1a73e8',pctCred+'%','blue','de '+disputas+' disputas abertas');
+          kcard2('📋','Completude de Cadastro',pctCompletude+'%','font-size:26px;font-weight:600;color:var(--ok)',registrosCompletos+'/'+totalValido2,'green','registros completos')+
+          kcard2('✅','Concluídos',pctConc+'%','font-size:26px;font-weight:600;color:var(--ok)',concluidosK+' de '+totalValido,'green','atendimentos concluídos')+
+          kcard2('💰','Recuperação Financeira',pctReemb+'%','font-size:26px;font-weight:600;color:'+(totalReemb>=0?'var(--ok)':'var(--err)'),fmtR(totalReemb),'pur','custo: '+fmtR(totalCusto))+
+          kcard2('🏆','Sucesso Disputa',pctCred+'%','font-size:26px;font-weight:600;color:#1a73e8',credRec+' de '+disputas,'blue','disputas com reembolso');
         var tratSim=base.filter(function(r){return (r.CHAMADO_ABERTO||'').trim()==='SIM';}).length;
         var tratReab=base.filter(function(r){return (r.CHAMADO_ABERTO||'').trim()==='Reaberto';}).length;
         var totalTrat=tratSim+tratReab;
         var pctReab=totalTrat>0?((tratReab/totalTrat)*100).toFixed(1):'—';
-        secEl.innerHTML+=kcard2('🔄','Taxa Reabertura',tratReab,'font-size:26px;font-weight:600;color:#f59e0b',pctReab+'%','warn','de '+totalTrat+' tratativas abertas');
+        secEl.innerHTML+=kcard2('🔄','Reabertura de Chamado',pctReab+'%','font-size:26px;font-weight:600;color:#f59e0b',tratReab+' de '+totalTrat,'warn','chamados reabertos');
       })();
     }
   }
@@ -4280,11 +4339,13 @@ function renderSummary(){
   }
   var base=baseCards; // contadores dos cards usam baseCards (sem sf)
   // Total card: mostra registros da tabela (baseFull, com sf se ativo)
-  var totalActive=!sf&&!missOnly;
-  var totalLabel=sf?'Filtrado por Status':cf?'Filtrado por Canal':ef?'Filtrado por Empr.':hasAnyFilter?'Filtrado':'Total Ativos';
+  // STATUS ATIVOS: sempre usa baseCards (sem filtro de status sf)
+  // Filtros globais (canal, empr, datas, srch) afetam — sf NÃO afeta
+  var totalActive=!sf&&!missOnly; // ativo SOMENTE quando nenhum status selecionado
+  var totalLabel=cf?'Filtrado por Canal':ef?'Filtrado por Empr.':(s||_di||_df)?'Filtrado':'Total Ativos';
   var h='<div class="sc sc-total'+(totalActive?' sc-active':'')+'" onclick="clearF()" title="Limpar filtro">'
     +'<div class="sc-lbl">'+totalLabel+'</div>'
-    +'<div class="sc-cnt">'+baseFull.length+'</div></div>';
+    +'<div class="sc-cnt">'+baseCards.length+'</div></div>';
   // statusCount calculado sobre baseCards (sem sf) → mostra distribuição real
   var statusCount={};
   baseCards.forEach(function(r){if(r.STATUS)statusCount[r.STATUS]=(statusCount[r.STATUS]||0)+1;});
@@ -4367,7 +4428,7 @@ function render(){
   const cell_style='style="cursor:pointer" title="Clique para editar"';
   var _edSet=SECTIONS[_activeSection]._editedRows||new Set();
   pg.forEach(r=>{const m=getMiss(r).length;const cc=CC[r.STATUS]||'chip';const enc=encodeURIComponent(JSON.stringify(r));
-    var _trCls=_edSet.has(r._row)?'chg':'';
+    var _trCls=_edSet.has(r._row)?'row-edited':'';
     h+='<tr class="'+_trCls+'"><td '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+(_activeSection==='retorn'?r.MODALIDADE:r.MOD_TRAT_CLIENTE)+'</td><td class="mono" '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.ID_VENDA+'</td><td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer" title="Clique para editar" onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.NOME+'</td><td '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))"><span class="'+cc+'">'+r.STATUS+'</span>'+(m?'<div class="miss-badge">⚠ '+m+'</div>':'')+'</td><td '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.EMPR+'</td><td '+cell_style+' onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))"><span class="chip chip-canal">'+r.CANAL+'</span></td><td class="mono" style="font-size:10px;cursor:pointer" title="Clique para editar" onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.SKU+'</td><td style="color:var(--on-sur-v);font-size:11px;cursor:pointer" title="Clique para editar" onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">'+r.DATA_VENDA+'</td><td><button class="btn btn-outlined btn-sm" onclick="openModal(JSON.parse(decodeURIComponent(\''+enc+'\')))">✏</button></td></tr>';
   });
   $el('tbody').innerHTML=h;
@@ -4588,10 +4649,27 @@ async function saveRecord(){
     CHEGOU_CARDEX:'Integrada Reclamação?'
   }:{});
   _editCols.forEach(({key,idx})=>{
-    const o=curRec[key]||'';const n=novos[key]||'';if(o===n)return;
-    const _hasEl=k=>!!document.getElementById('f_'+k)||!!document.querySelector('input[name="f_'+k+'"]');
-    if(n===''&&o!==''&&!_hasEl(key))return;
-    data.push({range:_cfg.sheetName+'!'+n2c(idx)+rowN,values:[[n]]});
+    const o=String(curRec[key]??'');const n=String(novos[key]??'');if(o===n)return;
+        const _hasElVisible=function(k){
+      var el=document.getElementById('f_'+k);
+      if(el){var p=el;while(p&&p!==document.body){if(p.style&&p.style.display==='none')return false;if(p.getAttribute&&p.getAttribute('id')&&p.getAttribute('id').endsWith('Extra')&&p.style.display==='none')return false;p=p.parentElement;}return true;}
+      var radios=document.querySelectorAll('input[name="f_'+k+'"]');
+      if(radios.length===0)return false;
+      var p2=radios[0];while(p2&&p2!==document.body){if(p2.style&&p2.style.display==='none')return false;p2=p2.parentElement;}return true;
+    };
+    // Se n é vazio mas o tem valor: só enviar se campo está VISÍVEL e é editável
+    // Campos ocultos, ausentes ou sem DOM → preservar valor original
+    if(n===''&&o!==''){
+      if(!_hasElVisible(key))return; // campo oculto/ausente → preserva
+      // Campo visível mas retornando vazio: verificar se é intencional
+      // Se o campo tem um input com value não-vazio carregado, o esvaziamento é intencional
+      // Se o input não existe ou retorna '' por ausência → preservar
+      var _el=document.getElementById('f_'+key);
+      var _radios=document.querySelectorAll('input[name="f_'+key+'"]');
+      // Se não há input real (só container div) → preservar
+      var _hasRealInput=(_el&&(_el.tagName==='INPUT'||_el.tagName==='SELECT'||_el.tagName==='TEXTAREA'))||_radios.length>0;
+      if(!_hasRealInput)return; // sem input real → preserva valor
+    }    data.push({range:_cfg.sheetName+'!'+n2c(idx)+rowN,values:[[n]]});
     _changes.push({label:_labelsMap[key]||key,oldVal:o,newVal:n});
   });
   if(!data.length){snack('Sem alterações','success');closeDlg();return;}
@@ -4997,7 +5075,7 @@ function _renderVirtual(tbody,sheet){
     const i=bulkFiltered[vi];
     if(i===undefined)continue;
     const r=bulkOrig[i];
-    parts.push('<tr id="br_'+i+'" class="'+(bulkChg[i]?'chg':'')+'">'
+    parts.push('<tr id="br_'+i+'" class="'+(bulkChg[i]?'chg':(SECTIONS[_activeSection]._editedRows.has(r._row)?'row-edited':''))+'">'
       +'<td class="col-ln">'+r._row+'</td>'
       +'<td class="col-status"><span class="chip '+(CC[r.STATUS]||'')+'" style="font-size:10px;padding:2px 5px">'+(r.STATUS||'—')+'</span></td>'
       +'<td class="col-id-venda">'+(r.ID_VENDA||'—')+'</td>');
@@ -5025,7 +5103,7 @@ function _renderAllRows(tbody){
   const parts=[];
   bulkFiltered.forEach(i=>{
     const r=bulkOrig[i];
-    parts.push('<tr id="br_'+i+'" class="'+(bulkChg[i]?'chg':'')+'">'
+    parts.push('<tr id="br_'+i+'" class="'+(bulkChg[i]?'chg':(SECTIONS[_activeSection]._editedRows.has(r._row)?'row-edited':''))+'">'
       +'<td class="col-ln">'+r._row+'</td>');
     visID.forEach(c=>{
       if(c.k==='STATUS'){
@@ -5172,6 +5250,11 @@ async function bulkSave(){
   const data=[];keys.forEach(i=>{const r=bulkOrig[i];Object.entries(bulkChg[i]).forEach(([key,val])=>{const idx=_activeCOL[key];if(idx===undefined||_FCOLS.has(idx))return;data.push({range:_cfg.sheetName+'!'+n2c(idx)+r._row,values:[[val]]});});});
   if(!data.length){snack('Nenhum campo editável');return;}
   try{const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+_cfg.sheetId+'/values:batchUpdate',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn},body:JSON.stringify({valueInputOption:'USER_ENTERED',data})});if(!res.ok){const e=await res.json();throw new Error(e.error?.message||res.statusText);}snack(data.length+' célula(s) salvas!','success');
+      // Marcar linhas salvas como editadas (persistente por seção)
+      keys.forEach(function(i){
+        var r=bulkOrig[i];
+        if(r&&r._row)SECTIONS[_activeSection]._editedRows.add(r._row);
+      });
       // Save current filters before reload
       const savedSF=document.getElementById('bfStatus'+_sfx)?.value||'';
       const savedCF=document.getElementById('bfCanal'+_sfx)?.value||'';
@@ -5407,14 +5490,7 @@ function updateSidebarActive(n){
   });
   var activeId=pageMap[n];
   if(activeId){var el=document.getElementById(activeId);if(el)el.classList.add('active');}
-  // LEGADO — Atualizar itens 0-3 (mantido para compatibilidade)
-  for(var i=0;i<=3;i++){
-    var el=document.getElementById('snav'+i);
-    if(el)el.classList.toggle('active',i===n);
-  }
-  // Configurações
-  var cfgEl=document.getElementById('snavCfg');
-  if(cfgEl)cfgEl.classList.toggle('active',n===4);
+  // (bloco legado removido — pageMap já cobre todos os casos)
   // Novo Registro nunca fica ativo (não é uma página)
   var novoEl=document.getElementById('snavNovo');
   if(novoEl)novoEl.classList.remove('active');
