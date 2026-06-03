@@ -673,6 +673,9 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
   position:sticky;top:0;z-index:5;
   border-right:1px solid rgba(255,255,255,.2);
   border-bottom:2px solid rgba(0,0,0,.15);
+  padding:0;          /* anula o padding:9px 12px do thead th global */
+  vertical-align:top; /* garante alinhamento uniforme */
+  box-sizing:border-box;
 }
 /* Colunas fixas no thead têm z-index maior */
 .bt thead .col-ln,.bt thead .col-status,.bt thead .col-id-venda{
@@ -691,7 +694,8 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 /* Colunas fixas: th-sec escuro e vazio */
 .bt thead .col-ln     .th-sec{
   display:flex;align-items:center;gap:4px;
-  min-height:22px;padding:2px 4px;
+  height:18px;        /* altura fixa = 50px total - 32px th-col */
+  padding:0 6px;
   font-size:10px;font-weight:600;letter-spacing:.5px;
   white-space:nowrap;overflow:hidden;
 }
@@ -1697,6 +1701,23 @@ body{
   background:#f3f4f6;
   color:#111827;
 }
+/* Garantir altura uniforme em todas as TH de Edição em Massa */
+#page3 .bt thead th,
+#page8 .bt thead th{
+  padding:0 !important;
+  vertical-align:top !important;
+}
+#page3 .bt thead th .th-sec,
+#page8 .bt thead th .th-sec{
+  height:18px !important;
+  min-height:18px !important;
+  max-height:18px !important;
+}
+#page3 .bt thead th .th-col,
+#page8 .bt thead th .th-col{
+  height:32px !important;
+  overflow:hidden !important;
+}
 #page8 .bt thead th.col-ln .th-sec{
   background:#d1d5db;
   color:#111827;
@@ -1708,6 +1729,51 @@ body{
   color:#374151;
   opacity:.7;
 }
+/* ── Cabeçalhos Edição em Massa RETORNOS — tons escuros + texto branco ── */
+/* Colunas fixas: #, Status, ID Venda */
+#page8 .bt thead th.col-ln,
+#page8 .bt thead th.col-status,
+#page8 .bt thead th.col-id-venda                 { background:#1f2937; }
+#page8 .bt thead th.col-ln .th-sec,
+#page8 .bt thead th.col-status .th-sec,
+#page8 .bt thead th.col-id-venda .th-sec          { background:#111827; }
+#page8 .bt thead th.col-ln .th-col,
+#page8 .bt thead th.col-status .th-col,
+#page8 .bt thead th.col-id-venda .th-col          { background:#1f2937; }
+#page8 .bt thead th.col-ln .th-label,
+#page8 .bt thead th.col-status .th-label,
+#page8 .bt thead th.col-id-venda .th-label        { color:#fff; }
+#page8 .bt thead th.col-ln .th-btn,
+#page8 .bt thead th.col-status .th-btn,
+#page8 .bt thead th.col-id-venda .th-btn          { color:rgba(255,255,255,.7); }
+/* Seção Identificação: cinza escuro */
+#page8 .bt thead th.sec-r-id                      { background:#374151; }
+#page8 .bt thead th.sec-r-id .th-sec              { background:#1f2937; color:#fff; }
+#page8 .bt thead th.sec-r-id .th-col              { background:#374151; }
+#page8 .bt thead th.sec-r-id .th-label            { color:#fff; }
+#page8 .bt thead th.sec-r-id .th-btn              { color:rgba(255,255,255,.7); }
+#page8 .bt thead th.sec-r-id .th-filter           { background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.25); color:#fff; }
+#page8 .bt thead th.sec-r-id .th-filter::placeholder { color:rgba(255,255,255,.5); }
+/* Seção Estoque: marrom escuro */
+#page8 .bt thead th.sec-r-estoque                 { background:#7c4a28; }
+#page8 .bt thead th.sec-r-estoque .th-sec         { background:#4a2512; color:#fff; }
+#page8 .bt thead th.sec-r-estoque .th-col         { background:#7c4a28; }
+#page8 .bt thead th.sec-r-estoque .th-label       { color:#fff; }
+#page8 .bt thead th.sec-r-estoque .th-btn         { color:rgba(255,255,255,.7); }
+#page8 .bt thead th.sec-r-estoque .th-filter      { background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.25); color:#fff; }
+#page8 .bt thead th.sec-r-estoque .th-filter::placeholder { color:rgba(255,255,255,.5); }
+/* Seção Tratativa Plataforma: amarelo forte (#eab308 base) + texto preto */
+#page8 .bt thead th.sec-r-trat-plat               { background:#ca8a04; }
+#page8 .bt thead th.sec-r-trat-plat .th-sec       { background:#854d0e; color:#fff; }
+#page8 .bt thead th.sec-r-trat-plat .th-col       { background:#ca8a04; }
+#page8 .bt thead th.sec-r-trat-plat .th-label     { color:#fff; font-weight:700; }
+#page8 .bt thead th.sec-r-trat-plat .th-btn       { color:rgba(255,255,255,.8); }
+#page8 .bt thead th.sec-r-trat-plat .th-filter    { background:rgba(0,0,0,.15); border-color:rgba(0,0,0,.25); color:#fff; }
+#page8 .bt thead th.sec-r-trat-plat .th-filter::placeholder { color:rgba(255,255,255,.6); }
+/* Filtros das colunas fixas também em branco */
+#page8 .bt thead th.col-status .th-filter,
+#page8 .bt thead th.col-id-venda .th-filter,
+#page8 .bt thead th.col-ln .th-filter             { background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.25); color:#fff; }
 /* Ajuste 2: texto dos filtros em preto em todas as colunas de page8 */
 #page8 .bt thead .th-filter{
   background:rgba(0,0,0,.06);
@@ -4833,6 +4899,7 @@ function buildBulkHead(thead){
   function mkFixed(key,label,cssClass){
     const fv=colFilters[key]||'';
     return '<th class="'+cssClass+'">'
+      +'<div class="th-sec"></div>'  // alinha com mkThWithSec
       +'<div class="th-col">'
         +'<div class="th-top"><span class="th-label">'+label+'</span>'
           +'<div class="th-controls">'
