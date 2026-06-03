@@ -2980,7 +2980,7 @@ const BANCO_MAP={
   'Shopee':{buscaCol:cN('A'),EMPR:cN('BO'),MODELO:cN('BP'),DATA_VENDA:cN('I'),SKU:cN('S'),QT:cN('X'),RASTREIO:cN('F'),NF_DEVOL:cN('BX'),NF:cN('AG'),NOME:cN('AZ'),ID_BLING:cN('A'),DESC:cN('J')},
   'Magalu':{buscaCol:cN('AT'),EMPR:cN('BJ'),MODELO:cN('AW'),DATA_VENDA:cN('A'),SKU:cN('E'),QT:cN('D'),RASTREIO:cN('O'),NF_DEVOL:cN('BD'),NF:cN('T'),NOME:cN('Z'),ID_BLING:cN('AT'),DESC:cN('AX')},
   'Amazon':{buscaCol:cN('A'),EMPR:cN('AL'),MODELO:cN('AM'),DATA_VENDA:cN('AN'),SKU:cN('L'),QT:cN('AO'),RASTREIO:cN('AA'),NF_DEVOL:cN('AV'),NF:cN('R'),NOME:cN('AE'),ID_BLING:cN('A'),DESC:cN('K')},
-  'TikTok':{buscaCol:cN('A'),EMPR:cN('BJ'),MODELO:cN('BK'),DATA_VENDA:cN('BG'),SKU:cN('R'),QT:cN('S'),RASTREIO:cN('N'),NF_DEVOL:cN('BV'),NF:cN('BH'),NOME:cN('AR'),ID_BLING:cN('A'),DESC:cN('T')}
+  'TikTok':{buscaCol:cN('A'),EMPR:cN('BJ'),MODELO:cN('BK'),DATA_VENDA:cN('BG'),SKU:cN('H'),QT:cN('L'),RASTREIO:cN('AK'),NF_DEVOL:cN('BV'),NF:cN('BH'),NOME:cN('AR'),ID_BLING:cN('A'),DESC:cN('T')}
 };
 function detectCanal(id){const p=String(id||'').substring(0,2);return p==='20'?'Mercado Livre':p==='25'||p==='26'?'Shopee':p==='14'||p==='15'?'Magalu':p==='70'?'Amazon':p==='58'?'TikTok':'';}
 function detectModal(desc){const s=(desc||'').toLowerCase();if(s.includes('cancelad')||s.includes('cancelou'))return'Cancelado';if(s.includes('devolvid')||s.includes('devolução')||s.includes('troca entregue'))return'Devolução';if(s.includes('não foi possível')||s.includes('extraviado')||s.includes('não entregue'))return'Não Entregue';return'';}
