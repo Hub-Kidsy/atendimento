@@ -2579,9 +2579,6 @@ function openModal(rec){
               fYN('DISPUTA_FINALIZADA','Disputa Finalizada?',r.DISPUTA_FINALIZADA),
             '</div>',
           '</div>',
-          '<div class="fg3">',
-            fYN('TRAT_PLAT_FIN','Tratativa Plataforma FINALIZADA?',r.TRAT_PLAT_FIN||'',true,isErr('TRAT_PLAT_FIN')),
-          '</div>',
         '</div>',
       '</div>',
     '</div>',
@@ -3201,7 +3198,7 @@ const FS=[
 ];
 // ══ COLUNAS EDIÇÃO EM MASSA — RETORNOS ══
 const RID_COLS=[
-  // Identificação RETORNOS
+  // Identificação RETORNOS — espelha seção Identificação do popup
   {k:'STATUS',          l:'Status',           t:'ro'},
   {k:'ID_VENDA',        l:'ID Venda',          t:'ro'},
   {k:'NOME',            l:'Nome',              t:'txt'},
@@ -3213,43 +3210,31 @@ const RID_COLS=[
   {k:'QT',              l:'QT',                t:'txt'},
   {k:'RASTREIO',        l:'Rastreio',          t:'txt'},
   {k:'NF',              l:'NF',                t:'txt'},
-  {k:'NF_DEVOL',        l:'NF DEVOL',          t:'txt'},
-  {k:'CHEGOU_CARDEX',   l:'Integrada Reclamação?', t:'sel', opts:['','SIM','NÃO']},
+  {k:'NF_DEVOL',        l:'NF DEVOL',          t:'txt'}
+  // CHEGOU_CARDEX removido do popup
 ];
 const RESTOQUE_COLS=[
-  // ESTOQUE RETORNOS — campos da planilha raiz
-  {k:'MODALIDADE',      l:'Modalidade',        t:'sel', opts:['','Devolução','Resolvido','Cancelado','Remoção','Não Entregue'], req:true},
-  {k:'DATA_RECEBIMENTO',l:'DATA Recebimento',  t:'txt'},
-  {k:'CONDICAO',        l:'Condição',          t:'sel', opts:['','OK p/ Estoque','Caixa Danificada','Danificado','Troca de Produto','Faltando Peça']},
-  {k:'OBS_RELEVANTES',  l:'Obs. Relevantes',   t:'txt'},
-  {k:'ENTRADA_CARDEX',  l:'NF Devol (Entrada Cardex)', t:'txt'},
-  {k:'ENTRADA_BLING',   l:'Entrada Cardex',    t:'sel', opts:['','ESTOQUE','DEFEITOS','DESCARTE']},
-  {k:'ENTRADA_BLING2',  l:'Entrada Bling',     t:'sel', opts:['','CARDEX','DEFEITOS','DESCARTE']},
-  {k:'NEC_TRAT_PLAT',   l:'Nec. Trat. Plat.?', t:'sel', opts:['','SIM','NÃO'], w:160},
-  {k:'OBS_TRAT_PLAT_GERAL', l:'Obs. Trat. Plataforma', t:'txt', w:200},
-  {k:'VALOR_NF',        l:'Custo Produto',     t:'txt'},
+  // Estoque RETORNOS — espelha seção Estoque do popup
+  {k:'MODALIDADE',          l:'Modalidade',            t:'sel', opts:['','Devolução','Resolvido','Cancelado','Remoção','Não Entregue'], req:true},
+  {k:'DATA_RECEBIMENTO',    l:'DATA Recebimento',      t:'txt'},
+  {k:'CONDICAO',            l:'Condição',              t:'sel', opts:['','OK p/ Estoque','Caixa Danificada','Danificado','Troca de Produto','Faltando Peça']},
+  {k:'OBS_RELEVANTES',      l:'Obs. Relevantes',       t:'txt'},
+  {k:'NEC_TRAT_PLAT',       l:'Nec. Trat. Plat.?',    t:'sel', opts:['','SIM','NÃO'], w:160},
+  {k:'OBS_TRAT_PLAT_GERAL', l:'Obs. Trat. Plataforma', t:'txt', w:200}
+  // Removidos: ENTRADA_CARDEX, ENTRADA_BLING, ENTRADA_BLING2, VALOR_NF
 ];
 const RDC_COLS=[
-  // TRATATIVA COM PLATAFORMA RETORNOS
-  {k:'ABERTO_TRAT_PLAT',l:'Aberto Trat. Plat.?', t:'sel', opts:['','SIM','NÃO','REABERTA']},
-  {k:'MOD_TRAT_PLAT1',  l:'Modalidade Trat. 1', t:'sel', opts:['','Disputa','Acordo','Mediação']},
-  {k:'MOTIVO_TRAT1',    l:'Motivo Trat. 1',    t:'txt'},
-  {k:'DATA_TRAT1',      l:'Data Trat. 1',      t:'txt'},
-  {k:'PROTOCOLO1',      l:'Protocolo 1',       t:'txt'},
-  {k:'OBS_TRAT1',       l:'Obs. Trat. 1',      t:'txt'},
-  {k:'MOD_TRAT_PLAT2',  l:'Modalidade Trat. 2', t:'sel', opts:['','Disputa','Acordo','Mediação']},
-  {k:'MOTIVO_TRAT2',    l:'Motivo Trat. 2',    t:'txt'},
-  {k:'DATA_TRAT2',      l:'Data Trat. 2',      t:'txt'},
-  {k:'PROTOCOLO2',      l:'Protocolo 2',       t:'txt'},
-  {k:'OBS_TRAT2',       l:'Obs. Trat. 2',      t:'txt'},
-  {k:'DISPUTA_ABERTA',  l:'Disputa Aberta?',   t:'sel', opts:['','SIM','NÃO']},
-  {k:'PLAT_DISPUTA',    l:'Plataforma Disputa', t:'sel', opts:['','Mercado Livre','Shopee','Amazon','Magalu','TikTok','J3','MTLOG','CARDEX']},
-  {k:'REEMBOLSO_MKT',   l:'Reembolso MKT?',    t:'sel', opts:['','SIM','NÃO']},
-  {k:'DISPUTA_FINALIZADA', l:'Disputa Final.?', t:'sel', opts:['','SIM','NÃO']},
-  {k:'CREDITO_RECEBIDO_VALOR', l:'R$ Crédito', t:'txt'},
-  {k:'CREDITO_RECEBIDO',l:'Crédito Recebido?', t:'sel', opts:['','SIM','NÃO']},
-  {k:'OBS_DISPUTA',     l:'Obs. Disputa',      t:'txt'},
-  {k:'TRAT_PLAT_FIN',   l:'Trat. Plat. Final.?', t:'sel', opts:['','SIM','NÃO']},
+  // Tratativa Plataforma RETORNOS — espelha seção Tratativa do popup
+  {k:'ABERTO_TRAT_PLAT',     l:'Aberto Trat. Plat.?',  t:'sel', opts:['','SIM','NÃO','Reaberto','REABERTA']},
+  {k:'PROTOCOLO1',           l:'Protocolo 1',           t:'txt'},
+  {k:'DISPUTA_ABERTA',       l:'Disputa Aberta?',       t:'sel', opts:['','SIM','NÃO']},
+  {k:'PLAT_DISPUTA',         l:'Plataforma Disputa',    t:'sel', opts:['','Mercado Livre','Shopee','Amazon','Magalu','TikTok','J3','MTLOG','CARDEX']},
+  {k:'REEMBOLSO_MKT',        l:'Reembolso MKT?',        t:'sel', opts:['','SIM','NÃO']},
+  {k:'CREDITO_RECEBIDO_VALOR',l:'R$ Crédito Recebido',  t:'txt'},
+  {k:'CREDITO_RECEBIDO',     l:'Crédito Recebido?',     t:'sel', opts:['','SIM','NÃO']},
+  {k:'OBS_DISPUTA',          l:'Obs. Disputa',          t:'txt'},
+  {k:'DISPUTA_FINALIZADA',   l:'Disputa Finalizada?',   t:'sel', opts:['','SIM','NÃO']}
+  // Removidos: MOD_TRAT_PLAT1/2, MOTIVO_TRAT1/2, DATA_TRAT1/2, PROTOCOLO2, OBS_TRAT1/2, TRAT_PLAT_FIN
 ];
 
 // Seção Financeiro removida da Edição em Massa
@@ -3556,9 +3541,6 @@ function openModalRetorn(rec){
           fInp('NF','NF',r.NF),
           fInp('NF_DEVOL','NF Devol.',r.NF_DEVOL),
         '</div>',
-        '<div class="fg3">',
-          fYN('CHEGOU_CARDEX','Integrada Reclamação?',r.CHEGOU_CARDEX),
-        '</div>',
       '</div>',
     '</div>',
 
@@ -3577,16 +3559,8 @@ function openModalRetorn(rec){
         '<div class="fg" style="grid-template-columns:2fr">',
           fInp('OBS_RELEVANTES','Obs. Relevantes',r.OBS_RELEVANTES),
         '</div>',
-        '<div class="fg3">',
-          fInp('ENTRADA_CARDEX','NF Devol / Entrada Cardex',r.ENTRADA_CARDEX),
-          fSel('ENTRADA_BLING','Entrada Cardex (destino)',r.ENTRADA_BLING,['','ESTOQUE','DEFEITOS','DESCARTE']),
-          fSel('ENTRADA_BLING2','Entrada Bling',r.ENTRADA_BLING2,['','CARDEX','DEFEITOS','DESCARTE']),
-        '</div>',
-        '<div class="fg3">',
+        '<div class="fg">',
           fYN('NEC_TRAT_PLAT','Nec. Tratativa Plataforma?',r.NEC_TRAT_PLAT),
-          fInp('VALOR_NF','Custo Produto',r.VALOR_NF),
-        '</div>',
-        '<div class="fg" style="grid-template-columns:2fr">',
           fInp('OBS_TRAT_PLAT_GERAL','Obs. Tratativa Plataforma',r.OBS_TRAT_PLAT_GERAL),
         '</div>',
       '</div>',
@@ -3603,27 +3577,8 @@ function openModalRetorn(rec){
           fYN3('ABERTO_TRAT_PLAT','Aberto Tratativa Plataforma?',r.ABERTO_TRAT_PLAT||'',true,isErr('ABERTO_TRAT_PLAT')),
         '</div>',
         '<div id="tpExtra_r" style="display:'+(tpA?'contents':'none')+'">',
-          '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:4px 0 2px">Tratativa 1</div>',
-          '<div class="fg3">',
-            fSel('MOD_TRAT_PLAT1','Modalidade Trat. Plat. 1',r.MOD_TRAT_PLAT1||'',MODALIDADES_PLAT),
-            fSel('MOTIVO_TRAT1','Motivo da Tratativa 1',r.MOTIVO_TRAT1||'',MOTIVOS_TRAT),
-            fInp('DATA_TRAT1','Data da Tratativa 1',r.DATA_TRAT1||'','text',false,'DD/MM/AAAA'),
-          '</div>',
-          '<div class="fg" style="grid-template-columns:1fr 2fr">',
+          '<div class="fg" style="grid-template-columns:1fr 1fr">',
             fInp('PROTOCOLO1','Protocolo 1',r.PROTOCOLO1||''),
-            fInp('OBS_TRAT1','Observações da Tratativa 1',r.OBS_TRAT1||''),
-          '</div>',
-          '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:8px 0 2px;display:flex;align-items:center;gap:8px">Tratativa 2 <button type="button" class="btn-sm" style="padding:1px 7px;font-size:12px;border-radius:4px;border:1px solid var(--pri);color:var(--pri);background:transparent;cursor:pointer" onclick="var el=document.getElementById(&quot;trat2Extra_r&quot;);el.style.display=el.style.display===&quot;none&quot;?&quot;contents&quot;:&quot;none&quot;" title="Expandir Tratativa 2">+</button></div>',
-          '<div id="trat2Extra_r" style="display:'+(t2A?'contents':'none')+'">',
-            '<div class="fg3">',
-              fSel('MOD_TRAT_PLAT2','Modalidade Trat. Plat. 2',r.MOD_TRAT_PLAT2||'',MODALIDADES_PLAT),
-              fSel('MOTIVO_TRAT2','Motivo da Tratativa 2',r.MOTIVO_TRAT2||'',MOTIVOS_TRAT),
-              fInp('DATA_TRAT2','Data da Tratativa 2',r.DATA_TRAT2||'','text',false,'DD/MM/AAAA'),
-            '</div>',
-            '<div class="fg" style="grid-template-columns:1fr 2fr">',
-              fInp('PROTOCOLO2','Protocolo 2',r.PROTOCOLO2||''),
-              fInp('OBS_TRAT2','Observações da Tratativa 2',r.OBS_TRAT2||''),
-            '</div>',
           '</div>',
           '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:8px 0 2px">Disputa</div>',
           '<div class="fg3">',
@@ -3644,9 +3599,6 @@ function openModalRetorn(rec){
             '<div class="fg3">',
               fYN('DISPUTA_FINALIZADA','Disputa Finalizada?',r.DISPUTA_FINALIZADA),
             '</div>',
-          '</div>',
-          '<div class="fg3">',
-            fYN('TRAT_PLAT_FIN','Tratativa Plataforma FINALIZADA?',r.TRAT_PLAT_FIN||'',true,isErr('TRAT_PLAT_FIN')),
           '</div>',
         '</div>',
       '</div>',
