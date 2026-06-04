@@ -797,6 +797,11 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 #page8 .bt tbody tr/* ── Destaque registros editados/confirmados (sessão atual) ────── */
 .row-edited td{background:#e8f5e9 !important;}
 .row-edited:hover td{background:#c8e6c9 !important;}
+/* Reforçar row-edited nas páginas de lista (page2=Atend, page7=Retorn) */
+#page2 tr.row-edited td,
+#page7 tr.row-edited td{background:#e8f5e9 !important;}
+#page2 tr.row-edited:hover td,
+#page7 tr.row-edited:hover td{background:#c8e6c9 !important;}
 
 .chg td{
   background:#fffde7 !important;
@@ -2034,6 +2039,8 @@ body{
   justify-content:flex-start !important;
   padding-top:60px !important;
   overflow:visible !important;
+  flex:1 !important;            /* ocupa altura total para margin-top:auto funcionar */
+  width:100% !important;        /* herda largura do main-layout incluindo offset do sidebar */
 }
 #homeShell #centerCol{
   display:flex !important;
@@ -2142,7 +2149,7 @@ body{
       <div class="quote-text" id="quote-text"></div>
     </div>
   </div>
-  <div class="vision" style="position:fixed;bottom:0;left:60px;right:0;z-index:1">
+  <div class="vision" style="width:100%;text-align:center;">
     <div style="font-size:10px;font-weight:600;letter-spacing:.8px;color:var(--on-sur-v);text-transform:uppercase;margin-bottom:3px">Nossa Visão</div>
     <div style="font-size:12px;color:var(--on-sur-v);max-width:600px;margin:0 auto;">
       Simplificar a mobilidade de <a href="#" style="color:var(--pri);text-decoration:none;font-weight:500">2 milhões de pais e mães da Geração Z</a>, tornando cada momento do dia a dia mais prático e especial.
@@ -3285,6 +3292,8 @@ const RESTOQUE_COLS=[
   {k:'DATA_RECEBIMENTO',    l:'DATA Recebimento',      t:'txt'},
   {k:'CONDICAO',            l:'Condição',              t:'sel', opts:['','OK p/ Estoque','Caixa Danificada','Danificado','Troca de Produto','Faltando Peça']},
   {k:'OBS_RELEVANTES',      l:'Obs. Relevantes',       t:'txt'},
+  {k:'ENTRADA_CARDEX',      l:'Entrada Cardex',        t:'sel', opts:['','ESTOQUE','DEFEITOS','DESCARTE'], req:true},
+  {k:'ENTRADA_BLING',       l:'Entrada Bling',         t:'sel', opts:['','CARDEX','DEFEITOS','DESCARTE'], req:true},
   {k:'NEC_TRAT_PLAT',       l:'Nec. Trat. Plat.?',    t:'sel', opts:['','SIM','NÃO'], w:160},
   {k:'OBS_TRAT_PLAT_GERAL', l:'Obs. Trat. Plataforma', t:'txt', w:200}
   // Removidos: ENTRADA_CARDEX, ENTRADA_BLING, ENTRADA_BLING2, VALOR_NF
@@ -3619,11 +3628,15 @@ function openModalRetorn(rec){
       '<div class="fsec-body">',
         '<div class="fg3">',
           fSel('MODALIDADE','Modalidade',r.MODALIDADE,['','Devolução','Resolvido','Cancelado','Remoção','Não Entregue'],true,isErr('MODALIDADE')),
-          fInp('DATA_RECEBIMENTO','DATA Recebimento',r.DATA_RECEBIMENTO,'text',false,'DD/MM/AAAA'),
-          fSel('CONDICAO','Condição',r.CONDICAO,['','OK p/ Estoque','Caixa Danificada','Danificado','Troca de Produto','Faltando Peça']),
+          fInp('DATA_RECEBIMENTO','DATA Recebimento',r.DATA_RECEBIMENTO,'text',true,'DD/MM/AAAA'),
+          fSel('CONDICAO','Condição',r.CONDICAO,['','OK p/ Estoque','Caixa Danificada','Danificado','Troca de Produto','Faltando Peça'],true),
         '</div>',
         '<div class="fg" style="grid-template-columns:2fr">',
           fInp('OBS_RELEVANTES','Obs. Relevantes',r.OBS_RELEVANTES),
+        '</div>',
+        '<div class="fg">',
+          fSel('ENTRADA_CARDEX','Entrada Cardex',r.ENTRADA_CARDEX||'',['','ESTOQUE','DEFEITOS','DESCARTE'],true),
+          fSel('ENTRADA_BLING','Entrada Bling',r.ENTRADA_BLING||'',['','CARDEX','DEFEITOS','DESCARTE'],true),
         '</div>',
         '<div class="fg">',
           fYN('NEC_TRAT_PLAT','Nec. Tratativa Plataforma?',r.NEC_TRAT_PLAT),
@@ -4487,7 +4500,7 @@ function goP(p){const tp=Math.ceil(filtered.length/PG)||1;if(p<1||p>tp)return;cu
 function getMissRetorn(r){
   var m=[];
   // Obrigatórios sempre
-  ['ID_VENDA','CANAL','EMPR','MODELO','MODALIDADE'].forEach(function(f){if(!r[f])m.push(f);});
+  ['ID_VENDA','CANAL','EMPR','MODELO','MODALIDADE','DATA_RECEBIMENTO','CONDICAO','ENTRADA_CARDEX','ENTRADA_BLING'].forEach(function(f){if(!r[f])m.push(f);});
   return m;
 }
 function getMiss(r){
@@ -4728,7 +4741,15 @@ async function saveRecord(){
       snack(data.length+' campo(s) salvos!','success');
       var _editedRow=_savedCurRec._row;
       var _recIdx=allData.findIndex(function(x){return x._row===_editedRow;});
-      if(_recIdx>=0){Object.assign(allData[_recIdx],_savedNovos);}
+      if(_recIdx>=0){
+        Object.assign(allData[_recIdx],_savedNovos);
+        // Sincronizar _data da seção para evitar sobrescrita ao navegar
+        var _secRef=SECTIONS[_activeSection];
+        var _dataIdx=_secRef._data.findIndex(function(x){return x._row===_editedRow;});
+        if(_dataIdx>=0)Object.assign(_secRef._data[_dataIdx],_savedNovos);
+        var _dashIdx=_secRef._dash.findIndex(function(x){return x._row===_editedRow;});
+        if(_dashIdx>=0)Object.assign(_secRef._dash[_dashIdx],_savedNovos);
+      }
       SECTIONS[_activeSection]._editedRows.add(_editedRow);
       closeDlg();
       render();renderSummary();
