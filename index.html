@@ -2148,11 +2148,11 @@ body{
       <div class="greeting-text" id="greeting-text">Bem-vindo!</div>
       <div class="quote-text" id="quote-text"></div>
     </div>
-  </div>
-  <div class="vision" style="width:100%;text-align:center;">
-    <div style="font-size:10px;font-weight:600;letter-spacing:.8px;color:var(--on-sur-v);text-transform:uppercase;margin-bottom:3px">Nossa Visão</div>
-    <div style="font-size:12px;color:var(--on-sur-v);max-width:600px;margin:0 auto;">
-      Simplificar a mobilidade de <a href="#" style="color:var(--pri);text-decoration:none;font-weight:500">2 milhões de pais e mães da Geração Z</a>, tornando cada momento do dia a dia mais prático e especial.
+    <div class="vision" style="width:100%;text-align:center;">
+      <div style="font-size:10px;font-weight:600;letter-spacing:.8px;color:var(--on-sur-v);text-transform:uppercase;margin-bottom:3px">Nossa Visão</div>
+      <div style="font-size:12px;color:var(--on-sur-v);max-width:600px;margin:0 auto;">
+        Simplificar a mobilidade de <a href="#" style="color:var(--pri);text-decoration:none;font-weight:500">2 milhões de pais e mães da Geração Z</a>, tornando cada momento do dia a dia mais prático e especial.
+      </div>
     </div>
   </div>
 </div>
@@ -4639,7 +4639,8 @@ async function saveRecord(){
   // Validar obrigatoriedade com base no curRec original
   // Sobrescrever apenas campos que o usuário preencheu no DOM (valor não-vazio)
   const _mergedForValidation=Object.assign({},curRec);
-  Object.entries(novos).forEach(function([k,v]){if(v!==undefined&&v!==null)_mergedForValidation[k]=v;});
+  // Só sobrescrever se o usuário realmente preencheu (valor não-vazio)
+  Object.entries(novos).forEach(function([k,v]){if(v!==undefined&&v!==null&&v!=='')_mergedForValidation[k]=v;});
   const miss=(_activeSection==='retorn'?getMissRetorn:getMiss)(_mergedForValidation);
   if(miss.length){
     var mm=document.getElementById('dlgMissMsg');
