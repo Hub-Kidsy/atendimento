@@ -5190,7 +5190,7 @@ function mkIDCell(r,ri,c){
   if(c.t==='ro'){
     const val=r[c.k]||'';
     const mc=getMiss(r).includes(c.k)?'miss-cell':'';
-    const onclk='selCell(this,!!(window._lastEvt&&(window._lastEvt.ctrlKey||window._lastEvt.metaKey)))';
+    const onclk='selCell(this,!!(window._lastEvt&&(window._lastEvt.ctrlKey||window._lastEvt.metaKey)),!!(window._lastEvt&&window._lastEvt.shiftKey))';
     return '<td class="sec-id '+mc+'" data-row="'+ri+'" data-col="'+c.k+'" onclick="'+onclk+'" style="padding:3px 6px;white-space:nowrap;font-size:11px;color:var(--on-sur-v)">'
       +(val||'')
       +'<div class="fill-handle" onmousedown="startFill(event,'+ri+',\''+c.k+'\')" onclick="event.stopPropagation()"></div>'
@@ -5205,8 +5205,8 @@ function mkEditCell(r,ri,c,secCls){
   const isMiss=getMiss(r).includes(c.k)?'miss-cell':'';
   const chg='bChg('+ri+',\''+c.k+'\',this.value)';
   const opts=c.opts||c.o;
-  const onclk='selCell(this,!!(window._lastEvt&&(window._lastEvt.ctrlKey||window._lastEvt.metaKey)))';
-  const onfcs='selCell(this.closest(\'td\'),!!(window._lastEvt&&(window._lastEvt.ctrlKey||window._lastEvt.metaKey)))';
+  const onclk='selCell(this,!!(window._lastEvt&&(window._lastEvt.ctrlKey||window._lastEvt.metaKey)),!!(window._lastEvt&&window._lastEvt.shiftKey))';
+  const onfcs='selCell(this.closest(\'td\'),!!(window._lastEvt&&(window._lastEvt.ctrlKey||window._lastEvt.metaKey)),!!(window._lastEvt&&window._lastEvt.shiftKey))';
   let inner='';
   if((c.t==='sel'||c.t==='yn')&&opts){
     const o=opts.map(v=>'<option value="'+v+'" '+(val===v?'selected':'')+'>'+(v||'— —')+'</option>').join('');
@@ -5344,8 +5344,46 @@ function _renderAllRows(tbody){
   _lastVStart=-1;_lastVEnd=-1;_lastVTarget=null;
 }
 
-function selCell(el, addToSel){
+function selCell(el, addToSel, isShift){
   if(!el)return;
+  const targetRow=parseInt(el.dataset.row);
+  const targetCol=el.dataset.col;
+
+  // SHIFT+CLICK: selecionar intervalo entre _rangeAnchor e célula clicada
+  // Opera sobre bulkFiltered para garantir funcionamento com filtros ativos
+  if(isShift && _rangeAnchor){
+    const [ancRow,ancCol]=_rangeAnchor.split(',');
+    const ancRowI=parseInt(ancRow);
+    // Índices em bulkFiltered (lista de registros visíveis após filtro)
+    const ancFI=bulkFiltered.indexOf(ancRowI);
+    const tgtFI=bulkFiltered.indexOf(targetRow);
+    if(ancFI!==-1 && tgtFI!==-1){
+      const fi0=Math.min(ancFI,tgtFI);
+      const fi1=Math.max(ancFI,tgtFI);
+      // Limpar seleção anterior
+      document.querySelectorAll('.bt td.sel,.bt td.sel-range').forEach(t=>{
+        t.classList.remove('sel','sel-range');
+      });
+      // Marcar todas as células do range visível
+      for(let fi=fi0;fi<=fi1;fi++){
+        const rowIdx=bulkFiltered[fi];
+        // Selecionar todas as colunas visíveis da linha
+        const tds=document.querySelectorAll('.bt td[data-row="'+rowIdx+'"]');
+        tds.forEach(td=>{
+          if(fi===fi1 && td.dataset.col===targetCol){
+            td.classList.add('sel');
+          } else {
+            td.classList.add('sel-range');
+          }
+        });
+      }
+      // Manter âncora e focar célula clicada
+      const inp=el.querySelector('input,select');
+      if(inp)setTimeout(()=>inp.focus({preventScroll:true}),0);
+      return;
+    }
+  }
+
   // Desfocar input/select da célula anteriormente selecionada
   const prevSel=document.querySelector('.bt td.sel');
   if(prevSel&&prevSel!==el){
@@ -5353,7 +5391,7 @@ function selCell(el, addToSel){
     if(prevInp)prevInp.blur();
   }
   if(!addToSel){
-    // Sem CTRL: limpar toda seleção anterior
+    // Sem CTRL/SHIFT: limpar toda seleção anterior
     document.querySelectorAll('.bt td.sel,.bt td.sel-range').forEach(t=>{
       t.classList.remove('sel','sel-range');
     });
@@ -5731,8 +5769,10 @@ function _pasteToTable(text,anchorRow,anchorCol){
   hCols.forEach(c=>{const td=document.querySelector('.bt td[data-col="'+c+'"]');if(td&&!td.querySelector('.cell-ro'))editCols.add(c);});
   const matrix=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').trimEnd().split('\n').map(l=>l.split('\t'));
   const acIdx=hCols.indexOf(anchorCol);
+  // Usar bulkFiltered para localizar a âncora — funciona com filtros ativos
   const afIdx=bulkFiltered.indexOf(anchorRow);
-  if(acIdx===-1||afIdx===-1)return;
+  if(acIdx===-1){showKbdToast('Coluna de destino nao encontrada');return;}
+  if(afIdx===-1){showKbdToast('Celula fora do filtro ativo');return;}
   let changed=0;
   matrix.forEach((row,rowOff)=>{
     const fi=afIdx+rowOff;if(fi>=bulkFiltered.length)return;
