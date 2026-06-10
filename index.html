@@ -816,6 +816,14 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .bt tr.chg td{background:#fffde7;}
 .bt tr.chg:hover td{background:#fff9c4;}
 .bt tr.chg .col-ln,.bt tr.chg .col-status,.bt tr.chg .col-id-venda{background:#fff9c4;}
+/* Item 4 — Linha selecionada via LN: azul exclusivo (≠ zebra, ≠ editada, ≠ hover, ≠ filtrada) */
+#page3 .bt tbody tr.row-sel td,
+#page8 .bt tbody tr.row-sel td{background:#cfe0ff !important;}
+#page3 .bt tbody tr.row-sel:hover td,
+#page8 .bt tbody tr.row-sel:hover td{background:#bcd4ff !important;}
+.bt tr.row-sel .col-ln,.bt tr.row-sel .col-status,.bt tr.row-sel .col-id-venda{background:#9ec0ff !important;}
+.bt tr.row-sel .col-ln{font-weight:700;color:#1e3a5f;}
+.bt td.col-ln{cursor:pointer;}
 
 
 
@@ -2195,7 +2203,7 @@ body{
 
 </div>
 <div id="page1" style="display:none"><div class="dash-wrap"><div class="dash-hdr"><div class="dash-title">Dashboard de Atendimento</div></div><div class="dash-body"><div class="dash-filter-bar"><div class="dash-filters"><label class="dash-filter-lbl">Filtrar:</label><select class="sel-field dash-sel" id="dashSku" onchange="applyDashFilter()"><option value="">Todos os SKUs</option></select><select class="sel-field dash-sel" id="dashCanal" onchange="applyDashFilter()"><option value="">Todos os Canais</option><option>Mercado Livre</option><option>Shopee</option><option>Amazon</option><option>Magalu</option><option value="TikTok">TikTok</option></select></div><div class="dash-period"><label class="dash-filter-lbl">Período:</label><button class="period-btn" onclick="setPeriod(7)">7d</button><button class="period-btn" onclick="setPeriod(30)">30d</button><button class="period-btn active" id="btnTodos" onclick="setPeriod(0)">Todos</button><input type="date" class="period-inp" id="dtDe" onchange="setPeriodCustom()"><span class="dash-ate">até</span><input type="date" class="period-inp" id="dtAte" onchange="setPeriodCustom()"><button class="btn btn-outlined btn-sm" onclick="applyDashFilter()">Aplicar</button></div></div><div class="kpi-section-title">📊 KPIs</div><div class="kpi-row" id="kpiSectionRow"></div><div style="height:8px"></div><div class="kpi-section-title">📊 STATUS ATIVOS</div><div class="kpi-row" id="kpiRow"></div><div class="kpi-section-title">📈 INDICADORES</div><div class="charts-row"><div class="chart-card"><div class="chart-title">📊 Registros por Status</div><div class="chart-wrap"><canvas id="chartStatus"></canvas></div></div><div class="chart-card"><div class="chart-title">🏪 Registros por Canal</div><div class="chart-wrap"><canvas id="chartCanal"></canvas></div></div></div><div class="charts-row"><div class="chart-card"><div class="chart-title">📋 Por Modalidade</div><div class="chart-wrap-sm"><canvas id="chartModal"></canvas></div></div><div class="chart-card"><div class="chart-title">🏷️ Top Motivos de Reclamação</div><div class="chart-wrap-sm"><canvas id="chartMotivo"></canvas></div></div></div><div class="kpi-row" id="finKpiRow" style="margin-top:12px"></div><div class="dash-bottom-row"><div class="dash-table-card"><div class="dash-card-title">📦 Registros por SKU <span id="skuTotalBadge" style="font-size:11px;color:var(--on-sur-v);font-weight:400">—</span></div><div class="dash-card-scroll"><table class="dash-mini-table"><thead><tr><th>SKU</th><th>Registros</th><th>Reclamações</th></tr></thead><tbody id="skuTableBody"></tbody></table></div></div><div class="dash-table-card"><div class="dash-card-title">🔍 Motivos por SKU</div><div class="dash-card-scroll"><table class="dash-mini-table"><thead><tr><th>SKU</th><th>Motivo</th><th>Qtd</th></tr></thead><tbody id="skuMotivoBody"></tbody></table></div></div></div><div class="month-chart-card"><div class="dash-card-title">📅 Registros por Mês (últimos 6 meses)</div><div class="month-chart-wrap"><canvas id="chartMes"></canvas></div></div></div></div></div>
-<div id="page2" style="display:none"><div class="summary-row" id="summaryRow"></div><div class="toolbar"><div class="search-field"><span style="color:var(--on-sur-v)">🔍</span><input id="srch" placeholder="Buscar ID, nome, SKU..." oninput="render();renderSummary();saveListState();"></div><select class="sel-field" id="fStatus" onchange="render();renderSummary()"><option value="">Todos os status ativos</option><option>ERRO DE PREENCHIMENTO</option><option>TRATATIVA ABERTA</option><option>TRATATIVA ATRASADA</option><option>ACOMPANHAR DISPUTA</option><option>ACOMPANHAR ENVIO</option><option>POSSÍVEL EXTRAVIO</option><option>EMITIR NF DEVOL</option><option>ABRIR TRAT. PLATAFORMA</option><option>AGUARDANDO REEMBOLSO</option><option>A ENVIAR</option><option>CONCLUÍDO</option><option>AGUARDANDO PRODUTO</option></select><select class="sel-field" id="fCanal" onchange="render();renderSummary()"><option value="">Todos os canais</option><option>Mercado Livre</option><option>Shopee</option><option>Amazon</option><option>Magalu</option><option value="TikTok">TikTok</option></select><button class="flt-btn" id="btnMiss" onclick="toggleMiss()" title="Incompletos">⚠</button><input class="sel-field" type="date" id="fDataIni" onchange="render();renderSummary()" title="Data inicial" style="width:130px;font-size:12px"><span style="font-size:11px;color:var(--on-sur-v)">até</span><input class="sel-field" type="date" id="fDataFim" onchange="render();renderSummary()" title="Data final" style="width:130px;font-size:12px"><button class="btn btn-filled" onclick="openModal(null)" style="height:32px;padding:0 14px;font-size:13px;white-space:nowrap;margin-left:4px">&#xFF0B; Novo Registro</button></div><div class="tbl-wrap"><div class="tbl-scroll"><table><thead><tr><th style="width:44px;min-width:44px;text-align:center;font-size:11px;color:var(--on-sur-v)">LN</th><th onclick="sortBy('MODALIDADE')" style="cursor:pointer;user-select:none;white-space:nowrap">Modalidade <span id="sort_MODALIDADE" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('ID_VENDA')" style="cursor:pointer;user-select:none;white-space:nowrap">ID Venda <span id="sort_ID_VENDA" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('NOME')" style="cursor:pointer;user-select:none;white-space:nowrap">Nome <span id="sort_NOME" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('STATUS')" style="cursor:pointer;user-select:none;white-space:nowrap">Status <span id="sort_STATUS" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('EMPR')" style="cursor:pointer;user-select:none;white-space:nowrap">EMPR. <span id="sort_EMPR" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('CANAL')" style="cursor:pointer;user-select:none;white-space:nowrap">Canal <span id="sort_CANAL" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('SKU')" style="cursor:pointer;user-select:none;white-space:nowrap">SKU <span id="sort_SKU" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('DATA_VENDA')" style="cursor:pointer;user-select:none;white-space:nowrap">Data <span id="sort_DATA_VENDA" style="font-size:10px;opacity:.6"></span></th></tr></thead><tbody id="tbody"></tbody></table></div><div class="pag" id="pag"></div></div></div>
+<div id="page2" style="display:none"><div class="summary-row" id="summaryRow"></div><div class="toolbar"><div class="search-field"><span style="color:var(--on-sur-v)">🔍</span><input id="srch" placeholder="Buscar ID, nome, SKU..." oninput="render();renderSummary();saveListState();"></div><select class="sel-field" id="fStatus" onchange="render();renderSummary()"><option value="">Todos os status ativos</option><option>ERRO DE PREENCHIMENTO</option><option>TRATATIVA ABERTA</option><option>TRATATIVA ATRASADA</option><option>ACOMPANHAR DISPUTA</option><option>ACOMPANHAR ENVIO</option><option>POSSÍVEL EXTRAVIO</option><option>EMITIR NF DEVOL</option><option>ABRIR TRAT. PLATAFORMA</option><option>AGUARDANDO REEMBOLSO</option><option>A ENVIAR</option><option>CONCLUÍDO</option><option>AGUARDANDO PRODUTO</option></select><select class="sel-field" id="fCanal" onchange="render();renderSummary()"><option value="">Todos os canais</option><option>Mercado Livre</option><option>Shopee</option><option>Amazon</option><option>Magalu</option><option value="TikTok">TikTok</option></select><button class="flt-btn" id="btnMiss" onclick="toggleMiss()" title="Incompletos">⚠</button><input class="sel-field" type="date" id="fDataIni" onchange="render();renderSummary()" title="Data inicial" style="width:130px;font-size:12px"><span style="font-size:11px;color:var(--on-sur-v)">até</span><input class="sel-field" type="date" id="fDataFim" onchange="render();renderSummary()" title="Data final" style="width:130px;font-size:12px"><button class="btn btn-filled" onclick="openModal(null)" style="height:32px;padding:0 14px;font-size:13px;white-space:nowrap;margin-left:4px">&#xFF0B; Novo Registro</button></div><div class="tbl-wrap"><div class="tbl-scroll"><table><thead><tr><th onclick="sortBy('_row')" style="width:44px;min-width:44px;text-align:center;font-size:11px;color:var(--on-sur-v);cursor:pointer;user-select:none" title="Ordenar por linha">LN <span id="sort__row" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('MODALIDADE')" style="cursor:pointer;user-select:none;white-space:nowrap">Modalidade <span id="sort_MODALIDADE" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('ID_VENDA')" style="cursor:pointer;user-select:none;white-space:nowrap">ID Venda <span id="sort_ID_VENDA" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('NOME')" style="cursor:pointer;user-select:none;white-space:nowrap">Nome <span id="sort_NOME" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('STATUS')" style="cursor:pointer;user-select:none;white-space:nowrap">Status <span id="sort_STATUS" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('EMPR')" style="cursor:pointer;user-select:none;white-space:nowrap">EMPR. <span id="sort_EMPR" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('CANAL')" style="cursor:pointer;user-select:none;white-space:nowrap">Canal <span id="sort_CANAL" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('SKU')" style="cursor:pointer;user-select:none;white-space:nowrap">SKU <span id="sort_SKU" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('DATA_VENDA')" style="cursor:pointer;user-select:none;white-space:nowrap">Data <span id="sort_DATA_VENDA" style="font-size:10px;opacity:.6"></span></th></tr></thead><tbody id="tbody"></tbody></table></div><div class="pag" id="pag"></div></div></div>
 <div id="page3" style="display:none">
 <div class="bulk-wrap">
   <div class="bulk-hdr">
@@ -2277,7 +2285,7 @@ body{
   </div>
 </div>
 <div id="page6" style="display:none"><div class="dash-wrap"><div class="dash-hdr"><div class="dash-title">Dashboard de Retornos</div></div><div class="dash-body"><div class="dash-filter-bar"><div class="dash-filters"><label class="dash-filter-lbl">Filtrar:</label><select class="sel-field dash-sel" id="dashSku_r" onchange="applyDashFilter()"><option value="">Todos os SKUs</option></select><select class="sel-field dash-sel" id="dashCanal_r" onchange="applyDashFilter()"><option value="">Todos os Canais</option><option>Mercado Livre</option><option>Shopee</option><option>Amazon</option><option>Magalu</option><option value="TikTok">TikTok</option></select></div><div class="dash-period"><label class="dash-filter-lbl">Período:</label><button class="period-btn" onclick="setPeriod(7)">7d</button><button class="period-btn" onclick="setPeriod(30)">30d</button><button class="period-btn active" id="btnTodos_r" onclick="setPeriod(0)">Todos</button><input type="date" class="period-inp" id="dtDe_r" onchange="setPeriodCustom()"><span class="dash-ate">até</span><input type="date" class="period-inp" id="dtAte_r" onchange="setPeriodCustom()"><button class="btn btn-outlined btn-sm" onclick="applyDashFilter()">Aplicar</button></div></div><div class="kpi-section-title">📊 KPIs</div><div class="kpi-row" id="kpiSectionRow_r"></div><div style="height:8px"></div><div class="kpi-section-title">📊 STATUS ATIVOS</div><div class="kpi-row" id="kpiRow_r"></div><div class="kpi-section-title">📈 INDICADORES</div><div class="charts-row"><div class="chart-card"><div class="chart-title">📊 Registros por Status</div><div class="chart-wrap"><canvas id="chartStatus_r"></canvas></div></div><div class="chart-card"><div class="chart-title">🏪 Registros por Canal</div><div class="chart-wrap"><canvas id="chartCanal_r"></canvas></div></div></div><div class="charts-row"><div class="chart-card"><div class="chart-title">📋 Quantidade por Condição e SKU</div><div class="chart-wrap" style="height:220px"><canvas id="chartModal_r"></canvas></div></div><div class="chart-card"><div class="chart-title">🏷️ Disputa Aberta vs Sem Disputa</div><div class="chart-wrap"><canvas id="chartMotivo_r"></canvas></div></div></div><div class="kpi-row" id="finKpiRow_r" style="margin-top:12px"></div><div class="dash-bottom-row"><div class="dash-table-card"><div class="dash-card-title">📦 Registros por SKU <span id="skuTotalBadge_r" style="font-size:11px;color:var(--on-sur-v);font-weight:400">—</span></div><div class="dash-card-scroll"><table class="dash-mini-table"><thead><tr><th>SKU</th><th>Registros</th><th>Reclamações</th></tr></thead><tbody id="skuTableBody_r"></tbody></table></div></div><div class="dash-table-card"><div class="dash-card-title">🔍 Motivos por SKU</div><div class="dash-card-scroll"><table class="dash-mini-table"><thead><tr><th>SKU</th><th>Motivo</th><th>Qtd</th></tr></thead><tbody id="skuMotivoBody_r"></tbody></table></div></div></div><div class="month-chart-card"><div class="dash-card-title">📅 Registros por Mês (últimos 6 meses)</div><div class="month-chart-wrap"><canvas id="chartMes_r"></canvas></div></div></div></div></div>
-<div id="page7" style="display:none"><div class="summary-row" id="summaryRow_r"></div><div class="toolbar"><div class="search-field"><span style="color:var(--on-sur-v)">🔍</span><input id="srch_r" placeholder="Buscar ID, nome, SKU..." oninput="render();renderSummary();saveListState();"></div><select class="sel-field" id="fStatus_r" onchange="render();renderSummary()"><option value="">Todos os status ativos</option><option>ACOMPANHAR DISPUTA</option><option>AGUARDANDO REEMBOLSO</option><option>ENTRADA ATRASADA</option><option>ENTRADA PENDENTE</option><option>CONCLUÍDO</option></select><select class="sel-field" id="fCanal_r" onchange="render();renderSummary()"><option value="">Todos os canais</option><option>Mercado Livre</option><option>Shopee</option><option>Amazon</option><option>Magalu</option><option value="TikTok">TikTok</option></select><button class="flt-btn" id="btnMiss_r" onclick="toggleMiss()" title="Incompletos">⚠</button><input class="sel-field" type="date" id="fDataIni_r" onchange="render();renderSummary()" title="Data inicial" style="width:130px;font-size:12px"><span style="font-size:11px;color:var(--on-sur-v)">até</span><input class="sel-field" type="date" id="fDataFim_r" onchange="render();renderSummary()" title="Data final" style="width:130px;font-size:12px"><button class="btn btn-filled" onclick="openModal(null)" style="height:32px;padding:0 14px;font-size:13px;white-space:nowrap;margin-left:4px">&#xFF0B; Novo Registro</button></div><div class="tbl-wrap"><div class="tbl-scroll"><table><thead><tr><th style="width:44px;min-width:44px;text-align:center;font-size:11px;color:var(--on-sur-v)">LN</th><th onclick="sortBy('MODALIDADE')" style="cursor:pointer;user-select:none;white-space:nowrap">Modalidade <span id="sort_MODALIDADE_r" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('ID_VENDA')" style="cursor:pointer;user-select:none;white-space:nowrap">ID Venda <span id="sort_ID_VENDA_r" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('NOME')" style="cursor:pointer;user-select:none;white-space:nowrap">Nome <span id="sort_NOME_r" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('STATUS')" style="cursor:pointer;user-select:none;white-space:nowrap">Status <span id="sort_STATUS_r" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('EMPR')" style="cursor:pointer;user-select:none;white-space:nowrap">EMPR. <span id="sort_EMPR_r" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('CANAL')" style="cursor:pointer;user-select:none;white-space:nowrap">Canal <span id="sort_CANAL_r" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('SKU')" style="cursor:pointer;user-select:none;white-space:nowrap">SKU <span id="sort_SKU_r" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('DATA_VENDA')" style="cursor:pointer;user-select:none;white-space:nowrap">Data <span id="sort_DATA_VENDA_r" style="font-size:10px;opacity:.6"></span></th></tr></thead><tbody id="tbody_r"></tbody></table></div><div class="pag" id="pag_r"></div></div></div>
+<div id="page7" style="display:none"><div class="summary-row" id="summaryRow_r"></div><div class="toolbar"><div class="search-field"><span style="color:var(--on-sur-v)">🔍</span><input id="srch_r" placeholder="Buscar ID, nome, SKU..." oninput="render();renderSummary();saveListState();"></div><select class="sel-field" id="fStatus_r" onchange="render();renderSummary()"><option value="">Todos os status ativos</option><option>ACOMPANHAR DISPUTA</option><option>AGUARDANDO REEMBOLSO</option><option>ENTRADA ATRASADA</option><option>ENTRADA PENDENTE</option><option>CONCLUÍDO</option></select><select class="sel-field" id="fCanal_r" onchange="render();renderSummary()"><option value="">Todos os canais</option><option>Mercado Livre</option><option>Shopee</option><option>Amazon</option><option>Magalu</option><option value="TikTok">TikTok</option></select><button class="flt-btn" id="btnMiss_r" onclick="toggleMiss()" title="Incompletos">⚠</button><input class="sel-field" type="date" id="fDataIni_r" onchange="render();renderSummary()" title="Data inicial" style="width:130px;font-size:12px"><span style="font-size:11px;color:var(--on-sur-v)">até</span><input class="sel-field" type="date" id="fDataFim_r" onchange="render();renderSummary()" title="Data final" style="width:130px;font-size:12px"><button class="btn btn-filled" onclick="openModal(null)" style="height:32px;padding:0 14px;font-size:13px;white-space:nowrap;margin-left:4px">&#xFF0B; Novo Registro</button></div><div class="tbl-wrap"><div class="tbl-scroll"><table><thead><tr><th onclick="sortBy('_row')" style="width:44px;min-width:44px;text-align:center;font-size:11px;color:var(--on-sur-v);cursor:pointer;user-select:none" title="Ordenar por linha">LN <span id="sort__row_r" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('MODALIDADE')" style="cursor:pointer;user-select:none;white-space:nowrap">Modalidade <span id="sort_MODALIDADE_r" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('ID_VENDA')" style="cursor:pointer;user-select:none;white-space:nowrap">ID Venda <span id="sort_ID_VENDA_r" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('NOME')" style="cursor:pointer;user-select:none;white-space:nowrap">Nome <span id="sort_NOME_r" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('STATUS')" style="cursor:pointer;user-select:none;white-space:nowrap">Status <span id="sort_STATUS_r" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('EMPR')" style="cursor:pointer;user-select:none;white-space:nowrap">EMPR. <span id="sort_EMPR_r" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('CANAL')" style="cursor:pointer;user-select:none;white-space:nowrap">Canal <span id="sort_CANAL_r" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('SKU')" style="cursor:pointer;user-select:none;white-space:nowrap">SKU <span id="sort_SKU_r" style="font-size:10px;opacity:.6"></span></th><th onclick="sortBy('DATA_VENDA')" style="cursor:pointer;user-select:none;white-space:nowrap">Data <span id="sort_DATA_VENDA_r" style="font-size:10px;opacity:.6"></span></th></tr></thead><tbody id="tbody_r"></tbody></table></div><div class="pag" id="pag_r"></div></div></div>
 <div id="page8" style="display:none">
 <div class="bulk-wrap">
   <div class="bulk-hdr">
@@ -2711,7 +2719,7 @@ function openModal(rec){
           '<div class="fsec-body">',
             '<div class="fg3">',
               fYN('CHEGOU_CARDEX','Chegou na Cardex?',r.CHEGOU_CARDEX),
-              fSel('STATUS_FULL','Status Full',r.STATUS_FULL,['','OK Estoque Full','Aguardando Retirada','Em Troca','Cliente c/ Produto','Descarte Estoque']),
+              fSel('STATUS_FULL','Status Full',r.STATUS_FULL,['','Cliente c/ Produto','OK Estoque Full','Descarte Estoque Full','Aguardando Retirada','Não foi identificado','Em Revisão no Full','Em Rota de Retorno','Pedido Extraviado','Em Troca','Descarte Estoque']),
               fInp('DATA_PREVISTA_RETORNO','Data Prev. Retorno',r.DATA_PREVISTA_RETORNO,'text',false,'DD/MM/AAAA'),
             '</div>',
           '</div>',
@@ -3248,7 +3256,7 @@ const ID_COLS=[
   {k:'STATUS',           l:'Status',                  t:'ro'},
   {k:'ID_VENDA',         l:'ID Venda',                t:'ro'},
   {k:'NOME',             l:'Nome',                    t:'txt'},
-  {k:'CANAL',            l:'Canal De Venda',          t:'sel', opts:['','Mercado Livre','Shopee','Amazon','Magalu','TikTok']},
+  {k:'CANAL',            l:'Canal De Venda',          t:'sel', opts:['','Mercado Livre','Shopee','Amazon','Magalu','TikTok'], req:true},
   {k:'EMPR',             l:'EMPR.',                   t:'sel', opts:['','JLD','DGL'], req:true},
   {k:'MODELO',           l:'Modelo',                  t:'sel', opts:['','Full','Normal','Flex','NE'], req:true},
   {k:'DATA_VENDA',       l:'Data da Venda',           t:'txt'},
@@ -3265,12 +3273,12 @@ const ID_COLS=[
 ];
 const TC=[
   // Tratativa Cliente — cols 17-32
-  {k:'MOD_TRAT_CLIENTE',    l:'Modalidade Tratativa',          t:'sel', opts:['','Cancelado','Devolução','Mensagem','Não Entregue','Reclamação','Resolvido','Troca']},
+  {k:'MOD_TRAT_CLIENTE',    l:'Modalidade Tratativa',          t:'sel', req:true, opts:['','Cancelado','Devolução','Mensagem','Não Entregue','Reclamação','Resolvido','Troca']},
   {k:'MOTIVO',              l:'Motivo Tratativa do Cliente',   t:'sel', opts:['','Arrependimento','Atraso na entrega','Caixa Danificada','Cancelado','Defeito','Devolução','Envio atrasado','Falta de Peça','Mensagem','Motivo desconhecido','Não Entregue','Não Recebido','Produto Danificado','Produto Errado','Qualidade Ruim','Reclamação','Resolvido']},
   {k:'DETALHAMENTO',        l:'Detalhamento da Tratativa',     t:'sel', opts:['','Alça','Assento banheiro','Bandeja','Bandeja Cadeirão','Banheira trincada','Barras','Capuz','Colchão','Conexão','Corpo do Produto','Danificado pela transportadora','Entrega atrasada','Ferramentas','Hastes dobráveis','Kit de parafusos e porcas','Manual','Mosquiteiro','Não especificado','Pernas','Roda','Saboneteira','Silicone','Suporte','Tecido','Trava','Zíper']},
   {k:'OBS_RECLAM',          l:'Observações da Tratativa',      t:'txt'},
   {k:'TRAT_CLIENTE_FIN_REP',l:'Impacto na Reputação?',        t:'sel', opts:['','SIM','NÃO']},
-  {k:'CHAMADO_ABERTO',      l:'Aberto Atendimento?',           t:'sel', opts:['','SIM','NÃO','Reaberto']},
+  {k:'CHAMADO_ABERTO',      l:'Aberto Atendimento?',           t:'sel', req:true, opts:['','SIM','NÃO','Reaberto']},
   {k:'DATA_TRATATIVA',      l:'DATA Atendimento',              t:'txt'},
   {k:'NEC_PECAS',           l:'Necessário Enviar Peças?',      t:'sel', opts:['','SIM','NÃO']},
   {k:'PECAS_ENVIADAS',      l:'Enviadas Peças p/ Cliente?',    t:'sel', opts:['','SIM','NÃO']},
@@ -3286,7 +3294,7 @@ const TC=[
 ];
 const DC=[
   // Tratativa Plataforma — abertura
-  {k:'ABERTO_TRAT_PLAT',      l:'Aberto Trat. Plataforma?',    t:'sel', opts:['','SIM','NÃO']},
+  {k:'ABERTO_TRAT_PLAT',      l:'Aberto Trat. Plataforma?',    t:'sel', req:true, opts:['','SIM','NÃO']},
   // Trat. 1
   {k:'MOD_TRAT_PLAT1',        l:'Mod. Trat. Plat. 1',          t:'sel', opts:['','Disputa','Acordo','Mediação']},
   {k:'MOTIVO_TRAT1',          l:'Motivo da Tratativa 1',        t:'sel', opts:['','Reembolso','Erro','Extravio']},
@@ -3312,7 +3320,7 @@ const DC=[
 const FS=[
   // Retorno — cols 52-54
   {k:'DATA_PREVISTA_RETORNO',l:'Data Prevista de Retorno',  t:'txt'},
-  {k:'STATUS_FULL',          l:'STATUS FINAL PLATAFORMA',   t:'sel', opts:['','OK Estoque Full','Aguardando Retirada','Em Troca','Cliente c/ Produto','Descarte Estoque Full','Não foi identificado']},
+  {k:'STATUS_FULL',          l:'STATUS FINAL PLATAFORMA',   t:'sel', opts:['','Cliente c/ Produto','OK Estoque Full','Descarte Estoque Full','Aguardando Retirada','Não foi identificado','Em Revisão no Full','Em Rota de Retorno','Pedido Extraviado','Em Troca','Descarte Estoque']},
   {k:'CHEGOU_CARDEX',        l:'CHEGOU NA CARDEX?',         t:'sel', opts:['','SIM','NÃO']},
 ];
 // ══ COLUNAS EDIÇÃO EM MASSA — RETORNOS ══
@@ -3335,8 +3343,8 @@ const RID_COLS=[
 const RESTOQUE_COLS=[
   // Estoque RETORNOS — espelha seção Estoque do popup
   {k:'MODALIDADE',          l:'Modalidade',            t:'sel', opts:['','Devolução','Resolvido','Cancelado','Remoção','Não Entregue'], req:true},
-  {k:'DATA_RECEBIMENTO',    l:'DATA Recebimento',      t:'txt'},
-  {k:'CONDICAO',            l:'Condição',              t:'sel', opts:['','OK p/ Estoque','Caixa Danificada','Danificado','Troca de Produto','Faltando Peça']},
+  {k:'DATA_RECEBIMENTO',    l:'DATA Recebimento',      t:'txt', req:true},
+  {k:'CONDICAO',            l:'Condição',              t:'sel', req:true, opts:['','OK p/ Estoque','Caixa Danificada','Danificado','Troca de Produto','Faltando Peça']},
   {k:'OBS_RELEVANTES',      l:'Obs. Relevantes',       t:'txt'},
   {k:'NF_DEVOL',            l:'NF DEVOL',              t:'txt'},
   {k:'ENTRADA_CARDEX',      l:'Entrada Cardex',        t:'sel', opts:['','ESTOQUE','DEFEITOS','DESCARTE'], req:true},
@@ -3477,10 +3485,11 @@ function switchPage(n){
   }
   if(n===3||n===8){
     _resetVCache();
-    restoreBulkState();  // restaurar colFilters ANTES de buildBulk gerar os inputs
-    buildBulk();
-    syncColFilterInputs(); // sincronizar valores dos inputs com colFilters
-    if(Object.values(SECTIONS[_activeSection]._bulkState||{}).some(function(v){return v&&(typeof v==='string'?v.length:typeof v==='boolean'?v:Object.keys(v).length);}))applyBF();
+    restoreBulkState();  // restaura colFilters/colSortState/missFilter/hiddenCols/bf ANTES de reconstruir
+    _bulkLoadData();     // recarrega bulkOrig da seção ativa SEM resetar filtros/edições
+    bulkRebuildView();   // reconstrói cabeçalho+linhas respeitando o estado restaurado
+    syncColFilterInputs(); // sincroniza valores dos inputs com colFilters
+    applyBF();           // aplica os filtros restaurados
     // Re-render com tamanho real após página estar visível
     var _bBody=$el('bBody');
     var _bSheet=$el('bulkSheet');
@@ -3876,7 +3885,8 @@ function saveBulkState(){
     bfSku:     document.getElementById('bfSku'+_sfx)?.value||'',
     missFilter:missFilter||false,
     colFilters:{...colFilters},
-    colSortState:{...colSortState}
+    colSortState:{...colSortState},
+    hiddenCols:new Set(hiddenCols)
   };
 }
 // ── Restaurar estado da Edição em Massa (page3 / page8) ──────────────────
@@ -3894,6 +3904,7 @@ function restoreBulkState(){
   if(st.missFilter!==undefined)missFilter=st.missFilter;
   if(st.colFilters&&Object.keys(st.colFilters).length)colFilters={...st.colFilters};
   if(st.colSortState&&Object.keys(st.colSortState).length)colSortState={...st.colSortState};
+  if(st.hiddenCols instanceof Set)hiddenCols=new Set(st.hiddenCols);
 }
 // ── Sincronizar inputs de filtro de coluna com o estado lógico ──────────
 function syncColFilterInputs(){
@@ -4483,10 +4494,10 @@ const SL=[
   {k:'A ENVIAR',c:'sc-info',l:'A ENVIAR'},
   {k:'ACOMPANHAR ENVIO',c:'sc-info',l:'ENVIO'},
   {k:'EMITIR NF DEVOL',c:'sc-warn',l:'NF DEVOL'},
+  {k:'POSSÍVEL EXTRAVIO',c:'sc-warn',l:'EXTRAVIO'},
   {k:'ABRIR TRAT. PLATAFORMA',c:'sc-pur',l:'TRAT. PLAT.'},
   {k:'ACOMPANHAR DISPUTA',c:'sc-pur',l:'DISPUTA'},
   {k:'AGUARDANDO REEMBOLSO',c:'sc-pur',l:'REEMBOLSO'},
-  {k:'POSSÍVEL EXTRAVIO',c:'sc-warn',l:'EXTRAVIO'},
 ];
 // ══ STATUS LIST RETORNOS ══
 const SL_RETORN=[
@@ -4534,7 +4545,7 @@ function renderSummary(){
       if(cf&&r.CANAL!==cf)return false;
       if(ef&&r.EMPR!==ef)return false;
       if(missOnly&&getMiss(r).length===0)return false;
-      if(s&&!(r.ID_VENDA+' '+r.NOME+' '+r.SKU+' '+r.CANAL).toLowerCase().includes(s))return false;
+      if(s&&!(r._row+' '+r.ID_VENDA+' '+r.NOME+' '+r.SKU+' '+r.CANAL).toLowerCase().includes(s))return false;
       if(_di||_df){
         var _dateKey=_isR?'DATA_RECEBIMENTO':'DATA_VENDA';
         var d=parseDate(r[_dateKey]);if(!d)return true;
@@ -4612,9 +4623,9 @@ function sortBy(col){
     sortDir=sortDir===1?-1:sortDir===-1?0:1;
     if(sortDir===0)sortCol=null;
   }else{sortCol=col;sortDir=1;}
-  // Atualizar ícones
-  ['MOD_TRAT_CLIENTE','ID_VENDA','NOME','STATUS','EMPR','CANAL','SKU','DATA_VENDA'].forEach(function(c){
-    var el=document.getElementById('sort_'+c);
+  // Atualizar ícones (inclui LN=_row; $el resolve sufixo _r p/ Retornos)
+  ['_row','MODALIDADE','MOD_TRAT_CLIENTE','ID_VENDA','NOME','STATUS','EMPR','CANAL','SKU','DATA_VENDA'].forEach(function(c){
+    var el=$el('sort_'+c);
     if(!el)return;
     el.textContent=c===sortCol?(sortDir===1?'↑':'↓'):'';
   });
@@ -4628,8 +4639,8 @@ function render(){
   function _parseDate(s){if(!s)return null;var p=s.split('/');if(p.length===3)return new Date(p[2],p[1]-1,p[0]);return new Date(s);}
   const _dIni=_di?new Date(_di):null;
   const _dFim=_df?new Date(_df):null;
-  filtered=allData.filter(r=>{if(!sf&&!s&&(_activeSection==='retorn'?IGNORADOS_RETORN:IGNORADOS).includes(r.STATUS))return false;if(sf&&r.STATUS!==sf)return false;if(cf&&r.CANAL!==cf)return false;if(ef&&r.EMPR!==ef)return false;if(missOnly&&getMiss(r).length===0)return false;if(s&&!(r.ID_VENDA+' '+r.NOME+' '+r.SKU+' '+r.CANAL+' '+r.MOD_TRAT_CLIENTE).toLowerCase().includes(s))return false;if(_dIni||_dFim){var _rd=_parseDate(r.DATA_VENDA);if(!_rd)return false;if(_dIni&&_rd<_dIni)return false;if(_dFim&&_rd>_dFim)return false;}return true;});
-  if(sortCol&&sortDir!==0){filtered.sort(function(a,b){var av=a[sortCol]||'',bv=b[sortCol]||'';if(sortCol==='DATA_VENDA'){var ad=_parseDate(av),bd=_parseDate(bv);return sortDir*((!ad&&!bd)?0:!ad?1:!bd?-1:ad-bd);}if(sortCol==='ID_VENDA'){var an=parseFloat(av),bn=parseFloat(bv);if(!isNaN(an)&&!isNaN(bn))return sortDir*(an-bn);}return sortDir*av.toString().localeCompare(bv.toString(),'pt-BR',{sensitivity:'base'});});}
+  filtered=allData.filter(r=>{if(!sf&&!s&&(_activeSection==='retorn'?IGNORADOS_RETORN:IGNORADOS).includes(r.STATUS))return false;if(sf&&r.STATUS!==sf)return false;if(cf&&r.CANAL!==cf)return false;if(ef&&r.EMPR!==ef)return false;if(missOnly&&getMiss(r).length===0)return false;if(s&&!(r._row+' '+r.ID_VENDA+' '+r.NOME+' '+r.SKU+' '+r.CANAL+' '+r.MOD_TRAT_CLIENTE).toLowerCase().includes(s))return false;if(_dIni||_dFim){var _rd=_parseDate(r.DATA_VENDA);if(!_rd)return false;if(_dIni&&_rd<_dIni)return false;if(_dFim&&_rd>_dFim)return false;}return true;});
+  if(sortCol&&sortDir!==0){filtered.sort(function(a,b){var av=a[sortCol]||'',bv=b[sortCol]||'';if(sortCol==='_row'){return sortDir*((parseFloat(av)||0)-(parseFloat(bv)||0));}if(sortCol==='DATA_VENDA'){var ad=_parseDate(av),bd=_parseDate(bv);return sortDir*((!ad&&!bd)?0:!ad?1:!bd?-1:ad-bd);}if(sortCol==='ID_VENDA'){var an=parseFloat(av),bn=parseFloat(bv);if(!isNaN(an)&&!isNaN(bn))return sortDir*(an-bn);}return sortDir*av.toString().localeCompare(bv.toString(),'pt-BR',{sensitivity:'base'});});}
   const tot=filtered.length;const tp=Math.ceil(tot/PG)||1;if(curPage>tp)curPage=1;const st=(curPage-1)*PG;const pg=filtered.slice(st,st+PG);
   if(!pg.length){$el('tbody').innerHTML='<tr><td colspan="9"><div class="state-box"><div style="font-size:28px">📭</div><div>Nenhum registro</div></div></td></tr>';$el('pag').innerHTML='';return;}
   let h='';
@@ -4703,15 +4714,25 @@ function getMiss(r){
 
   return m;
 }
+function _maskDate(el){
+  // Insere barras automaticamente: 01062026 -> 01/06/2026 (digitação e colagem)
+  var v=(el.value||'').replace(/\D/g,'').slice(0,8);
+  var o=v;
+  if(v.length>4)o=v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4);
+  else if(v.length>2)o=v.slice(0,2)+'/'+v.slice(2);
+  el.value=o;
+}
 function fInp(id,lbl,val,type,req,ph,ro,isNew){
   type=type||'text';req=req||false;ph=ph||'';ro=ro||false;isNew=isNew||false;
   const err=req&&!val&&!isNew;
   const rc=err?'req-fld':'';
   const errCls=err?'err':'';
+  const isDate=ph==='DD/MM/AAAA';
   return '<div class="fld '+rc+'"><label>'+lbl+'</label>'
     +'<input type="'+type+'" id="f_'+id+'" class="mdi '+errCls+(ro?' af':'')+'"'
+    +(isDate?' inputmode="numeric"':'')
     +' value="'+(val||'').replace(/"/g,'&quot;')+'" placeholder="'+ph+'"'
-    +(ro?' readonly':'')+(ro?'':' oninput="fldChg(\''+id+'\',this.value)"')+'></div>';
+    +(ro?' readonly':'')+(ro?'':' oninput="'+(isDate?'_maskDate(this);':'')+'fldChg(\''+id+'\',this.value)"')+'></div>';
 }
 function fRO(id,lbl,val){return '<div class="fld"><label>'+lbl+'</label><input type="text" id="f_'+id+'" class="mdi '+(val?'af':'')+'" value="'+(val||'').replace(/"/g,'&quot;')+'" readonly></div>';}
 function fSel(id,lbl,val,opts,req,fe){
@@ -4916,16 +4937,13 @@ async function saveRecord(){
 // ══ BULK ══════════════════════════════════════════════════════════════════════
 
 
-function buildBulk(){
+function _bulkLoadData(){
   const ativos=allData.filter(r=>!IGNORADOS_BULK.includes(r.STATUS));
-  bulkOrig=ativos.map(r=>({...r}));bulkChg={};missFilter=null;statusFilter=null;colSortState={};colFilters={};
-  // Resetar colWidths mas preservar larguras padrão das colunas customizadas
-  colWidths={'NEC_TRAT_PLAT':160,'OBS_TRAT_PLAT_GERAL':200};
+  bulkOrig=ativos.map(r=>({...r}));
   bulkFiltered=[...Array(ativos.length).keys()];
   var _bft=$el('bfTotal');if(_bft)_bft.textContent=ativos.length;
-  // Reset filter selects
-  ['bfStatus','bfCanal','bfModal'].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.classList.remove('active');}});
-  var bfSku=$el('bfSku');if(bfSku){bfSku.value='';bfSku.classList.remove('active');}
+}
+function bulkRebuildView(){
   buildMissChips();
   buildBulkHead($el('bHead'));
   _resetVCache();
@@ -4933,6 +4951,17 @@ function buildBulk(){
   // Atualizar contador 'Mostrando X de Y'
   var _bfc2=$el('bfCount');if(_bfc2)_bfc2.textContent=bulkFiltered.length;
   updateBulkInfo();
+}
+function buildBulk(){
+  // Reset completo (carga nova de dados): limpa edições, filtros e ocultações
+  bulkChg={};missFilter=null;statusFilter=null;colSortState={};colFilters={};
+  // Resetar colWidths mas preservar larguras padrão das colunas customizadas
+  colWidths={'NEC_TRAT_PLAT':160,'OBS_TRAT_PLAT_GERAL':200};
+  // Reset filter selects
+  ['bfStatus','bfCanal','bfModal'].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.classList.remove('active');}});
+  var bfSku=$el('bfSku');if(bfSku){bfSku.value='';bfSku.classList.remove('active');}
+  _bulkLoadData();
+  bulkRebuildView();
 }
 function buildMissChips(filteredIdxs){
   // Use filtered subset when provided (so chips reflect current filter context)
@@ -5217,7 +5246,9 @@ function mkEditCell(r,ri,c,secCls){
   }else if(c.t==='ro'){
     inner='<span class="cell-ro">'+(val||'')+'</span>';
   }else{
-    inner='<input class="bulk-inp" id="'+uid+'" value="'+val.replace(/"/g,'&quot;')+'" onfocus="'+onfcs+'" oninput="'+chg+'">';
+    var _isDate=/^DATA/.test(c.k)||c.k==='NF_DEVOL_EMISSAO';
+    var _oin=(_isDate?'_maskDate(this);':'')+chg;
+    inner='<input class="bulk-inp" id="'+uid+'" value="'+val.replace(/"/g,'&quot;')+'" '+(_isDate?'inputmode="numeric" ':'')+'onfocus="'+onfcs+'" oninput="'+_oin+'">';
   }
   return '<td class="'+secCls+' '+isMiss+'" data-row="'+ri+'" data-col="'+c.k+'" onclick="'+onclk+'">'    +inner    +'<div class="fill-handle" onmousedown="startFill(event,'+ri+',\''+c.k+'\',event)" onclick="event.stopPropagation()"></div>'    +'</td>';
 }
@@ -5296,7 +5327,7 @@ function _renderVirtual(tbody,sheet){
     if(i===undefined)continue;
     const r=bulkOrig[i];
     parts.push('<tr id="br_'+i+'" class="'+(bulkChg[i]?'chg':(SECTIONS[_activeSection]._editedRows.has(r._row)?'row-edited':''))+'">'
-      +'<td class="col-ln">'+r._row+'</td>'
+      +'<td class="col-ln" onclick="selectBulkRow('+i+')" title="Selecionar linha">'+r._row+'</td>'
       +'<td class="col-status"><span class="chip '+(CC[r.STATUS]||'')+'" style="font-size:10px;padding:2px 5px">'+(r.STATUS||'—')+'</span></td>'
       +'<td class="col-id-venda">'+(r.ID_VENDA||'—')+'</td>');
     visID.filter(c=>c.k!=='STATUS'&&c.k!=='ID_VENDA').forEach(c=>{parts.push(mkIDCell(r,i,c));});
@@ -5324,7 +5355,7 @@ function _renderAllRows(tbody){
   bulkFiltered.forEach(i=>{
     const r=bulkOrig[i];
     parts.push('<tr id="br_'+i+'" class="'+(bulkChg[i]?'chg':(SECTIONS[_activeSection]._editedRows.has(r._row)?'row-edited':''))+'">'
-      +'<td class="col-ln">'+r._row+'</td>');
+      +'<td class="col-ln" onclick="selectBulkRow('+i+')" title="Selecionar linha">'+r._row+'</td>');
     visID.forEach(c=>{
       if(c.k==='STATUS'){
         parts.push('<td class="sec-id col-status" data-row="'+i+'" data-col="STATUS" style="white-space:nowrap">'
@@ -5346,6 +5377,7 @@ function _renderAllRows(tbody){
 
 function selCell(el, addToSel, isShift){
   if(!el)return;
+  isShift=false; // SHIFT+clique desativado (seleção por intervalo removida)
   const targetRow=parseInt(el.dataset.row);
   const targetCol=el.dataset.col;
 
@@ -5481,7 +5513,28 @@ function bChg(i,key,val){
   updateBulkInfo();
 }
 function updateBulkInfo(){const n=Object.keys(bulkChg).length;['bulkInfo','fsInfo'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=n?n+' linha(s) alteradas':'';});['bfChg','fsChg'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=n;});}
-function bulkReset(){bulkChg={};hiddenCols.clear();colSortState={};colFilters={};colWidths={};statusFilter=null;missFilter=null;buildBulk();snack('Desfeito');}
+function bulkReset(){
+  // Desfazer = reset VISUAL apenas (filtros, ordenações, ocultações, larguras).
+  // NÃO reverte edições de células (bulkChg) nem dados carregados (bulkOrig).
+  hiddenCols.clear();colSortState={};colFilters={};
+  colWidths={'NEC_TRAT_PLAT':160,'OBS_TRAT_PLAT_GERAL':200};
+  statusFilter=null;missFilter=null;
+  ['bfStatus','bfCanal','bfModal'].forEach(id=>{const el=document.getElementById(id);if(el){el.value='';el.classList.remove('active');}});
+  var bfSku=$el('bfSku');if(bfSku){bfSku.value='';bfSku.classList.remove('active');}
+  buildBulkHead($el('bHead'));
+  document.querySelectorAll('.th-filter').forEach(function(el){el.value='';});
+  applyBF();
+  snack('Filtros e ocultações desfeitos');
+}
+// Item 4 — clique na LN seleciona a linha inteira (destaque exclusivo)
+function selectBulkRow(i){
+  document.querySelectorAll('.bt tr.row-sel').forEach(function(tr){tr.classList.remove('row-sel');});
+  var tr=document.getElementById('br_'+i);
+  if(tr)tr.classList.add('row-sel');
+}
+function clearBulkRowSel(){
+  document.querySelectorAll('.bt tr.row-sel').forEach(function(tr){tr.classList.remove('row-sel');});
+}
 async function bulkSave(){
   const keys=Object.keys(bulkChg);if(!keys.length){snack('Nenhuma alteração');return;}
   // ── Popup de confirmação ─────────────────────────────────────────
