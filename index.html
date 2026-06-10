@@ -2803,12 +2803,6 @@ function clearToken(){
   _gisTokenClient = null;
   snack('Token removido. Faça login novamente ao salvar.', 'success');
 }
-function clearToken(){
-  sessionStorage.removeItem('gToken');
-  sessionStorage.removeItem('gTokenExp');
-  _gisTokenClient = null;
-  snack('Token removido. Faça login novamente ao salvar.', 'success');
-}
 
 
 const quotes = [{"greeting": "Bom dia! Que hoje seja produtivo.", "quote": "O sucesso é a soma de pequenos esforços repetidos dia após dia.", "author": "Robert Collier"}, {"greeting": "Bem-vindo! Você está no caminho certo.", "quote": "A única maneira de fazer um ótimo trabalho é amar o que você faz.", "author": "Steve Jobs"}, {"greeting": "Mais um dia incrível começa agora.", "quote": "Não é sobre ter tempo, é sobre criar tempo.", "author": "Oprah Winfrey"}, {"greeting": "Que a sua energia hoje mova montanhas.", "quote": "O segredo para seguir em frente é começar.", "author": "Mark Twain"}, {"greeting": "Hoje é uma nova oportunidade de brilhar.", "quote": "Sonhos não funcionam a menos que você trabalhe.", "author": "John C. Maxwell"}, {"greeting": "Olá! Vamos conquistar mais um dia juntos.", "quote": "A persistência é o caminho do êxito.", "author": "Charles Chaplin"}, {"greeting": "Energia positiva para mais um dia de vitórias.", "quote": "Tudo parece impossível até que seja feito.", "author": "Nelson Mandela"}];
@@ -3413,6 +3407,12 @@ function saveCfg(){
     var el=document.getElementById(domPfx+k)||document.getElementById(k);
     if(el){
       var v=el.value.trim();
+      if(k==='clientId'&&v!==sec[k]){
+        // Client ID mudou: invalidar token client e token em cache para forçar novo login com a credencial nova
+        _gisTokenClient=null;
+        sessionStorage.removeItem('gToken');
+        sessionStorage.removeItem('gTokenExp');
+      }
       sec[k]=v;cfg[k]=v;
       localStorage.setItem(pfx+k,v);
     }
@@ -5660,6 +5660,7 @@ function _initGIS(){
       if(_gisTokenResolve){ _gisTokenResolve(null); _gisTokenResolve = null; }
     }
   });
+  _gisTokenClient._cid = cfg.clientId; // registra qual Client ID este cliente está usando
   return true;
 }
 
@@ -5684,8 +5685,8 @@ async function getToken(){
   var loaded = await _loadGIS();
   if(!loaded) return null;
 
-  // 5. Inicializar token client se necessário
-  if(!_gisTokenClient){
+  // 5. Inicializar token client se necessário (ou recriar se o Client ID mudou de seção)
+  if(!_gisTokenClient || _gisTokenClient._cid!==cfg.clientId){
     if(!_initGIS()) return null;
   }
 
