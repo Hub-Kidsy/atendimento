@@ -3338,7 +3338,7 @@ const RESTOQUE_COLS=[
   {k:'CONDICAO',            l:'Condição',              t:'sel', req:true, opts:['','OK p/ Estoque','Caixa Danificada','Danificado','Troca de Produto','Faltando Peça']},
   {k:'OBS_RELEVANTES',      l:'Obs. Relevantes',       t:'txt'},
   {k:'NF_DEVOL',            l:'NF DEVOL',              t:'txt'},
-  {k:'ENTRADA_CARDEX',      l:'Entrada Cardex',        t:'sel', opts:['','ESTOQUE','DEFEITOS','DESCARTE'], req:true},
+  {k:'ENTRADA_CARDEX',      l:'Entrada Cardex',        t:'sel', opts:['','ESTOQUE','DEFEITOS','DESCARTE']},
   {k:'ENTRADA_BLING',       l:'Entrada Bling',         t:'sel', opts:['','CARDEX','DEFEITOS','DESCARTE'], req:true},
   {k:'NEC_TRAT_PLAT',       l:'Nec. Trat. Plat.?',    t:'sel', opts:['','SIM','NÃO'], w:160},
   {k:'OBS_TRAT_PLAT_GERAL', l:'Obs. Trat. Plataforma', t:'txt', w:200}
@@ -3689,7 +3689,7 @@ function openModalRetorn(rec){
           fInp('OBS_RELEVANTES','Obs. Relevantes',r.OBS_RELEVANTES),
         '</div>',
         '<div class="fg">',
-          fSel('ENTRADA_CARDEX','Entrada Cardex',r.ENTRADA_CARDEX||'',['','ESTOQUE','DEFEITOS','DESCARTE'],true),
+          fSel('ENTRADA_CARDEX','Entrada Cardex',r.ENTRADA_CARDEX||'',['','ESTOQUE','DEFEITOS','DESCARTE'],false),
           fSel('ENTRADA_BLING','Entrada Bling',r.ENTRADA_BLING||'',['','CARDEX','DEFEITOS','DESCARTE'],true),
         '</div>',
         '<div class="fg">',
@@ -4693,7 +4693,7 @@ function goP(p){const tp=Math.ceil(filtered.length/PG)||1;if(p<1||p>tp)return;cu
 function getMissRetorn(r){
   var m=[];
   // Obrigatórios sempre
-  ['ID_VENDA','CANAL','EMPR','MODELO','MODALIDADE','DATA_RECEBIMENTO','CONDICAO','ENTRADA_CARDEX','ENTRADA_BLING'].forEach(function(f){if(!r[f])m.push(f);});
+  ['ID_VENDA','CANAL','EMPR','MODELO','MODALIDADE','DATA_RECEBIMENTO','CONDICAO','ENTRADA_BLING'].forEach(function(f){if(!r[f])m.push(f);});
   return m;
 }
 function getMiss(r){
