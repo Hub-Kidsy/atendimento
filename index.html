@@ -1661,7 +1661,7 @@ body{
 /* ── Seções exclusivas do Popup de RETORNOS ───────────────────────── */
 /* IDENTIFICAÇÃO — neutro, cinza suave */
 .fsec-r-id{
-  background:#f9fafb;
+  background:#ffffff;
   border:1px solid #e5e7eb;
 }
 .fsec-r-id .fsec-tit-row{
@@ -1678,7 +1678,7 @@ body{
 
 /* ESTOQUE — verde pastel */
 .fsec-r-estoque{
-  background:#fdf8f4;
+  background:#ffffff;
   border:1px solid #d4b8a0;
 }
 .fsec-r-estoque .fsec-tit-row{
@@ -1695,7 +1695,7 @@ body{
 
 /* TRATATIVA PLATAFORMA — âmbar pastel */
 .fsec-r-trat-plat{
-  background:#fffbeb;
+  background:#ffffff;
   border:1px solid #fde68a;
 }
 .fsec-r-trat-plat .fsec-tit-row{
@@ -3339,7 +3339,7 @@ const RESTOQUE_COLS=[
   {k:'OBS_RELEVANTES',      l:'Obs. Relevantes',       t:'txt'},
   {k:'NF_DEVOL',            l:'NF DEVOL',              t:'txt'},
   {k:'ENTRADA_CARDEX',      l:'Entrada Cardex',        t:'sel', opts:['','ESTOQUE','DEFEITOS','DESCARTE']},
-  {k:'ENTRADA_BLING',       l:'Entrada Bling',         t:'sel', opts:['','CARDEX','DEFEITOS','DESCARTE'], req:true},
+  {k:'ENTRADA_BLING',       l:'Entrada Bling',         t:'sel', opts:['','CARDEX','DEFEITOS','DESCARTE']},
   {k:'NEC_TRAT_PLAT',       l:'Nec. Trat. Plat.?',    t:'sel', opts:['','SIM','NÃO'], w:160},
   {k:'OBS_TRAT_PLAT_GERAL', l:'Obs. Trat. Plataforma', t:'txt', w:200}
 ];
@@ -3688,11 +3688,11 @@ function openModalRetorn(rec){
         '<div class="fg" style="grid-template-columns:2fr">',
           fInp('OBS_RELEVANTES','Obs. Relevantes',r.OBS_RELEVANTES),
         '</div>',
-        '<div class="fg">',
+        '<div class="fg3">',
           fSel('ENTRADA_CARDEX','Entrada Cardex',r.ENTRADA_CARDEX||'',['','ESTOQUE','DEFEITOS','DESCARTE'],false),
-          fSel('ENTRADA_BLING','Entrada Bling',r.ENTRADA_BLING||'',['','CARDEX','DEFEITOS','DESCARTE'],true),
+          fSel('ENTRADA_BLING','Entrada Bling',r.ENTRADA_BLING||'',['','CARDEX','DEFEITOS','DESCARTE'],false),
         '</div>',
-        '<div class="fg">',
+        '<div class="fg" style="grid-template-columns:1fr 2fr;gap:10px">',
           fYN('NEC_TRAT_PLAT','Nec. Tratativa Plataforma?',r.NEC_TRAT_PLAT),
           fInp('OBS_TRAT_PLAT_GERAL','Obs. Tratativa Plataforma',r.OBS_TRAT_PLAT_GERAL),
         '</div>',
@@ -4693,7 +4693,7 @@ function goP(p){const tp=Math.ceil(filtered.length/PG)||1;if(p<1||p>tp)return;cu
 function getMissRetorn(r){
   var m=[];
   // Obrigatórios sempre
-  ['ID_VENDA','CANAL','EMPR','MODELO','MODALIDADE','DATA_RECEBIMENTO','CONDICAO','ENTRADA_BLING'].forEach(function(f){if(!r[f])m.push(f);});
+  ['ID_VENDA','CANAL','EMPR','MODELO','MODALIDADE','DATA_RECEBIMENTO','CONDICAO'].forEach(function(f){if(!r[f])m.push(f);});
   return m;
 }
 function getMiss(r){
