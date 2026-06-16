@@ -2999,44 +2999,45 @@ const COL={
 };
 // ══ COL RETORNOS — mapeamento baseado nos cabeçalhos REAIS da planilha ══
 const COL_RETORN={
-  // ── Identificação (0-11) ─────────────────────────────────────────────
+  // ── Identificação (0-12) ─────────────────────────────────────────────
   STATUS:0, ID_VENDA:1, NOME:2, CANAL:3, EMPR:4,
   MODELO:5, DATA_VENDA:6, SKU:7, QT:8,
   RASTREIO:9, NF:10, NF_DEVOL:11,
   CHEGOU_CARDEX:12,       // 'Inegragada a uma Reclamação?'
-  // ── ESTOQUE (13-21) ───────────────────────────────────────────────────
-  MODALIDADE:13,          // Modalidade
-  DATA_RECEBIMENTO:14,    // DATA de Recebm.
-  CONDICAO:15,            // Condição
-  OBS_RELEVANTES:16,      // Observações Relevantes
-  ENTRADA_CARDEX:17,      // NF Devol (número)
-  ENTRADA_BLING:18,       // Entrada Cardex (ESTOQUE/DEFEITOS/DESCARTE)
-  ENTRADA_BLING2:19,      // Entrada Bling (CARDEX/DEFEITOS...)
-  NEC_TRAT_PLAT:20,       // Necessário Tratativa Plataforma?
-  OBS_TRAT_PLAT_GERAL:21, // Observações para Tratativa Plataforma
-  VALOR_NF:22,            // Custo Produto
-  // ── TRATATIVA COM PLATAFORMA (23-41) ─────────────────────────────────
-  ABERTO_TRAT_PLAT:23,    // Aberto Tratativa Plataforma?
-  MOD_TRAT_PLAT1:24,      // Modalidade Tratativa Plataforma 1
-  MOTIVO_TRAT1:25,        // Motivo da Tratativa 1?
-  DATA_TRAT1:26,          // Data da Tratativa 1
-  PROTOCOLO1:27,          // Protocolo 1
-  OBS_TRAT1:28,           // Observações da Tratativa 1
-  MOD_TRAT_PLAT2:29,      // Modalidade Tratativa Plataforma 2
-  MOTIVO_TRAT2:30,        // Motivo da Tratativa 2?
-  DATA_TRAT2:31,          // Data da Tratativa 2
-  PROTOCOLO2:32,          // Protocolo 2
-  OBS_TRAT2:33,           // Observações da Tratativa 2
-  DISPUTA_ABERTA:34,      // Disputa Aberta?
-  PLAT_DISPUTA:35,        // Plataforma Disputa
-  REEMBOLSO_MKT:36,       // Reembolso do Marketplace?
-  DISPUTA_FINALIZADA:37,  // Disputa Finalizada?
-  CREDITO_RECEBIDO_VALOR:38, // R$ Crédito Recebido
-  CREDITO_RECEBIDO:39,    // Crédito Recebido?
-  OBS_DISPUTA:40,         // Observações da Disputa
-  TRAT_PLAT_FIN:41,       // Tratativa Plataforma FINALIZADA?
-  STATUS2:42,             // STATUS 2
-  CUSTO_PRODUTO:22        // Custo Produto — índice dinâmico via applyColumnsMap
+  AUTOR:13,               // AUTOR (adicionado à planilha)
+  // ── ESTOQUE (14-22) ───────────────────────────────────────────────────
+  MODALIDADE:14,          // Modalidade
+  DATA_RECEBIMENTO:15,    // DATA de Recebm.
+  CONDICAO:16,            // Condição
+  OBS_RELEVANTES:17,      // Observações Relevantes
+  ENTRADA_CARDEX:18,      // NF Devol (número)
+  ENTRADA_BLING:19,       // Entrada Cardex (ESTOQUE/DEFEITOS/DESCARTE)
+  ENTRADA_BLING2:20,      // Entrada Bling (CARDEX/DEFEITOS...)
+  NEC_TRAT_PLAT:21,       // Necessário Tratativa Plataforma?
+  OBS_TRAT_PLAT_GERAL:22, // Observações para Tratativa Plataforma
+  VALOR_NF:23,            // Custo Produto
+  // ── TRATATIVA COM PLATAFORMA (24-42) ─────────────────────────────────
+  ABERTO_TRAT_PLAT:24,    // Aberto Tratativa Plataforma?
+  MOD_TRAT_PLAT1:25,      // Modalidade Tratativa Plataforma 1
+  MOTIVO_TRAT1:26,        // Motivo da Tratativa 1?
+  DATA_TRAT1:27,          // Data da Tratativa 1
+  PROTOCOLO1:28,          // Protocolo 1
+  OBS_TRAT1:29,           // Observações da Tratativa 1
+  MOD_TRAT_PLAT2:30,      // Modalidade Tratativa Plataforma 2
+  MOTIVO_TRAT2:31,        // Motivo da Tratativa 2?
+  DATA_TRAT2:32,          // Data da Tratativa 2
+  PROTOCOLO2:33,          // Protocolo 2
+  OBS_TRAT2:34,           // Observações da Tratativa 2
+  DISPUTA_ABERTA:35,      // Disputa Aberta?
+  PLAT_DISPUTA:36,        // Plataforma Disputa
+  REEMBOLSO_MKT:37,       // Reembolso do Marketplace?
+  DISPUTA_FINALIZADA:38,  // Disputa Finalizada?
+  CREDITO_RECEBIDO_VALOR:39, // R$ Crédito Recebido
+  CREDITO_RECEBIDO:40,    // Crédito Recebido?
+  OBS_DISPUTA:41,         // Observações da Disputa
+  TRAT_PLAT_FIN:42,       // Tratativa Plataforma FINALIZADA?
+  STATUS2:43,             // STATUS 2
+  CUSTO_PRODUTO:23        // Custo Produto — índice dinâmico via applyColumnsMap
 };
 // Status da planilha RETORNOS
 const STATUS_RETORN=['CONCLUÍDO','ACOMPANHAR DISPUTA','AGUARDANDO REEMBOLSO','ENTRADA ATRASADA','ENTRADA PENDENTE',''];
