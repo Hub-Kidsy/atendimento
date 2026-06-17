@@ -933,7 +933,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 /* .dlg- */
 /* ── Sections ────────────────────────────────────────────────── */
 .fsec{border-radius:10px;margin-bottom:14px;overflow:hidden;border:1px solid var(--out);}
-.fsec-id{background:#f8f9fa;}.fsec-trat{background:#eff6ff;}.fsec-disp{background:#fff7ed;}
+.fsec-id{background:#fff;}.fsec-trat{background:#fff;}.fsec-disp{background:#fff;}
 .fsec-tit{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--on-sur-v);margin-bottom:10px;}
 .fsec-tit-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
 .fsec-tit-row .fsec-tit{flex:1;margin-bottom:0;}
@@ -1129,10 +1129,14 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 
 /* ── Seções do popup ─────────────────────────────────────────────── */
 .fsec{border-radius:10px;margin-bottom:14px;overflow:hidden;border:1px solid var(--out);}
-.fsec-id{background:#f8f9fa;}
-.fsec-trat{background:#eff6ff;}
-.fsec-disp{background:#fff7ed;}
-.fsec-fin{background:#f0fdf4;}
+.fsec-id{background:#fff;}
+.fsec-trat{background:#fff;}
+.fsec-disp{background:#fff;}
+.fsec-fin{background:#fff;}
+.fsec-id>.fsec-tit-row{background:#f8f9fa;}
+.fsec-trat>.fsec-tit-row{background:#eff6ff;}
+.fsec-disp>.fsec-tit-row{background:#fff7ed;}
+.fsec-fin>.fsec-tit-row{background:#f0fdf4;}
 .fsec-tit-row{
   display:flex;align-items:center;
   padding:10px 12px;gap:8px;
@@ -1153,6 +1157,12 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .fsec.collapsed .fsec-body{display:none;}
 .fsec-
 /* 
+
+/* Destaque azul – NF Devol (Emissão) quando NEC_NF_DEVOL=SIM */
+.mdi.nfblue{border-color:#1a73e8!important;background:#e8f0fe;}
+.fld.nfblue-fld label{color:#1a73e8;font-weight:600;}
+td.nf-blue-cell{background:#e8f0fe!important;}
+td.nf-blue-cell .bulk-inp{background:#e8f0fe;border-color:#1a73e8;}
 
 /* Subsecção (Full/Estoque dentro de Identificação) */
 .fsec-subsec{
@@ -1570,9 +1580,9 @@ body{
 .fsec-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px;}
 .fsec-tit-row{display:flex;align-items:center;padding:8px 12px;gap:8px;border-bottom:1px solid var(--out-v);}
 .fsec-tit{flex:1;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--on-sur-v);}
-.fsec-id{background:#f8f9fa;}
-.fsec-trat{background:#f0f4ff;}
-.fsec-disp{background:#fff8f0;}
+.fsec-id{background:#fff;}
+.fsec-trat{background:#fff;}
+.fsec-disp{background:#fff;}
 .fg{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
 @media(max-width:700px){.fg,.fg3{grid-template-columns:1fr;}}
@@ -1655,7 +1665,8 @@ body{
 
 .kpi-info{border-left:4px solid #1a73e8;}
 
-.fsec-full{background:#f0fdf4;}
+.fsec-full{background:#fff;}
+.fsec-full>.fsec-tit-row{background:#f0fdf4;}
 .fsec-full .fsec-tit{color:#15803d;}
 
 /* ── Seções exclusivas do Popup de RETORNOS ───────────────────────── */
@@ -1665,7 +1676,7 @@ body{
   border:1px solid #e5e7eb;
 }
 .fsec-r-id .fsec-tit-row{
-  background:#f3f4f6;
+  background:#ffffff;
   border-bottom:1px solid #e5e7eb;
 }
 .fsec-r-id .fsec-tit{
@@ -1682,7 +1693,7 @@ body{
   border:1px solid #d4b8a0;
 }
 .fsec-r-estoque .fsec-tit-row{
-  background:#ede0d4;
+  background:#ffffff;
   border-bottom:1px solid #d4b8a0;
 }
 .fsec-r-estoque .fsec-tit{
@@ -1699,7 +1710,7 @@ body{
   border:1px solid #fde68a;
 }
 .fsec-r-trat-plat .fsec-tit-row{
-  background:#fef9c3;
+  background:#ffffff;
   border-bottom:1px solid #fde68a;
 }
 .fsec-r-trat-plat .fsec-tit{
@@ -2222,10 +2233,13 @@ body{
   <div class="bulk-filters-row">
     <select class="bulk-filter-sel" id="bfStatus" onchange="applyBF()">
       <option value="">Todos os Status</option>
+      <option>ERRO DE PREENCHIMENTO</option>
       <option>TRATATIVA ABERTA</option><option>TRATATIVA ATRASADA</option>
       <option>ACOMPANHAR DISPUTA</option><option>ACOMPANHAR ENVIO</option>
-      <option>POSSÍVEL EXTRAVIO</option><option>AGUARDANDO REEMBOLSO</option>
-      <option>A ENVIAR</option>
+      <option>POSSÍVEL EXTRAVIO</option><option>EMITIR NF DEVOL</option>
+      <option>ABRIR TRAT. PLATAFORMA</option><option>AGUARDANDO REEMBOLSO</option>
+      <option>A ENVIAR</option><option>CONCLUÍDO</option>
+      <option>AGUARDANDO PRODUTO</option>
     </select>
     <select class="bulk-filter-sel" id="bfCanal" onchange="applyBF()">
       <option value="">Todos os Canais</option>
@@ -2569,26 +2583,28 @@ function openModal(rec){
         '<button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button>',
       '</div>',
       '<div class="fsec-body">',
-        '<div class="fg">',
+        '<div class="fg" style="grid-template-columns:1fr 2fr">',
           fInp('ID_VENDA','ID Venda',r.ID_VENDA,'text',true,false,false,isNew),
+          fInp('NOME','Nome',r.NOME),
+        '</div>',
+        '<div class="fg3">',
           fSel('CANAL','Canal',r.CANAL,['','Mercado Livre','Shopee','Amazon','Magalu','TikTok'],true,isErr('CANAL')),
           fSel('EMPR','EMPR.',r.EMPR,['','JLD','DGL'],true,isErr('EMPR')),
           fSel('MODELO','Modelo',r.MODELO,['','Full','Normal','Flex','NE'],true,isErr('MODELO')),
         '</div>',
         '<div class="fg3">',
-          fInp('NOME','Nome',r.NOME),
           fInp('DATA_VENDA','Data Venda',r.DATA_VENDA,'text',false,'DD/MM/AAAA'),
           fInp('SKU','SKU',r.SKU),
-        '</div>',
-        '<div class="fg3">',
           fInp('QT','QT',r.QT),
-          fInp('RASTREIO','Rastreio',r.RASTREIO),
         '</div>',
-        '<div class="fg3">',
+        '<div class="fg" style="grid-template-columns:2fr 1fr 1fr">',
+          fInp('RASTREIO','Rastreio',r.RASTREIO),
           fInp('NF','NF',r.NF),
           fInp('NF_DEVOL','NF Devol.',r.NF_DEVOL),
         '</div>',
-        // Full/Estoque subsecção
+        '<div class="fg" style="grid-template-columns:1fr 2fr">',
+          (function(){var nb=r.NEC_NF_DEVOL==='SIM';return '<div class="fld'+(nb?' nfblue-fld':'')+'"><label>NF Devol (Emissão)</label><input type="text" id="f_NF_DEVOL_EMISSAO" class="mdi'+(nb?' nfblue':'')+'" value="'+(r.NF_DEVOL_EMISSAO||'').replace(/"/g,'&quot;')+'" oninput="fldChg(\'NF_DEVOL_EMISSAO\',this.value)"></div>';})(),
+        '</div>',
       '</div>',
     '</div>',
 
@@ -2599,52 +2615,62 @@ function openModal(rec){
         '<button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button>',
       '</div>',
       '<div class="fsec-body">',
+        // 1. Modalidade | Motivo | Detalhamento — mesma linha
         '<div class="fg3">',
           fSel('MOD_TRAT_CLIENTE','Modalidade Tratativa',r.MOD_TRAT_CLIENTE,MODALIDADES),
-        '</div>',
-        '<div class="fg3">',
           fSel('MOTIVO','Motivo Tratativa do Cliente',r.MOTIVO,MOTIVOS,false,isErr('MOTIVO')),
           fSel('DETALHAMENTO','Detalhamento da Tratativa',r.DETALHAMENTO,DETALHAMENTOS),
         '</div>',
-        '<div class="fg" style="grid-template-columns:2fr">',
+        // 2. Obs da Tratativa — largura = Nome (2fr de 1fr+2fr)
+        '<div class="fg" style="grid-template-columns:2fr 1fr">',
           fInp('OBS_RECLAM','Observações da Tratativa',r.OBS_RECLAM),
         '</div>',
-        '<div class="fg3">',
-          fYN3('CHAMADO_ABERTO','Aberto Atendimento?',r.CHAMADO_ABERTO),
+        // ── Subsessão: Atendimento e Envio de Peças ──────────────────
+        '<div style="border:1px solid #d0d5dd;border-radius:8px;padding:12px 14px 10px;margin-top:6px;background:#fff;display:flex;flex-direction:column;gap:8px">',
+          '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#374151;margin-bottom:2px">Atendimento</div>',
+          // Linha 1: Aberto Atendimento + DATA Atendimento
+          '<div class="fg3">',
+            fYN3('CHAMADO_ABERTO','Aberto Atendimento?',r.CHAMADO_ABERTO),
+            '<div id="cAExtra_dt" style="display:'+(cA?'contents':'none')+'">',
+              fInp('DATA_TRATATIVA','DATA Atendimento',r.DATA_TRATATIVA,'text',false,'DD/MM/AAAA'),
+            '</div>',
+          '</div>',
+          // Linha 2: Nec. Enviar Peças?
+          '<div id="cAExtra" style="display:'+(cA?'contents':'none')+'">',
+            '<div class="fg3">',
+              fYN('NEC_PECAS','Nec. Enviar Peças?',r.NEC_PECAS,true,isErr('NEC_PECAS')),
+            '</div>',
+          '</div>',
+          // Linha 3: Peças enviadas | Reenvio recebido | Custo Envio
+          '<div id="pecasExtra" style="display:'+(pA?'contents':'none')+'">',
+            '<div class="fg3">',
+              fYN('PECAS_ENVIADAS','Enviadas Peças p/ Cliente?',r.PECAS_ENVIADAS,true,isErr('PECAS_ENVIADAS')),
+              fYN('REENVIO_RECEBIDO','Reenvio recebido pelo cliente?',r.REENVIO_RECEBIDO,true,isErr('REENVIO_RECEBIDO')),
+              fInp('CUSTO_ENVIO','Custo de Envio',r.CUSTO_ENVIO,'text',false,'R$ 0,00'),
+            '</div>',
+            // Linha 4: Obs do envio — largura = Nome
+            '<div class="fg" style="grid-template-columns:2fr 1fr">',
+              fInp('OBS_PECAS','Observação do envio de peças',r.OBS_PECAS),
+            '</div>',
+          '</div>',
         '</div>',
-        '<div id="cAExtra" style="display:'+(cA?'contents':'none')+'">',
-          '<div class="fg3">',
-            fInp('DATA_TRATATIVA','DATA Atendimento',r.DATA_TRATATIVA,'text',false,'DD/MM/AAAA'),
-          '</div>',
-          '<div class="fg3">',
-            fYN('NEC_PECAS','Nec. Enviar Peças?',r.NEC_PECAS,true,isErr('NEC_PECAS')),
-          '</div>',
-        '</div>',
-        '<div id="pecasExtra" style="display:'+(pA?'contents':'none')+'">',
-          '<div class="fg3">',
-            fYN('PECAS_ENVIADAS','Enviadas Peças p/ Cliente?',r.PECAS_ENVIADAS,true,isErr('PECAS_ENVIADAS')),
-            fYN('REENVIO_RECEBIDO','Reenvio recebido pelo cliente?',r.REENVIO_RECEBIDO,true,isErr('REENVIO_RECEBIDO')),
-          '</div>',
-          '<div class="fg" style="grid-template-columns:1fr">',
-            fInp('OBS_PECAS','Observação do envio de peças',r.OBS_PECAS),
-          '</div>',
-          '<div class="fg3">',
-            fInp('CUSTO_ENVIO','Custo de Envio',r.CUSTO_ENVIO,'text',false,'R$ 0,00'),
-          '</div>',
-        '</div>',
+        // ── Linha financeira/operacional ─────────────────────────────
         '<div class="fg3">',
           fInp('PAGO_PLAT','Pago a Plataforma ou Cliente',r.PAGO_PLAT,'text',false,'R$ 0,00'),
           fYN('TRAT_CLIENTE_FIN_REP','Impacto na Reputação?',r.TRAT_CLIENTE_FIN_REP||''),
-        '</div>',
-        '<div class="fg3">',
           fYN('DEVOLUCAO_ABERTA','Aberto processo de devolução?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA')),
+        '</div>',
+        // ── Finalização ─────────────────────────────────────────────
+        '<div class="fg3">',
           fYN('TRATATIVA_FINALIZADA','Tratativa Cliente FINALIZADA?',r.TRATATIVA_FINALIZADA,true,isErr('TRATATIVA_FINALIZADA')),
         '</div>',
-        '<div class="fg3">',
-          fYN('NEC_TRAT_PLAT','Necessário Tratativa Plataforma?',r.NEC_TRAT_PLAT,false,false),
-        '</div>',
-        '<div class="fg" style="grid-template-columns:1fr">',
-          fInp('OBS_TRAT_PLAT_GERAL','Obs. para Tratativa Plataforma',r.OBS_TRAT_PLAT_GERAL),
+        // ── Subsessão: Tratativa Plataforma ─────────────────────────
+        '<div style="border:1px solid #d0d5dd;border-radius:8px;padding:12px 14px 10px;margin-top:6px;background:#fff;display:flex;flex-direction:column;gap:8px">',
+          '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#374151;margin-bottom:2px">Plataforma</div>',
+          '<div class="fg" style="grid-template-columns:1fr 2fr">',
+            fYN('NEC_TRAT_PLAT','Necessário Tratativa Plataforma?',r.NEC_TRAT_PLAT,false,false),
+            fInp('OBS_TRAT_PLAT_GERAL','Obs. para Tratativa Plataforma',r.OBS_TRAT_PLAT_GERAL),
+          '</div>',
         '</div>',
       '</div>',
     '</div>',
@@ -2701,7 +2727,7 @@ function openModal(rec){
             '</div>',
           '</div>',
           '<div class="fg3">',
-            fYN3('TRAT_PLAT_FIN','Tratativa Plataforma FINALIZADA?',r.TRAT_PLAT_FIN||'',true,isErr('TRAT_PLAT_FIN')),
+            fYN('TRAT_PLAT_FIN','Tratativa Plataforma FINALIZADA?',r.TRAT_PLAT_FIN||'',true,isErr('TRAT_PLAT_FIN')),
           '</div>',
         '</div>',
       '</div>',
@@ -3652,22 +3678,22 @@ function openModalRetorn(rec){
         '<button class="fsec-collapse-btn" onclick="this.closest(\'div.fsec\').classList.toggle(\'collapsed\')">▾</button>',
       '</div>',
       '<div class="fsec-body">',
-        '<div class="fg">',
+        '<div class="fg" style="grid-template-columns:1fr 2fr">',
           fInp('ID_VENDA','ID Venda',r.ID_VENDA,'text',true,false,false,isNew),
+          fInp('NOME','Nome',r.NOME),
+        '</div>',
+        '<div class="fg3">',
           fSel('CANAL','Canal',r.CANAL,['','Mercado Livre','Shopee','Amazon','Magalu','TikTok'],true,isErr('CANAL')),
           fSel('EMPR','EMPR.',r.EMPR,['','JLD','DGL'],true,isErr('EMPR')),
           fSel('MODELO','Modelo',r.MODELO,['','Full','Normal','Flex','NE'],true,isErr('MODELO')),
         '</div>',
         '<div class="fg3">',
-          fInp('NOME','Nome',r.NOME),
           fInp('DATA_VENDA','Data Venda',r.DATA_VENDA,'text',false,'DD/MM/AAAA'),
           fInp('SKU','SKU',r.SKU),
-        '</div>',
-        '<div class="fg3">',
           fInp('QT','QT',r.QT),
-          fInp('RASTREIO','Rastreio',r.RASTREIO),
         '</div>',
-        '<div class="fg3">',
+        '<div class="fg" style="grid-template-columns:2fr 1fr 1fr">',
+          fInp('RASTREIO','Rastreio',r.RASTREIO),
           fInp('NF','NF',r.NF),
           fInp('NF_DEVOL','NF Devol.',r.NF_DEVOL),
         '</div>',
@@ -3692,9 +3718,9 @@ function openModalRetorn(rec){
         '<div class="fg3">',
           fSel('ENTRADA_CARDEX','Entrada Cardex',r.ENTRADA_CARDEX||'',['','ESTOQUE','DEFEITOS','DESCARTE'],false),
           fSel('ENTRADA_BLING','Entrada Bling',r.ENTRADA_BLING||'',['','CARDEX','DEFEITOS','DESCARTE'],false),
-        '</div>',
-        '<div class="fg" style="grid-template-columns:1fr 2fr;gap:10px">',
           fYN('NEC_TRAT_PLAT','Nec. Tratativa Plataforma?',r.NEC_TRAT_PLAT),
+        '</div>',
+        '<div class="fg" style="grid-template-columns:1fr">',
           fInp('OBS_TRAT_PLAT_GERAL','Obs. Tratativa Plataforma',r.OBS_TRAT_PLAT_GERAL),
         '</div>',
       '</div>',
@@ -5048,7 +5074,7 @@ function applyBF(){
   }
   // Sort
   const sk=Object.keys(colSortState).find(k=>colSortState[k]);
-  const _dateCols=new Set(['DATA_VENDA','DATA_CAMINHO_MKT','DATA_ENTREGUE_MKT','DATA_TRATATIVA','DATA_PREVISTA_RETORNO','NF_DEVOL_EMISSAO']);
+  const _dateCols=new Set(['DATA_VENDA','DATA_CAMINHO_MKT','DATA_ENTREGUE_MKT','DATA_TRATATIVA','DATA_PREVISTA_RETORNO']);
   if(sk){const dir=colSortState[sk];idxs.sort((a,b)=>{
     const va=bulkOrig[a][sk]||'',vb=bulkOrig[b][sk]||'';
     if(_dateCols.has(sk)){
@@ -5264,6 +5290,7 @@ function mkEditCell(r,ri,c,secCls){
   const val=getCellVal(ri,c.k)||'';
   const uid='b_'+ri+'_'+c.k;
   const isMiss=getMiss(r).includes(c.k)?'miss-cell':'';
+  const isNfBlue=c.k==='NF_DEVOL_EMISSAO'&&(r.NEC_NF_DEVOL||getCellVal(ri,'NEC_NF_DEVOL'))==='SIM'?'nf-blue-cell':'';
   const chg='bChg('+ri+',\''+c.k+'\',this.value)';
   const opts=c.opts||c.o;
   const onclk='selCell(this,!!(window._lastEvt&&(window._lastEvt.ctrlKey||window._lastEvt.metaKey)),!!(window._lastEvt&&window._lastEvt.shiftKey))';
@@ -5278,11 +5305,11 @@ function mkEditCell(r,ri,c,secCls){
   }else if(c.t==='ro'){
     inner='<span class="cell-ro">'+(val||'')+'</span>';
   }else{
-    var _isDate=/^DATA/.test(c.k)||c.k==='NF_DEVOL_EMISSAO';
+    var _isDate=/^DATA/.test(c.k);
     var _oin=(_isDate?'_maskDate(this);':'')+chg;
     inner='<input class="bulk-inp" id="'+uid+'" value="'+val.replace(/"/g,'&quot;')+'" '+(_isDate?'inputmode="numeric" ':'')+'onfocus="'+onfcs+'" oninput="'+_oin+'">';
   }
-  return '<td class="'+secCls+' '+isMiss+'" data-row="'+ri+'" data-col="'+c.k+'" onclick="'+onclk+'">'    +inner    +'<div class="fill-handle" onmousedown="startFill(event,'+ri+',\''+c.k+'\',event)" onclick="event.stopPropagation()"></div>'    +'</td>';
+  return '<td class="'+secCls+' '+isMiss+' '+isNfBlue+'" data-row="'+ri+'" data-col="'+c.k+'" onclick="'+onclk+'">'    +inner    +'<div class="fill-handle" onmousedown="startFill(event,'+ri+',\''+c.k+'\',event)" onclick="event.stopPropagation()"></div>'    +'</td>';
 }
 function renderBulkRows(tbody){
   if(!tbody)return;
@@ -5973,8 +6000,10 @@ function fldChg(id,val){
   // Toggle cAExtra quando CHAMADO_ABERTO muda (DATA + NEC_PECAS)
   if(id==='CHAMADO_ABERTO'){
     var ce=document.getElementById('cAExtra');
+    var cdt=document.getElementById('cAExtra_dt');
     var showC=['SIM','Reaberto','REABERTA'].includes((val||'').trim());
     if(ce)ce.style.display=showC?'contents':'none';
+    if(cdt)cdt.style.display=showC?'contents':'none';
     // Se ocultar cAExtra, ocultar também pecasExtra
     if(!showC){
       var pe2=document.getElementById('pecasExtra');
