@@ -1676,7 +1676,7 @@ body{
   border:1px solid #e5e7eb;
 }
 .fsec-r-id .fsec-tit-row{
-  background:#ffffff;
+  background:#f3f4f6;
   border-bottom:1px solid #e5e7eb;
 }
 .fsec-r-id .fsec-tit{
@@ -1690,11 +1690,11 @@ body{
 /* ESTOQUE — verde pastel */
 .fsec-r-estoque{
   background:#ffffff;
-  border:1px solid #d4b8a0;
+  border:1px solid #e5e7eb;
 }
 .fsec-r-estoque .fsec-tit-row{
-  background:#ffffff;
-  border-bottom:1px solid #d4b8a0;
+  background:#ede0d4;
+  border-bottom:1px solid #e5e7eb;
 }
 .fsec-r-estoque .fsec-tit{
   color:#5c3317;
@@ -1707,11 +1707,11 @@ body{
 /* TRATATIVA PLATAFORMA — âmbar pastel */
 .fsec-r-trat-plat{
   background:#ffffff;
-  border:1px solid #fde68a;
+  border:1px solid #e5e7eb;
 }
 .fsec-r-trat-plat .fsec-tit-row{
-  background:#ffffff;
-  border-bottom:1px solid #fde68a;
+  background:#fef9c3;
+  border-bottom:1px solid #e5e7eb;
 }
 .fsec-r-trat-plat .fsec-tit{
   color:#92400e;
@@ -2626,8 +2626,8 @@ function openModal(rec){
           fInp('OBS_RECLAM','Observações da Tratativa',r.OBS_RECLAM),
         '</div>',
         // ── Subsessão: Atendimento e Envio de Peças ──────────────────
-        '<div style="border:1px solid #d0d5dd;border-radius:8px;padding:12px 14px 10px;margin-top:6px;background:#fff;display:flex;flex-direction:column;gap:8px">',
-          '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#374151;margin-bottom:2px">Atendimento</div>',
+        '<div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">',
+          '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:4px 0 2px">Atendimento</div>',
           // Linha 1: Aberto Atendimento + DATA Atendimento
           '<div class="fg3">',
             fYN3('CHAMADO_ABERTO','Aberto Atendimento?',r.CHAMADO_ABERTO),
@@ -2645,8 +2645,8 @@ function openModal(rec){
           '<div id="pecasExtra" style="display:'+(pA?'contents':'none')+'">',
             '<div class="fg3">',
               fYN('PECAS_ENVIADAS','Enviadas Peças p/ Cliente?',r.PECAS_ENVIADAS,true,isErr('PECAS_ENVIADAS')),
-              fYN('REENVIO_RECEBIDO','Reenvio recebido pelo cliente?',r.REENVIO_RECEBIDO,true,isErr('REENVIO_RECEBIDO')),
               fInp('CUSTO_ENVIO','Custo de Envio',r.CUSTO_ENVIO,'text',false,'R$ 0,00'),
+              fYN('REENVIO_RECEBIDO','Reenvio recebido pelo cliente?',r.REENVIO_RECEBIDO,true,isErr('REENVIO_RECEBIDO')),
             '</div>',
             // Linha 4: Obs do envio — largura = Nome
             '<div class="fg" style="grid-template-columns:2fr 1fr">',
@@ -2656,17 +2656,17 @@ function openModal(rec){
         '</div>',
         // ── Linha financeira/operacional ─────────────────────────────
         '<div class="fg3">',
+          fYN('DEVOLUCAO_ABERTA','Aberto processo de devolução?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA')),
           fInp('PAGO_PLAT','Pago a Plataforma ou Cliente',r.PAGO_PLAT,'text',false,'R$ 0,00'),
           fYN('TRAT_CLIENTE_FIN_REP','Impacto na Reputação?',r.TRAT_CLIENTE_FIN_REP||''),
-          fYN('DEVOLUCAO_ABERTA','Aberto processo de devolução?',r.DEVOLUCAO_ABERTA,true,isErr('DEVOLUCAO_ABERTA')),
         '</div>',
         // ── Finalização ─────────────────────────────────────────────
         '<div class="fg3">',
           fYN('TRATATIVA_FINALIZADA','Tratativa Cliente FINALIZADA?',r.TRATATIVA_FINALIZADA,true,isErr('TRATATIVA_FINALIZADA')),
         '</div>',
         // ── Subsessão: Tratativa Plataforma ─────────────────────────
-        '<div style="border:1px solid #d0d5dd;border-radius:8px;padding:12px 14px 10px;margin-top:6px;background:#fff;display:flex;flex-direction:column;gap:8px">',
-          '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#374151;margin-bottom:2px">Plataforma</div>',
+        '<div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">',
+          '<div class="fsec-sub-label" style="font-size:11px;font-weight:600;color:var(--on-sur-v);margin:8px 0 2px">Plataforma</div>',
           '<div class="fg" style="grid-template-columns:1fr 2fr">',
             fYN('NEC_TRAT_PLAT','Necessário Tratativa Plataforma?',r.NEC_TRAT_PLAT,false,false),
             fInp('OBS_TRAT_PLAT_GERAL','Obs. para Tratativa Plataforma',r.OBS_TRAT_PLAT_GERAL),
@@ -5636,6 +5636,7 @@ async function bulkSave(){
       const savedColFilters={...colFilters};
       const savedColSort={...colSortState};
       bulkChg={};
+      SECTIONS[_activeSection]._bulkChg={};
       await loadData();
       buildBulk();
       // Restore filters after rebuild
