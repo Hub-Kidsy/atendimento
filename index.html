@@ -2159,7 +2159,6 @@ body{
         </button>
       </div>
     </div>
-    <div class="sidebar-sep"></div>
     <!-- Grupo RETORNOS -->
     <div class="sb-group" id="sbGroupRetorn">
       <button class="sb-group-btn" id="sbGroupRetornBtn" data-tooltip="Retornos" onclick="if(typeof toggleSbGroup==='function')toggleSbGroup('sbGroupRetorn')" title="Retornos">
@@ -2190,7 +2189,6 @@ body{
         </button>
       </div>
     </div>
-    <div class="sidebar-sep"></div>
     <button class="sidebar-item" id="snavCfg_PLACEHOLDER" style="display:none" data-page="4" data-tooltip="Configurações" onclick="if(typeof sidebarNav==='function')sidebarNav(4)">
       <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg> <span class="sidebar-label">Configurações</span>
     </button>
@@ -2431,12 +2429,14 @@ body{
 <div class="chart-card"><div class="chart-title">📦 Pedidos por Empresa</div><div class="chart-wrap"><canvas id="comChartEmpr"></canvas></div></div>
 </div>
 <div class="charts-row">
-<div class="chart-card"><div class="chart-title">📊 Pedidos por Status</div><div class="chart-wrap-sm"><canvas id="comChartStatus"></canvas></div></div>
-<div class="chart-card"><div class="chart-title">🚚 Faturamento por Envio</div><div class="chart-wrap-sm"><canvas id="comChartEnvio"></canvas></div></div>
+<div class="chart-card"><div class="chart-title">🚚 Faturamento por Envio</div><div class="chart-wrap"><canvas id="comChartEnvio"></canvas></div></div>
+</div>
+<div class="charts-row">
+<div class="chart-card" style="flex:1"><div class="chart-title">📊 Faturamento Diário por Canal</div><div class="chart-wrap" style="height:280px"><canvas id="comChartDiaCan"></canvas></div></div>
 </div>
 <div class="dash-bottom-row">
-<div class="dash-table-card"><div class="dash-card-title">🏷️ Top SKUs por Faturamento</div>
-<div class="dash-card-scroll"><table class="dash-mini-table"><thead><tr><th>SKU</th><th>Pedidos</th><th>Faturamento</th><th>Margem %</th></tr></thead>
+<div class="dash-table-card" style="padding:10px 12px"><div class="dash-card-title" style="margin-bottom:6px">🏷️ Top SKUs por Faturamento</div>
+<div class="dash-card-scroll" style="max-height:320px"><table class="dash-mini-table"><thead><tr><th>SKU</th><th>Pedidos</th><th>Faturamento</th><th>Margem %</th></tr></thead>
 <tbody id="comSkuBody"></tbody></table></div></div>
 <div class="dash-table-card"><div class="dash-card-title">📅 Vendas por Dia (últimos 30)</div>
 <div class="dash-card-scroll" style="height:260px"><canvas id="comChartDia"></canvas></div></div>
@@ -2449,7 +2449,7 @@ body{
   <div style="max-width:640px;margin:32px auto;padding:0 24px 40px">
     <h2 style="font-family:'Google Sans',sans-serif;font-size:20px;font-weight:500;color:var(--on-sur);margin:0 0 20px;display:flex;align-items:center;gap:10px">⚙ Configurações Comercial</h2>
     <div class="cfg-card">
-      <div class="cfg-section-title">Conexão com Google Sheets (Total)</div>
+      <div class="cfg-section-title">Conexão com Google Sheets (TOTAL)</div>
       <div class="cfg-f">
         <label>ID da Planilha</label>
         <input id="com_sheetId" placeholder="1cDH2mXl..." style="width:100%;box-sizing:border-box"/>
@@ -2457,7 +2457,7 @@ body{
       </div>
       <div class="cfg-f">
         <label>Nome da Aba</label>
-        <input id="com_sheetName" value="Total" style="width:220px"/>
+        <input id="com_sheetName" value="TOTAL" style="width:220px"/>
       </div>
       <div class="cfg-f">
         <label>API Key</label>
@@ -2467,8 +2467,9 @@ body{
         <label>OAuth Client ID</label>
         <input id="com_clientId" placeholder="xxxx.apps.googleusercontent.com" style="width:100%;box-sizing:border-box"/>
       </div>
-      <div class="cfg-f" style="margin-top:12px">
-        <button class="btn btn-filled" onclick="saveComercialCfg()">Salvar Configurações</button>
+      <div style="display:flex;gap:10px;padding-top:8px;border-top:1px solid var(--out-v)">
+        <button class="btn btn-filled" onclick="saveComercialCfg()">💾 Salvar</button>
+        <button class="btn btn-outlined" onclick="testComercialConn()">↻ Testar Conexão</button>
       </div>
     </div>
   </div>
@@ -2532,7 +2533,7 @@ function toggleSbGroup(groupId){
   if(!btn||!sub)return;
   var willOpen=!btn.classList.contains('open');
   // Fechar TODOS os outros grupos antes de abrir
-  var allGroups=['sbGroupAtend','sbGroupRetorn'];
+  var allGroups=['sbGroupComercial','sbGroupAtend','sbGroupRetorn'];
   allGroups.forEach(function(gid){
     if(gid===groupId)return;
     var ob=document.getElementById(gid+'Btn');
@@ -3248,7 +3249,7 @@ function detectModal(desc){const s=(desc||'').toLowerCase();if(s.includes('cance
 const SECTIONS={
   comercial:{key:'comercial',label:'COMERCIAL',
     sheetId:localStorage.getItem('com_sheetId')||'',
-    sheetName:localStorage.getItem('com_sheetName')||'Total',
+    sheetName:localStorage.getItem('com_sheetName')||'TOTAL',
     apiKey:localStorage.getItem('com_apiKey')||'',
     clientId:localStorage.getItem('com_clientId')||'',
     _data:[],_dash:[]
@@ -3524,7 +3525,7 @@ window.onload=()=>{
   SECTIONS.retorn.sheetId=localStorage.getItem('retorn_sheetId')||'';
   // Comercial
   SECTIONS.comercial.sheetId=localStorage.getItem('com_sheetId')||'';
-  SECTIONS.comercial.sheetName=localStorage.getItem('com_sheetName')||'Total';
+  SECTIONS.comercial.sheetName=localStorage.getItem('com_sheetName')||'TOTAL';
   SECTIONS.comercial.apiKey=localStorage.getItem('com_apiKey')||'';
   SECTIONS.comercial.clientId=localStorage.getItem('com_clientId')||'';
   SECTIONS.retorn.sheetName=localStorage.getItem('retorn_sheetName')||'RETORNOS';
@@ -4722,7 +4723,7 @@ function renderSummary(){
       if(s&&!(r._row+' '+r.ID_VENDA+' '+r.NOME+' '+r.SKU+' '+r.CANAL).toLowerCase().includes(s))return false;
       if(_di||_df){
         var _dateKey=_isR?'DATA_RECEBIMENTO':'DATA_VENDA';
-        var d=parseDate(r[_dateKey]);if(!d)return true;
+        var d=parseDate(r[_dateKey]);if(!d)return false;
         if(_di&&d<new Date(_di))return false;
         if(_df){var ate=new Date(_df);ate.setHours(23,59,59);if(d>ate)return false;}
       }
@@ -4821,7 +4822,8 @@ function render(){
   function _parseDate(s){if(!s)return null;var p=s.split('/');if(p.length===3)return new Date(p[2],p[1]-1,p[0]);return new Date(s);}
   const _dIni=_di?new Date(_di):null;
   const _dFim=_df?new Date(_df):null;
-  filtered=allData.filter(r=>{if(!sf&&!s&&(_activeSection==='retorn'?IGNORADOS_RETORN:IGNORADOS).includes(r.STATUS))return false;if(sf&&r.STATUS!==sf)return false;if(cf&&r.CANAL!==cf)return false;if(ef&&r.EMPR!==ef)return false;if(missOnly&&getMiss(r).length===0)return false;if(s&&!(r._row+' '+r.ID_VENDA+' '+r.NOME+' '+r.SKU+' '+r.CANAL+' '+r.MOD_TRAT_CLIENTE).toLowerCase().includes(s))return false;if(_dIni||_dFim){var _rd=_parseDate(r.DATA_VENDA);if(!_rd)return false;if(_dIni&&_rd<_dIni)return false;if(_dFim&&_rd>_dFim)return false;}return true;});
+  const _dateField=_activeSection==='retorn'?'DATA_RECEBIMENTO':'DATA_VENDA';
+  filtered=allData.filter(r=>{if(!sf&&!s&&(_activeSection==='retorn'?IGNORADOS_RETORN:IGNORADOS).includes(r.STATUS))return false;if(sf&&r.STATUS!==sf)return false;if(cf&&r.CANAL!==cf)return false;if(ef&&r.EMPR!==ef)return false;if(missOnly&&getMiss(r).length===0)return false;if(s&&!(r._row+' '+r.ID_VENDA+' '+r.NOME+' '+r.SKU+' '+r.CANAL+' '+r.MOD_TRAT_CLIENTE).toLowerCase().includes(s))return false;if(_dIni||_dFim){var _rd=_parseDate(r[_dateField]);if(!_rd)return false;if(_dIni&&_rd<_dIni)return false;if(_dFim&&_rd>_dFim)return false;}return true;});
   if(sortCol&&sortDir!==0){filtered.sort(function(a,b){var av=a[sortCol]||'',bv=b[sortCol]||'';if(sortCol==='_row'){return sortDir*((parseFloat(av)||0)-(parseFloat(bv)||0));}if(sortCol==='DATA_VENDA'){var ad=_parseDate(av),bd=_parseDate(bv);return sortDir*((!ad&&!bd)?0:!ad?1:!bd?-1:ad-bd);}if(sortCol==='ID_VENDA'){var an=parseFloat(av),bn=parseFloat(bv);if(!isNaN(an)&&!isNaN(bn))return sortDir*(an-bn);}return sortDir*av.toString().localeCompare(bv.toString(),'pt-BR',{sensitivity:'base'});});}
   const tot=filtered.length;const tp=Math.ceil(tot/PG)||1;if(curPage>tp)curPage=1;const st=(curPage-1)*PG;const pg=filtered.slice(st,st+PG);
   if(!pg.length){$el('tbody').innerHTML='<tr><td colspan="9"><div class="state-box"><div style="font-size:28px">📭</div><div>Nenhum registro</div></div></td></tr>';$el('pag').innerHTML='';return;}
@@ -5150,8 +5152,10 @@ function buildMissChips(filteredIdxs){
   const mm={};rows.forEach(r=>{getMiss(r).forEach(k=>{mm[k]=(mm[k]||0)+1;});});const tot=rows.filter(r=>getMiss(r).length>0).length;
   let chips='<button class="miss-chip '+(missFilter==='__all__'?'on':'')+'" onclick="setMF(\'__all__\')">Todos incompletos <strong>('+tot+')</strong></button>';
   Object.entries(mm).sort((a,b)=>b[1]-a[1]).forEach(([k,n])=>{chips+='<button class="miss-chip '+(missFilter===k?'on':'')+'" onclick="setMF(\''+k+'\')">'+( ML[k]||k)+' <strong>('+n+')</strong></button>';});
-  ['missChips','fsMissChips'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=chips;});
-  ['missCounterBadge','fsMissCounter'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=tot;});
+  var _mcEl=$el('missChips');if(_mcEl)_mcEl.innerHTML=chips;
+  var _fsMcEl=document.getElementById('fsMissChips');if(_fsMcEl)_fsMcEl.innerHTML=chips;
+  var _mbEl=$el('missCounterBadge');if(_mbEl)_mbEl.textContent=tot;
+  var _fsMbEl=document.getElementById('fsMissCounter');if(_fsMbEl)_fsMbEl.textContent=tot;
 }
 function setMF(k){missFilter=k;buildMissChips();applyBF();}
 function clearMissFilter(){missFilter=null;buildMissChips();applyBF();}
@@ -5192,7 +5196,8 @@ function applyBF(){
   if(_bdi2||_bdf2){
     const _ini=_bdi2?new Date(_bdi2):null;
     const _fim=_bdf2?new Date(_bdf2):null;
-    idxs=idxs.filter(i=>{var rd=_bParseDate(bulkOrig[i].DATA_VENDA||'');if(!rd)return false;
+    const _bDateField=_activeSection==='retorn'?'DATA_RECEBIMENTO':'DATA_VENDA';
+    idxs=idxs.filter(i=>{var rd=_bParseDate(bulkOrig[i][_bDateField]||'');if(!rd)return false;
       if(_ini&&rd<_ini)return false;if(_fim&&rd>_fim)return false;return true;});
   }
   // Sort
@@ -6274,7 +6279,7 @@ function updateReqVisual(){
 // MÓDULO COMERCIAL — Dashboard + Config
 // ══════════════════════════════════════════════════════════════════
 
-// COL mapping for aba Total
+// COL mapping for aba TOTAL
 const COL_COM={
   DATA_VENDA:0, UF:1, METODO_ENVIO:2, STATUS:3,
   CUSTO_TOTAL:4, TOTAL_VENDA:5, REPASSE:6, PEDIDOS:7, SKU:8,
@@ -6305,7 +6310,7 @@ async function loadComercialData(){
     sec._data=rows.map(function(r,idx){
       var obj={_row:idx+2};
       headers.forEach(function(h,i){obj[h]=r[i]||'';});
-      // Map known columns by index (aba Total)
+      // Map known columns by index (aba TOTAL)
       obj.DATA_VENDA=r[0]||'';
       obj.UF=r[1]||'';
       obj.STATUS=r[3]||'';
@@ -6350,7 +6355,7 @@ async function renderDashComercial(){
   if(!SECTIONS.comercial._data.length)await loadComercialData();
   var data=SECTIONS.comercial._data;
   if(!data.length){
-    document.getElementById('comKpiRow').innerHTML='<div style="padding:20px;color:var(--on-sur-v)">Nenhum dado carregado. Configure a conexão com a aba Total em Configurações.</div>';
+    document.getElementById('comKpiRow').innerHTML='<div style="padding:20px;color:var(--on-sur-v)">Nenhum dado carregado. Configure a conexão com a aba TOTAL em Configurações.</div>';
     return;
   }
   // Apply filters
@@ -6363,7 +6368,8 @@ async function renderDashComercial(){
   // Populate canal filter dynamically
   var canalSel=document.getElementById('comCanal');
   if(canalSel&&canalSel.options.length<=1){
-    var canais=new Set(data.map(r=>r.CANAL2).filter(Boolean));
+    var _dropInvalid=new Set(['Canal De Venda 2','Outros','?','Empresa','Envio','']);
+    var canais=new Set(data.map(r=>(r.CANAL2||'').trim()).filter(c=>c&&!_dropInvalid.has(c)));
     canais.forEach(c=>{var o=document.createElement('option');o.value=c;o.textContent=c;canalSel.appendChild(o);});
   }
   
@@ -6386,21 +6392,15 @@ async function renderDashComercial(){
   var totalPedidos=ativos.reduce((s,r)=>s+(parseInt(r.PEDIDOS)||1),0);
   var faturamento=ativos.reduce((s,r)=>s+parseBRL(r.TOTAL_VENDA),0);
   var ticketMedio=totalPedidos?faturamento/totalPedidos:0;
-  var margemVals=ativos.map(r=>parseFloat(String(r.MARGEM_PCT2||'0').replace('%','').replace(',','.'))).filter(v=>!isNaN(v)&&v!==0);
-  var margemMedia=margemVals.length?margemVals.reduce((a,b)=>a+b,0)/margemVals.length:0;
-  var repasse=ativos.reduce((s,r)=>s+parseBRL(r.REPASSE),0);
-  var custoTotal=ativos.reduce((s,r)=>s+parseBRL(r.CUSTO_TOTAL),0);
-  var impostoTotal=ativos.reduce((s,r)=>s+parseBRL(r.IMPOSTO_TOTAL2),0);
   
   var kpiRow=document.getElementById('comKpiRow');
-  kpiRow.innerHTML=[
-    _comKpi('PEDIDOS',''+totalPedidos,'#1a73e8'),
-    _comKpi('FATURAMENTO','R$ '+faturamento.toLocaleString('pt-BR',{minimumFractionDigits:2}),'#0d9488'),
-    _comKpi('TICKET MÉDIO','R$ '+ticketMedio.toLocaleString('pt-BR',{minimumFractionDigits:2}),'#7c3aed'),
-    _comKpi('MARGEM MÉDIA',margemMedia.toFixed(1)+'%','#ea580c'),
-    _comKpi('REPASSE','R$ '+repasse.toLocaleString('pt-BR',{minimumFractionDigits:2}),'#0284c7'),
-    _comKpi('CUSTO TOTAL','R$ '+custoTotal.toLocaleString('pt-BR',{minimumFractionDigits:2}),'#15803d')
-  ].join('');
+  // badge helper (mesmo padrão do Dashboard Atendimento)
+  function _comBadge(v,col){var colors={red:'#991b1b',green:'#166534',blue:'#1e3a8a',pur:'#6b21a8',warn:'#92400e'};var bg={red:'#fef2f2',green:'#f0fdf4',blue:'#eff6ff',pur:'#faf5ff',warn:'#fffbeb'};return '<span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;background:'+(bg[col]||'#f1f5f9')+';color:'+(colors[col]||'#334155')+'">'+v+'</span>';}
+  function _comKcard(icon,lbl,val,valStyle,badgeVal,badgeCol,sub){return '<div class="kpi"><div class="kpi-lbl">'+icon+' '+lbl+'</div><div class="kpi-val" style="'+valStyle+'">'+val+'</div><div style="margin:4px 0">'+_comBadge(badgeVal,badgeCol)+'</div><div class="kpi-sub">'+sub+'</div></div>';}
+  kpiRow.innerHTML=
+    _comKcard('📦','Pedidos',totalPedidos,'font-size:26px;font-weight:600;color:#1a73e8',totalPedidos+' pedidos','blue','no período')+
+    _comKcard('💰','Faturamento','R$ '+faturamento.toLocaleString('pt-BR',{minimumFractionDigits:2}),'font-size:26px;font-weight:600;color:#0d9488','R$ '+(faturamento/1000).toFixed(1)+'k','green','receita total')+
+    _comKcard('🎫','Ticket Médio','R$ '+ticketMedio.toLocaleString('pt-BR',{minimumFractionDigits:2}),'font-size:26px;font-weight:600;color:#7c3aed','por pedido','pur','valor médio');
   
   // Charts
   _comRenderCharts(ativos,filtered);
@@ -6408,41 +6408,52 @@ async function renderDashComercial(){
   _comRenderSkuTable(ativos);
 }
 
-function _comKpi(label,value,color){
-  return '<div class="kpi-card" style="border-left:4px solid '+color+'"><div class="kpi-label">'+label+'</div><div class="kpi-val" style="color:'+color+'">'+value+'</div></div>';
-}
-
 function _comRenderCharts(ativos,all){
   // Destroy old charts
   Object.values(_comCharts).forEach(c=>{if(c&&c.destroy)c.destroy();});
   _comCharts={};
   
-  // 1. Faturamento por Canal
+  // Valores inválidos a excluir de métricas
+  var _comInvalid=new Set(['Canal De Venda 2','Outros','?','Empresa','Envio','']);
+  
+  // 1. Faturamento por Canal (Doughnut)
   var canalMap={};
-  ativos.forEach(r=>{var c=r.CANAL2||'Outros';canalMap[c]=(canalMap[c]||0)+parseBRL(r.TOTAL_VENDA);});
+  ativos.forEach(r=>{var c=(r.CANAL2||'').trim();if(!c||_comInvalid.has(c))return;canalMap[c]=(canalMap[c]||0)+parseBRL(r.TOTAL_VENDA);});
   var cLabels=Object.keys(canalMap).sort((a,b)=>canalMap[b]-canalMap[a]);
   var cVals=cLabels.map(k=>canalMap[k]);
   var cColors=['#1a73e8','#ea4335','#fbbc04','#34a853','#ff6d01','#46bdc6'];
+  var cTotal=cVals.reduce((a,b)=>a+b,0);
   var ctx1=document.getElementById('comChartCanal');
-  if(ctx1)_comCharts.canal=new Chart(ctx1,{type:'bar',data:{labels:cLabels,datasets:[{data:cVals,backgroundColor:cColors.slice(0,cLabels.length)}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return 'R$ '+c.raw.toLocaleString('pt-BR',{minimumFractionDigits:2})}}}},scales:{y:{ticks:{callback:function(v){return 'R$ '+(v/1000).toFixed(0)+'k'}}}}}});
+  if(ctx1)_comCharts.canal=new Chart(ctx1,{type:'doughnut',data:{labels:cLabels,datasets:[{data:cVals,backgroundColor:cColors.slice(0,cLabels.length)}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:6,boxWidth:11}},tooltip:{callbacks:{label:function(c){var v=c.raw;var p=cTotal>0?((v/cTotal)*100).toFixed(1)+'%':'0%';return c.label+': R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2})+' ('+p+')'}}}}}});
   
   // 2. Pedidos por Empresa
   var emprMap={};
-  ativos.forEach(r=>{var e=r.EMPRESA||'?';emprMap[e]=(emprMap[e]||0)+(parseInt(r.PEDIDOS)||1);});
+  ativos.forEach(r=>{var e=(r.EMPRESA||'').trim();if(!e||_comInvalid.has(e))return;emprMap[e]=(emprMap[e]||0)+(parseInt(r.PEDIDOS)||1);});
   var ctx2=document.getElementById('comChartEmpr');
   if(ctx2)_comCharts.empr=new Chart(ctx2,{type:'doughnut',data:{labels:Object.keys(emprMap),datasets:[{data:Object.values(emprMap),backgroundColor:['#1a73e8','#ea4335','#34a853']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
   
-  // 3. Pedidos por Status
-  var statusMap={};
-  all.forEach(r=>{var s=r.STATUS||'?';statusMap[s]=(statusMap[s]||0)+(parseInt(r.PEDIDOS)||1);});
-  var ctx3=document.getElementById('comChartStatus');
-  if(ctx3)_comCharts.status=new Chart(ctx3,{type:'pie',data:{labels:Object.keys(statusMap),datasets:[{data:Object.values(statusMap),backgroundColor:['#34a853','#ea4335','#fbbc04','#1a73e8','#ff6d01']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
-  
-  // 4. Faturamento por Envio
+  // 3. Faturamento por Envio (Doughnut)
   var envioMap={};
-  ativos.forEach(r=>{var e=r.ENVIO||'?';envioMap[e]=(envioMap[e]||0)+parseBRL(r.TOTAL_VENDA);});
+  ativos.forEach(r=>{var e=(r.ENVIO||'').trim();if(!e||_comInvalid.has(e))return;envioMap[e]=(envioMap[e]||0)+parseBRL(r.TOTAL_VENDA);});
+  var eTotal=Object.values(envioMap).reduce((a,b)=>a+b,0);
   var ctx4=document.getElementById('comChartEnvio');
-  if(ctx4)_comCharts.envio=new Chart(ctx4,{type:'bar',data:{labels:Object.keys(envioMap),datasets:[{data:Object.values(envioMap),backgroundColor:['#7c3aed','#0d9488','#ea580c','#1a73e8','#d946ef']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return 'R$ '+c.raw.toLocaleString('pt-BR',{minimumFractionDigits:2})}}}}}});
+  if(ctx4)_comCharts.envio=new Chart(ctx4,{type:'doughnut',data:{labels:Object.keys(envioMap),datasets:[{data:Object.values(envioMap),backgroundColor:['#7c3aed','#0d9488','#ea580c','#1a73e8','#d946ef']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:6,boxWidth:11}},tooltip:{callbacks:{label:function(c){var v=c.raw;var p=eTotal>0?((v/eTotal)*100).toFixed(1)+'%':'0%';return c.label+': R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2})+' ('+p+')'}}}}}});
+  
+  // 4. Faturamento Diário por Canal (Stacked Bar)
+  var _dcMap={};var _dcCanais=new Set();
+  ativos.forEach(r=>{
+    var d=r.DATA_VENDA;var c=(r.CANAL2||'').trim();
+    if(!d||!c||_comInvalid.has(c))return;
+    if(!_dcMap[d])_dcMap[d]={};
+    _dcMap[d][c]=(_dcMap[d][c]||0)+parseBRL(r.TOTAL_VENDA);
+    _dcCanais.add(c);
+  });
+  var _dcDays=Object.keys(_dcMap).sort((a,b)=>{var da=_comParseDate(a),db=_comParseDate(b);return da-db;}).slice(-30);
+  var _dcCanalArr=Array.from(_dcCanais).sort();
+  var _dcColors=['#1a73e8','#ea4335','#fbbc04','#34a853','#ff6d01','#46bdc6','#d946ef','#0284c7'];
+  var _dcDatasets=_dcCanalArr.map((c,i)=>({label:c,data:_dcDays.map(d=>(_dcMap[d]&&_dcMap[d][c])||0),backgroundColor:_dcColors[i%_dcColors.length]}));
+  var ctx6=document.getElementById('comChartDiaCan');
+  if(ctx6)_comCharts.diaCan=new Chart(ctx6,{type:'bar',data:{labels:_dcDays,datasets:_dcDatasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:6,boxWidth:11}},tooltip:{mode:'index',intersect:false,callbacks:{label:function(c){return c.dataset.label+': R$ '+c.raw.toLocaleString('pt-BR',{minimumFractionDigits:2})},footer:function(items){var t=items.reduce((s,i)=>s+i.raw,0);return 'Total: R$ '+t.toLocaleString('pt-BR',{minimumFractionDigits:2})}},footerFont:{weight:'bold'}}},scales:{x:{stacked:true,ticks:{maxRotation:45,font:{size:9}}},y:{stacked:true,ticks:{callback:function(v){return 'R$ '+(v/1000).toFixed(1)+'k'}}}}}});
   
   // 5. Vendas por Dia (line chart)
   var dayMap={};
@@ -6455,7 +6466,8 @@ function _comRenderCharts(ativos,all){
 function _comRenderSkuTable(ativos){
   var skuMap={};
   ativos.forEach(function(r){
-    var sku=r.SKU||'?';
+    var sku=(r.SKU||'').trim();
+    if(!sku||sku==='?'||sku==='SKU')return;
     if(!skuMap[sku])skuMap[sku]={pedidos:0,fat:0,margens:[]};
     skuMap[sku].pedidos+=(parseInt(r.PEDIDOS)||1);
     skuMap[sku].fat+=parseBRL(r.TOTAL_VENDA);
@@ -6473,7 +6485,7 @@ function _comRenderSkuTable(ativos){
 
 function saveComercialCfg(){
   var id=document.getElementById('com_sheetId')?.value||'';
-  var name=document.getElementById('com_sheetName')?.value||'Total';
+  var name=document.getElementById('com_sheetName')?.value||'TOTAL';
   var key=document.getElementById('com_apiKey')?.value||'';
   var cid=document.getElementById('com_clientId')?.value||'';
   localStorage.setItem('com_sheetId',id);
@@ -6488,6 +6500,26 @@ function saveComercialCfg(){
   alert('Configurações Comercial salvas com sucesso!');
 }
 
+async function testComercialConn(){
+  // Ler valores atuais dos campos (mesmo sem salvar)
+  var id=document.getElementById('com_sheetId')?.value||'';
+  var name=document.getElementById('com_sheetName')?.value||'TOTAL';
+  var key=document.getElementById('com_apiKey')?.value||'';
+  if(!id||!key){alert('⚠ Preencha o ID da Planilha e a API Key antes de testar.');return;}
+  try{
+    var url='https://sheets.googleapis.com/v4/spreadsheets/'+id+'/values/'+encodeURIComponent(name)+'!A1:R2?key='+key;
+    var resp=await fetch(url);
+    if(!resp.ok){var err=await resp.json().catch(()=>({}));alert('❌ Erro na conexão:\n'+(err.error?.message||'HTTP '+resp.status));return;}
+    var json=await resp.json();
+    if(!json.values||json.values.length<1){alert('⚠ Conexão OK, mas a aba "'+name+'" parece vazia.');return;}
+    var cols=json.values[0].length;
+    var rows=json.values.length-1;
+    alert('✅ Conexão bem-sucedida!\n\nAba: '+name+'\nColunas encontradas: '+cols+'\nLinhas de amostra: '+rows);
+  }catch(e){
+    alert('❌ Falha na conexão:\n'+e.message);
+  }
+}
+
 // Load config into fields when page11 is shown
 var _origSwitchPageCom=null;
 (function(){
@@ -6496,7 +6528,7 @@ var _origSwitchPageCom=null;
     _sp(n);
     if(n===11){
       document.getElementById('com_sheetId').value=SECTIONS.comercial.sheetId||'';
-      document.getElementById('com_sheetName').value=SECTIONS.comercial.sheetName||'Total';
+      document.getElementById('com_sheetName').value=SECTIONS.comercial.sheetName||'TOTAL';
       document.getElementById('com_apiKey').value=SECTIONS.comercial.apiKey||'';
       document.getElementById('com_clientId').value=SECTIONS.comercial.clientId||'';
     }
