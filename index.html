@@ -7275,54 +7275,49 @@ const _ROLE_PAGES = {
 
 // ── Inicializa o cliente Supabase e verifica sessão ──
 async function _authInit(){
-  // Limpar URL antes de tudo — remove ?error= e outros params que confundem o Supabase
-  const _urlHasCode  = window.location.search.includes('code=');
-  const _urlHasError = window.location.search.includes('error=');
-  const _urlHasToken = window.location.hash.includes('access_token');
-
-  // Criar cliente Supabase com fluxo PKCE (code exchange, sem hash)
+  // Criar cliente Supabase
   _sb = supabase.createClient(_SB_URL, _SB_ANON, {
     auth: {
       flowType: 'pkce',
-      detectSessionInUrl: true,
+      detectSessionInUrl: false, // vamos fazer a troca manualmente
       persistSession: true,
       autoRefreshToken: true,
       storage: window.localStorage
     }
   });
 
-  // Ouvir mudanças de sessão
+  // Registrar listener de mudanças de sessão
   _sb.auth.onAuthStateChange(async (event, session)=>{
     if(event === 'SIGNED_IN' && session){
       window.history.replaceState(null,'',window.location.pathname);
       await _authOnLogin(session.user);
     } else if(event === 'SIGNED_OUT'){
       _authShowLogin();
-    } else if(event === 'TOKEN_REFRESHED' && session){
-      // Token renovado silenciosamente — não reinicializa o app
     }
   });
 
-  // Se há ?code= na URL: o Supabase vai trocá-lo por sessão automaticamente via detectSessionInUrl
-  // Aguardar o onAuthStateChange disparar SIGNED_IN
-  if(_urlHasCode){
-    // Supabase está processando o code — aguardar até 5s pelo SIGNED_IN
-    await new Promise(function(resolve){
-      var timeout = setTimeout(resolve, 5000);
-      var unsub = _sb.auth.onAuthStateChange(function(event){
-        if(event === 'SIGNED_IN'){ clearTimeout(timeout); unsub.data.subscription.unsubscribe(); resolve(); }
-      });
-    });
-    return; // onAuthStateChange já vai chamar _authOnLogin
+  // ── Caso 1: Retorno do OAuth com ?code= na URL ──
+  var params = new URLSearchParams(window.location.search);
+  var code = params.get('code');
+  if(code){
+    // Limpar URL imediatamente para evitar reuso do code
+    window.history.replaceState(null,'',window.location.pathname);
+    // Trocar o code por sessão explicitamente
+    var exch = await _sb.auth.exchangeCodeForSession(code);
+    if(exch.error){
+      console.error('[Auth] exchangeCodeForSession error:', exch.error);
+      _authShowLogin();
+    }
+    // Se deu certo, onAuthStateChange vai disparar SIGNED_IN e chamar _authOnLogin
+    return;
   }
 
-  // Verificar sessão existente no localStorage
-  const { data:{ session } } = await _sb.auth.getSession();
-  if(session){
-    window.history.replaceState(null,'',window.location.pathname);
-    await _authOnLogin(session.user);
+  // ── Caso 2: Sessão existente no localStorage ──
+  var sess = await _sb.auth.getSession();
+  if(sess.data && sess.data.session){
+    await _authOnLogin(sess.data.session.user);
   } else {
-    // Sem sessão e sem code de troca = mostrar tela de login
+    // ── Caso 3: Sem sessão — mostrar login ──
     _authShowLogin();
   }
 }
