@@ -2167,6 +2167,34 @@ body{
 .user-menu-item:hover{background:var(--bg);}
 .user-menu-item.danger{color:var(--err,#dc2626);}
 .user-menu-sep{height:1px;background:var(--out);margin:4px 0;}
+
+/* ── Custom Role Select (page12) — fixed dropdown imune a overflow:hidden ── */
+.role-sel-wrap{position:relative;display:inline-block;}
+.role-sel-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 10px 4px 8px;border-radius:6px;
+  border:1.5px solid var(--out);background:var(--bg);
+  font-size:12px;font-weight:600;cursor:pointer;
+  min-width:120px;justify-content:space-between;
+  transition:border-color .15s;user-select:none;
+}
+.role-sel-btn:hover{border-color:var(--pri);}
+.role-sel-btn.disabled{opacity:.45;cursor:not-allowed;pointer-events:none;}
+.role-sel-btn svg{flex-shrink:0;opacity:.6;}
+.role-sel-dropdown{
+  position:fixed;
+  background:var(--sur);border:1px solid var(--out);
+  border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.15);
+  min-width:140px;padding:4px 0;
+  z-index:9500;display:none;
+}
+.role-sel-dropdown.open{display:block;}
+.role-sel-opt{
+  padding:8px 14px;font-size:13px;cursor:pointer;
+  color:var(--on-sur);transition:background .1s;
+}
+.role-sel-opt:hover{background:var(--bg);}
+.role-sel-opt.selected{font-weight:700;color:var(--pri);}
 </style>
 </head>
 <body>
@@ -7622,6 +7650,83 @@ async function toggleFav(rowNum){
 const _ROLE_LABELS = { admin:'Admin', operador:'Operador', viewer:'Visualizador' };
 const _ROLE_COLORS = { admin:'#1a73e8', operador:'#0d9488', viewer:'#6b7280' };
 
+// ── Custom role dropdown — imune a overflow:hidden nos containers ──
+var _ROLE_OPTIONS = [
+  {value:'viewer',  label:'Visualizador', color:'#6b7280'},
+  {value:'operador',label:'Operador',      color:'#0d9488'},
+  {value:'admin',   label:'Admin',         color:'#1a73e8'}
+];
+
+function _usersRoleBtn(userId, email, currentRole, isSelf){
+  var opt  = _ROLE_OPTIONS.find(function(o){return o.value===currentRole;}) || _ROLE_OPTIONS[0];
+  var dis  = isSelf ? ' role-sel-btn disabled' : ' role-sel-btn';
+  var tip  = isSelf ? ' title="Não é possível alterar seu próprio role"' : '';
+  var uid  = 'rsbtn_'+userId.replace(/-/g,'');
+  return '<div class="role-sel-wrap" id="wrap_'+uid+'">'
+    +'<div class="'+dis.trim()+'" id="'+uid+'"'+tip
+    +' onclick="'+(!isSelf?'_usersOpenRoleSel(\''+uid+'\',\''+userId+'\',\''+email+'\',\''+currentRole+'\')':'')+'"'
+    +' style="color:'+opt.color+'">'
+    +'<span id="lbl_'+uid+'">'+opt.label+'</span>'
+    +'<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>'
+    +'</div>'
+    +'</div>';
+}
+
+var _rolSelActive = null; // {btnId, userId, email}
+
+function _usersOpenRoleSel(btnId, userId, email, currentRole){
+  // Close any open dropdown first
+  var existing = document.getElementById('roleSelDropdown');
+  if(existing){
+    existing.classList.remove('open');
+    existing.remove();
+    if(_rolSelActive && _rolSelActive.btnId === btnId){ _rolSelActive=null; return; }
+  }
+  _rolSelActive = {btnId:btnId, userId:userId, email:email};
+
+  // Get button position for fixed placement
+  var btn = document.getElementById(btnId);
+  if(!btn) return;
+  var rect = btn.getBoundingClientRect();
+
+  // Build dropdown
+  var dd = document.createElement('div');
+  dd.id = 'roleSelDropdown';
+  dd.className = 'role-sel-dropdown open';
+  dd.style.top  = (rect.bottom + 4) + 'px';
+  dd.style.left = rect.left + 'px';
+  dd.style.minWidth = rect.width + 'px';
+
+  _ROLE_OPTIONS.forEach(function(opt){
+    var item = document.createElement('div');
+    item.className = 'role-sel-opt' + (opt.value===currentRole?' selected':'');
+    item.textContent = opt.label;
+    item.style.color = opt.color;
+    item.onclick = function(e){
+      e.stopPropagation();
+      dd.classList.remove('open');
+      dd.remove();
+      _rolSelActive = null;
+      if(opt.value !== currentRole){
+        _usersSetRole(userId, email, opt.value, btnId, currentRole);
+      }
+    };
+    dd.appendChild(item);
+  });
+
+  document.body.appendChild(dd);
+
+  // Close on outside click
+  setTimeout(function(){
+    document.addEventListener('click', function _closeRolSel(){
+      var d = document.getElementById('roleSelDropdown');
+      if(d){ d.classList.remove('open'); d.remove(); }
+      _rolSelActive = null;
+      document.removeEventListener('click', _closeRolSel);
+    }, {once:true});
+  }, 0);
+}
+
 async function _usersLoad(){
   if(!_sb || _sbRole !== 'admin') return;
   const tbody = document.getElementById('usersTableBody');
@@ -7649,11 +7754,9 @@ async function _usersLoad(){
       +'<td><div style="width:30px;height:30px;border-radius:50%;background:'+roleColor+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">'+iniciais+'</div></td>'
       +'<td style="font-weight:500">'+u.nome+''+selfTag+'</td>'
       +'<td style="font-size:12px;color:var(--on-sur-v)">'+u.email+'</td>'
-      +'<td style="position:relative;overflow:visible;z-index:10"><select onchange="_usersSetRole(\''+u.id+'\',\''+u.email+'\',this.value,this)" style="padding:4px 8px;border-radius:6px;border:1.5px solid var(--out);background:var(--bg);color:'+roleColor+';font-size:12px;font-weight:600;cursor:pointer;min-width:120px"'+(isSelf?' disabled title="Não é possível alterar seu próprio role"':'')+'>'
-      +'<option value="viewer"'+(u.role==='viewer'?' selected':'')+'>Visualizador</option>'
-      +'<option value="operador"'+(u.role==='operador'?' selected':'')+'>Operador</option>'
-      +'<option value="admin"'+(u.role==='admin'?' selected':'')+'>Admin</option>'
-      +'</select></td>'
+      +'<td>'
+      +_usersRoleBtn(u.id, u.email, u.role, isSelf)
+      +'</td>'
       +'<td>'+ativoLabel+'</td>'
       +'<td style="font-size:12px;color:var(--on-sur-v)">'+ultimoAcesso+'</td>'
       +'<td>'+(isSelf?'—':'<button onclick="_usersToggleAtivo(\''+u.id+'\',\''+u.email+'\','+u.ativo+')" style="font-size:11px;padding:3px 8px;border-radius:5px;border:1px solid var(--out);background:var(--bg);cursor:pointer;color:'+(u.ativo?'#dc2626':'#16a34a')+'" title="'+(u.ativo?'Desativar':'Reativar')+' usuário">'+(u.ativo?'🚫 Desativar':'✅ Ativar')+'</button>')+'</td>'
@@ -7661,13 +7764,22 @@ async function _usersLoad(){
   }).join('');
 }
 
-async function _usersSetRole(userId, email, newRole, selectEl){
+async function _usersSetRole(userId, email, newRole, btnId, oldRole){
   if(!confirm('Alterar role de "'+email+'" para "'+(_ROLE_LABELS[newRole]||newRole)+'"?')){
-    _usersLoad(); return;
+    return;
   }
   var res = await _sb.from('perfis').update({ role: newRole }).eq('id', userId);
-  if(res.error){ snack('Erro: '+res.error.message, 'error'); _usersLoad(); }
-  else { snack('Role de '+email+' atualizado para '+(_ROLE_LABELS[newRole]||newRole), 'success'); }
+  if(res.error){
+    snack('Erro: '+res.error.message, 'error');
+  } else {
+    snack('Role de '+email+' atualizado para '+(_ROLE_LABELS[newRole]||newRole), 'success');
+    // Atualizar label do botão sem recarregar a tabela inteira
+    var opt = _ROLE_OPTIONS.find(function(o){return o.value===newRole;})||_ROLE_OPTIONS[0];
+    var lbl = document.getElementById('lbl_'+btnId);
+    var btn = document.getElementById(btnId);
+    if(lbl) lbl.textContent = opt.label;
+    if(btn) btn.style.color = opt.color;
+  }
 }
 
 async function _usersToggleAtivo(userId, email, currentAtivo){
