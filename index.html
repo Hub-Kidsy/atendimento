@@ -7221,26 +7221,38 @@ const _ROLE_PAGES = {
 async function _authInit(){
   _sb = supabase.createClient(_SB_URL, _SB_ANON);
 
-  // Verificar sessão existente (token em localStorage do supabase)
-  const { data:{ session } } = await _sb.auth.getSession();
-  if(session){
-    await _authOnLogin(session.user);
-  } else{
-    _authShowLogin();
-  }
-
-  // Escutar mudanças de sessão (login, logout, refresh de token)
+  // Escutar mudanças de sessão ANTES de verificar sessão
+  // Assim captura o SIGNED_IN do callback OAuth antes do getSession()
   _sb.auth.onAuthStateChange(async (event, session)=>{
     if(event === 'SIGNED_IN' && session){
+      // Limpar URL (remover tokens e parâmetros de erro do hash/query)
+      if(window.location.hash || window.location.search){
+        window.history.replaceState(null,'',window.location.pathname);
+      }
       await _authOnLogin(session.user);
     } else if(event === 'SIGNED_OUT'){
       _authShowLogin();
     }
   });
+
+  // Verificar sessão existente (token em localStorage do supabase)
+  const { data:{ session } } = await _sb.auth.getSession();
+  if(session){
+    // Sessão já existia (usuário voltou ao app logado)
+    window.history.replaceState(null,'',window.location.pathname);
+    await _authOnLogin(session.user);
+  } else if(!window.location.hash.includes('access_token')){
+    // Sem sessão e sem token no hash = mostrar login
+    _authShowLogin();
+  }
+  // Se há access_token no hash, aguardar o onAuthStateChange disparar SIGNED_IN
 }
 
 // ── Chamado após login bem-sucedido ──
+var _authLoginRunning = false;
 async function _authOnLogin(user){
+  if(_authLoginRunning) return;
+  _authLoginRunning = true;
   _sbUser = user;
 
   // Buscar perfil e role no Supabase
@@ -7282,6 +7294,7 @@ async function _authOnLogin(user){
 
   // Esconder overlay e inicializar o app
   document.getElementById('authOverlay').classList.add('hidden');
+  _authLoginRunning = false;
   _appInit();
 }
 
