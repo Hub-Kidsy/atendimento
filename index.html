@@ -7275,33 +7275,56 @@ const _ROLE_PAGES = {
 
 // ── Inicializa o cliente Supabase e verifica sessão ──
 async function _authInit(){
-  _sb = supabase.createClient(_SB_URL, _SB_ANON);
+  // Limpar URL antes de tudo — remove ?error= e outros params que confundem o Supabase
+  const _urlHasCode  = window.location.search.includes('code=');
+  const _urlHasError = window.location.search.includes('error=');
+  const _urlHasToken = window.location.hash.includes('access_token');
 
-  // Escutar mudanças de sessão ANTES de verificar sessão
-  // Assim captura o SIGNED_IN do callback OAuth antes do getSession()
-  _sb.auth.onAuthStateChange(async (event, session)=>{
-    if(event === 'SIGNED_IN' && session){
-      // Limpar URL (remover tokens e parâmetros de erro do hash/query)
-      if(window.location.hash || window.location.search){
-        window.history.replaceState(null,'',window.location.pathname);
-      }
-      await _authOnLogin(session.user);
-    } else if(event === 'SIGNED_OUT'){
-      _authShowLogin();
+  // Criar cliente Supabase com fluxo PKCE (code exchange, sem hash)
+  _sb = supabase.createClient(_SB_URL, _SB_ANON, {
+    auth: {
+      flowType: 'pkce',
+      detectSessionInUrl: true,
+      persistSession: true,
+      autoRefreshToken: true,
+      storage: window.localStorage
     }
   });
 
-  // Verificar sessão existente (token em localStorage do supabase)
+  // Ouvir mudanças de sessão
+  _sb.auth.onAuthStateChange(async (event, session)=>{
+    if(event === 'SIGNED_IN' && session){
+      window.history.replaceState(null,'',window.location.pathname);
+      await _authOnLogin(session.user);
+    } else if(event === 'SIGNED_OUT'){
+      _authShowLogin();
+    } else if(event === 'TOKEN_REFRESHED' && session){
+      // Token renovado silenciosamente — não reinicializa o app
+    }
+  });
+
+  // Se há ?code= na URL: o Supabase vai trocá-lo por sessão automaticamente via detectSessionInUrl
+  // Aguardar o onAuthStateChange disparar SIGNED_IN
+  if(_urlHasCode){
+    // Supabase está processando o code — aguardar até 5s pelo SIGNED_IN
+    await new Promise(function(resolve){
+      var timeout = setTimeout(resolve, 5000);
+      var unsub = _sb.auth.onAuthStateChange(function(event){
+        if(event === 'SIGNED_IN'){ clearTimeout(timeout); unsub.data.subscription.unsubscribe(); resolve(); }
+      });
+    });
+    return; // onAuthStateChange já vai chamar _authOnLogin
+  }
+
+  // Verificar sessão existente no localStorage
   const { data:{ session } } = await _sb.auth.getSession();
   if(session){
-    // Sessão já existia (usuário voltou ao app logado)
     window.history.replaceState(null,'',window.location.pathname);
     await _authOnLogin(session.user);
-  } else if(!window.location.hash.includes('access_token')){
-    // Sem sessão e sem token no hash = mostrar login
+  } else {
+    // Sem sessão e sem code de troca = mostrar tela de login
     _authShowLogin();
   }
-  // Se há access_token no hash, aguardar o onAuthStateChange disparar SIGNED_IN
 }
 
 // ── Chamado após login bem-sucedido ──
@@ -7364,10 +7387,13 @@ function _authShowBlocked(){
 
 // ── Login com Google ──
 async function _authSignInGoogle(){
+  // Usar sempre a URL limpa sem params para evitar poluição no redirect
+  var _cleanUrl = window.location.origin + window.location.pathname;
   const { error } = await _sb.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: window.location.href
+      redirectTo: _cleanUrl,
+      queryParams: { access_type: 'offline', prompt: 'select_account' }
     }
   });
   if(error) snack('Erro ao conectar com Google: ' + error.message, 'error');
