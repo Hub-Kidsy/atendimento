@@ -2152,10 +2152,11 @@ body{
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 #userRole{font-size:10px;color:var(--on-sur-v);}
 #userMenu{
-  position:absolute;top:calc(100% + 6px);right:0;
+  position:fixed;
   background:var(--sur);border:1px solid var(--out);
   border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.12);
-  min-width:180px;padding:6px 0;z-index:200;display:none;
+  min-width:200px;padding:6px 0;z-index:9000;display:none;
+  top:auto;right:auto;
 }
 #userMenu.open{display:block;}
 .user-menu-item{
@@ -2201,11 +2202,7 @@ body{
         </button>
       </div>
     </div>
-    <!-- Usuários — standalone, apenas admin -->
-    <button class="sidebar-item" id="snav12" data-page="12" data-tooltip="Usuários" onclick="if(typeof sidebarNav==='function')sidebarNav(12)">
-      <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-      <span class="sidebar-label">Usuários</span>
-    </button>
+
     <!-- Grupo ATENDIMENTOS -->
     <div class="sb-group" id="sbGroupAtend">
       <button class="sb-group-btn" id="sbGroupAtendBtn" data-tooltip="Atendimentos" onclick="if(typeof toggleSbGroup==='function')toggleSbGroup('sbGroupAtend')" title="Atendimentos">
@@ -2270,9 +2267,9 @@ body{
       <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg> <span class="sidebar-label">Configurações</span>
     </button>
     <!-- USUÁRIOS — último item sidebar, apenas admin -->
-    <button class="sidebar-item" id="snav12" data-page="12" data-tooltip="USUÁRIOS" onclick="if(typeof sidebarNav==='function')sidebarNav(12)" style="margin-top:auto">
+    <button class="sidebar-item" id="snav12" data-page="12" data-tooltip="USUÁRIOS" onclick="if(typeof sidebarNav==='function')sidebarNav(12)">
       <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-      <span class="sidebar-label">USUÁRIOS</span>
+      <span class="sidebar-label" style="text-transform:uppercase;letter-spacing:.04em">Usuários</span>
     </button>
   </nav>
 </div>
@@ -2582,12 +2579,12 @@ body{
     <div style="font-size:13px;color:var(--on-sur-v);margin-bottom:24px">Gerencie os acessos da equipe ao Hub Kidsy.</div>
 
     <!-- Tabela de usuários -->
-    <div class="dash-table-card" style="padding:0;overflow:hidden">
+    <div class="dash-table-card" style="padding:0;overflow:visible;border-radius:10px;">
       <div style="padding:14px 18px;border-bottom:1px solid var(--out);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
         <div style="font-size:14px;font-weight:600;color:var(--on-sur)">Usuários cadastrados <span id="usersCount" style="font-size:12px;color:var(--on-sur-v);font-weight:400"></span></div>
         <button class="btn btn-outlined btn-sm" onclick="_usersLoad()" style="gap:6px">↻ Atualizar</button>
       </div>
-      <div style="overflow-x:auto">
+      <div style="overflow-x:auto;overflow-y:visible;">
         <table class="dash-mini-table" style="width:100%">
           <thead>
             <tr>
@@ -7480,7 +7477,19 @@ function _authUpdateWidget(user, perfil){
 // ── Toggle menu do usuário ──
 function _authToggleMenu(e){
   e.stopPropagation();
-  document.getElementById('userMenu').classList.toggle('open');
+  var menu = document.getElementById('userMenu');
+  if(menu.classList.contains('open')){
+    menu.classList.remove('open');
+    return;
+  }
+  // Position fixed menu relative to the widget
+  var widget = document.getElementById('userWidget');
+  if(widget){
+    var rect = widget.getBoundingClientRect();
+    menu.style.top  = (rect.bottom + 6) + 'px';
+    menu.style.right = (window.innerWidth - rect.right) + 'px';
+  }
+  menu.classList.add('open');
 }
 document.addEventListener('click', ()=>{
   const m = document.getElementById('userMenu');
@@ -7640,7 +7649,7 @@ async function _usersLoad(){
       +'<td><div style="width:30px;height:30px;border-radius:50%;background:'+roleColor+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">'+iniciais+'</div></td>'
       +'<td style="font-weight:500">'+u.nome+''+selfTag+'</td>'
       +'<td style="font-size:12px;color:var(--on-sur-v)">'+u.email+'</td>'
-      +'<td><select onchange="_usersSetRole(\''+u.id+'\',\''+u.email+'\',this.value,this)" style="padding:3px 6px;border-radius:6px;border:1px solid var(--out);background:var(--bg);color:'+roleColor+';font-size:12px;font-weight:600;cursor:pointer"'+(isSelf?' disabled title="Não é possível alterar seu próprio role"':'')+'>'
+      +'<td style="position:relative;overflow:visible;z-index:10"><select onchange="_usersSetRole(\''+u.id+'\',\''+u.email+'\',this.value,this)" style="padding:4px 8px;border-radius:6px;border:1.5px solid var(--out);background:var(--bg);color:'+roleColor+';font-size:12px;font-weight:600;cursor:pointer;min-width:120px"'+(isSelf?' disabled title="Não é possível alterar seu próprio role"':'')+'>'
       +'<option value="viewer"'+(u.role==='viewer'?' selected':'')+'>Visualizador</option>'
       +'<option value="operador"'+(u.role==='operador'?' selected':'')+'>Operador</option>'
       +'<option value="admin"'+(u.role==='admin'?' selected':'')+'>Admin</option>'
