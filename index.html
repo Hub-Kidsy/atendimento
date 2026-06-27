@@ -2199,6 +2199,10 @@ body{
           <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1115.6 12 3.611 3.611 0 0112 15.6z"/></svg>
           <span class="sidebar-label">Configurações</span>
         </button>
+        <button class="sidebar-item" id="snav12" data-page="12" data-tooltip="Usuários" onclick="if(typeof sidebarNav==='function')sidebarNav(12)">
+          <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          <span class="sidebar-label">Usuários</span>
+        </button>
       </div>
     </div>
     <!-- Grupo ATENDIMENTOS -->
@@ -2565,6 +2569,57 @@ body{
   </div>
 </div>
 
+<!-- USUÁRIOS: Gerenciamento (page12 — admin only) -->
+<div id="page12" style="display:none">
+  <div style="max-width:760px;margin:32px auto;padding:0 24px">
+    <div style="font-size:20px;font-weight:700;color:var(--on-sur);margin-bottom:4px">👥 Gerenciamento de Usuários</div>
+    <div style="font-size:13px;color:var(--on-sur-v);margin-bottom:24px">Gerencie os acessos da equipe ao Hub Kidsy.</div>
+
+    <!-- Tabela de usuários -->
+    <div class="dash-table-card" style="padding:0;overflow:hidden">
+      <div style="padding:14px 18px;border-bottom:1px solid var(--out);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div style="font-size:14px;font-weight:600;color:var(--on-sur)">Usuários cadastrados <span id="usersCount" style="font-size:12px;color:var(--on-sur-v);font-weight:400"></span></div>
+        <button class="btn btn-outlined btn-sm" onclick="_usersLoad()" style="gap:6px">↻ Atualizar</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="dash-mini-table" style="width:100%">
+          <thead>
+            <tr>
+              <th style="width:36px"></th>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Último acesso</th>
+              <th style="width:80px">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--on-sur-v)">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Legenda de roles -->
+    <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap">
+      <div style="font-size:12px;color:var(--on-sur-v)">
+        <strong style="color:var(--on-sur)">Admin</strong> — Acesso total a todas as páginas
+      </div>
+      <div style="font-size:12px;color:var(--on-sur-v)">•</div>
+      <div style="font-size:12px;color:var(--on-sur-v)">
+        <strong style="color:var(--on-sur)">Operador</strong> — Atendimentos, Retornos e Comercial (sem Configurações)
+      </div>
+      <div style="font-size:12px;color:var(--on-sur-v)">•</div>
+      <div style="font-size:12px;color:var(--on-sur-v)">
+        <strong style="color:var(--on-sur)">Visualizador</strong> — Apenas dashboards e Home
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 <!-- POPUP DE EDIÇÃO -->
 <div class="dlg-ov" id="dlgOv">
   <div class="dlg">
@@ -2666,6 +2721,7 @@ function sidebarNav(n){
       try{localStorage.setItem('sidebarCollapsed','0');}catch(e){}
     }
     if(n===10){comSetPeriodMes();}
+    if(n===12){_usersLoad();}
   }
   if([1,2,3,4].includes(n)){
     // Garantir seção ATENDIMENTOS ativa
@@ -7212,9 +7268,9 @@ let   _sbRole  = 'viewer';
 
 // Mapeamento role → páginas permitidas (números das páginas)
 const _ROLE_PAGES = {
-  admin:    [0,1,2,3,4,5,6,7,8,9,10,11],   // tudo
-  operador: [0,1,2,3,6,7,8,10],             // sem config (4,9,11)
-  viewer:   [0,1,6]                          // só dashboards e home
+  admin:    [0,1,2,3,4,5,6,7,8,9,10,11,12], // tudo + gestão de usuários
+  operador: [0,1,2,3,6,7,8,10],              // sem config (4,9,11,12)
+  viewer:   [0,1,6]                           // só dashboards e home
 };
 
 // ── Inicializa o cliente Supabase e verifica sessão ──
@@ -7255,39 +7311,33 @@ async function _authOnLogin(user){
   _authLoginRunning = true;
   _sbUser = user;
 
-  // Buscar perfil e role no Supabase
-  const { data: perfil, error } = await _sb
-    .from('perfis')
-    .select('role, ativo, nome')
-    .eq('id', user.id)
-    .single();
-
-  // Se perfil não existe ainda (primeiro login), aguardar trigger criar
-  if(error || !perfil){
-    // Aguardar 1s para o trigger disparar e tentar novamente
-    await new Promise(r => setTimeout(r, 1000));
-    const { data: perfil2 } = await _sb
+  // Buscar perfil e role no Supabase — sempre fresh, sem cache
+  let perfilFinal = null;
+  for(let tentativa = 0; tentativa < 3; tentativa++){
+    const { data, error } = await _sb
       .from('perfis')
       .select('role, ativo, nome')
       .eq('id', user.id)
       .single();
-    if(perfil2) { Object.assign(perfil || {}, perfil2); }
+    if(data){ perfilFinal = data; break; }
+    // Aguardar trigger criar o perfil (primeiro login)
+    await new Promise(r => setTimeout(r, 1000));
   }
 
   // Verificar se usuário está ativo
-  if(perfil && perfil.ativo === false){
+  if(perfilFinal && perfilFinal.ativo === false){
     _authShowBlocked();
     await _sb.auth.signOut();
     return;
   }
 
-  _sbRole = (perfil && perfil.role) || 'viewer';
+  _sbRole = (perfilFinal && perfilFinal.role) || 'viewer';
 
   // Carregar favoritos do Supabase (substitui localStorage)
   await _authLoadFavoritos();
 
   // Atualizar widget de usuário na app-bar
-  _authUpdateWidget(user, perfil);
+  _authUpdateWidget(user, perfilFinal);
 
   // Aplicar visibilidade das páginas conforme role
   _authApplyPermissions();
@@ -7377,7 +7427,7 @@ function _authApplyPermissions(){
     0: 'snav0',
     1: 'snav1', 2: 'snav2', 3: 'snav3', 4: 'snavCfg',
     6: 'snavR1', 7: 'snavR2', 8: 'snavR3', 9: 'snavRCfg',
-    10: 'snav10', 11: 'snav11'
+    10: 'snav10', 11: 'snav11', 12: 'snav12'
   };
 
   Object.entries(navMap).forEach(([page, id])=>{
@@ -7483,6 +7533,70 @@ async function toggleFav(rowNum){
     if(cell) cell.textContent = favs.has(key)?'⭐':'☆';
   }
 }
+
+
+// ════════════════════════════════════════════════════════════════
+// 👥 GERENCIAMENTO DE USUÁRIOS (admin only)
+// ════════════════════════════════════════════════════════════════
+const _ROLE_LABELS = { admin:'Admin', operador:'Operador', viewer:'Visualizador' };
+const _ROLE_COLORS = { admin:'#1a73e8', operador:'#0d9488', viewer:'#6b7280' };
+
+async function _usersLoad(){
+  if(!_sb || _sbRole !== 'admin') return;
+  const tbody = document.getElementById('usersTableBody');
+  const badge = document.getElementById('usersCount');
+  if(tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--on-sur-v)">Carregando...</td></tr>';
+
+  const { data, error } = await _sb
+    .from('perfis')
+    .select('id, email, nome, role, ativo, criado_em, ultimo_acesso')
+    .order('criado_em', { ascending: false });
+
+  if(error || !data){ if(tbody) tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--err)">Erro ao carregar usuários</td></tr>'; return; }
+  if(badge) badge.textContent = '(' + data.length + ')';
+  if(!tbody) return;
+
+  tbody.innerHTML = data.map(function(u){
+    var isSelf = u.id === (_sbUser && _sbUser.id);
+    var iniciais = (u.nome||u.email).split(' ').map(function(p){return p[0];}).slice(0,2).join('').toUpperCase();
+    var roleColor = _ROLE_COLORS[u.role] || '#6b7280';
+    var roleLabel = _ROLE_LABELS[u.role] || u.role;
+    var ativoLabel = u.ativo ? '<span style="color:#16a34a;font-size:11px">● Ativo</span>' : '<span style="color:#dc2626;font-size:11px">● Inativo</span>';
+    var ultimoAcesso = u.ultimo_acesso ? new Date(u.ultimo_acesso).toLocaleDateString('pt-BR') : '—';
+    var selfTag = isSelf ? ' <span style="font-size:10px;color:var(--on-sur-v)">(você)</span>' : '';
+    return '<tr>'
+      +'<td><div style="width:30px;height:30px;border-radius:50%;background:'+roleColor+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">'+iniciais+'</div></td>'
+      +'<td style="font-weight:500">'+u.nome+''+selfTag+'</td>'
+      +'<td style="font-size:12px;color:var(--on-sur-v)">'+u.email+'</td>'
+      +'<td><select onchange="_usersSetRole(\''+u.id+'\',\''+u.email+'\',this.value,this)" style="padding:3px 6px;border-radius:6px;border:1px solid var(--out);background:var(--bg);color:'+roleColor+';font-size:12px;font-weight:600;cursor:pointer"'+(isSelf?' disabled title="Não é possível alterar seu próprio role"':'')+'>'
+      +'<option value="viewer"'+(u.role==='viewer'?' selected':'')+'>Visualizador</option>'
+      +'<option value="operador"'+(u.role==='operador'?' selected':'')+'>Operador</option>'
+      +'<option value="admin"'+(u.role==='admin'?' selected':'')+'>Admin</option>'
+      +'</select></td>'
+      +'<td>'+ativoLabel+'</td>'
+      +'<td style="font-size:12px;color:var(--on-sur-v)">'+ultimoAcesso+'</td>'
+      +'<td>'+(isSelf?'—':'<button onclick="_usersToggleAtivo(\''+u.id+'\',\''+u.email+'\','+u.ativo+')" style="font-size:11px;padding:3px 8px;border-radius:5px;border:1px solid var(--out);background:var(--bg);cursor:pointer;color:'+(u.ativo?'#dc2626':'#16a34a')+'" title="'+(u.ativo?'Desativar':'Reativar')+' usuário">'+(u.ativo?'🚫 Desativar':'✅ Ativar')+'</button>')+'</td>'
+      +'</tr>';
+  }).join('');
+}
+
+async function _usersSetRole(userId, email, newRole, selectEl){
+  if(!confirm('Alterar role de "'+email+'" para "'+(_ROLE_LABELS[newRole]||newRole)+'"?')){
+    _usersLoad(); return;
+  }
+  var res = await _sb.from('perfis').update({ role: newRole }).eq('id', userId);
+  if(res.error){ snack('Erro: '+res.error.message, 'error'); _usersLoad(); }
+  else { snack('Role de '+email+' atualizado para '+(_ROLE_LABELS[newRole]||newRole), 'success'); }
+}
+
+async function _usersToggleAtivo(userId, email, currentAtivo){
+  var acao = currentAtivo ? 'desativar' : 'reativar';
+  if(!confirm('Tem certeza que deseja '+acao+' o usuário "'+email+'"?')) return;
+  var res = await _sb.from('perfis').update({ ativo: !currentAtivo }).eq('id', userId);
+  if(res.error){ snack('Erro: '+res.error.message, 'error'); }
+  else { snack('Usuário '+email+' '+(currentAtivo?'desativado':'reativado'), 'success'); _usersLoad(); }
+}
+
 </script>
 
 </body>
