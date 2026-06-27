@@ -7275,59 +7275,67 @@ const _ROLE_PAGES = {
 
 // ── Inicializa o cliente Supabase e verifica sessão ──
 async function _authInit(){
+  var _hasCode = window.location.search.includes('code=');
+
   // Criar cliente Supabase
   _sb = supabase.createClient(_SB_URL, _SB_ANON, {
     auth: {
       flowType: 'pkce',
-      detectSessionInUrl: false, // vamos fazer a troca manualmente
+      detectSessionInUrl: true,
       persistSession: true,
       autoRefreshToken: true,
       storage: window.localStorage
     }
   });
 
-  // Registrar listener de mudanças de sessão
-  _sb.auth.onAuthStateChange(async (event, session)=>{
-    if(event === 'SIGNED_IN' && session){
-      window.history.replaceState(null,'',window.location.pathname);
-      await _authOnLogin(session.user);
-    } else if(event === 'SIGNED_OUT'){
-      _authShowLogin();
-    }
-  });
-
-  // ── Caso 1: Retorno do OAuth com ?code= na URL ──
-  var params = new URLSearchParams(window.location.search);
-  var code = params.get('code');
-  if(code){
-    // Limpar URL imediatamente para evitar reuso do code
-    window.history.replaceState(null,'',window.location.pathname);
-    // Trocar o code por sessão explicitamente
-    var exch = await _sb.auth.exchangeCodeForSession(code);
-    if(exch.error){
-      console.error('[Auth] exchangeCodeForSession error:', exch.error);
-      _authShowLogin();
-    }
-    // Se deu certo, onAuthStateChange vai disparar SIGNED_IN e chamar _authOnLogin
+  // ── Caso 1: voltando do OAuth com ?code= ──
+  // Aguardar o Supabase trocar o code por sessão (SIGNED_IN virá depois)
+  if(_hasCode){
+    console.log('[Auth] ?code= detectado, aguardando troca PKCE...');
+    // Esperar SIGNED_IN com timeout de 10s
+    await new Promise(function(resolve){
+      var done = false;
+      var timer = setTimeout(function(){
+        if(!done){ done=true; console.warn('[Auth] timeout aguardando SIGNED_IN'); resolve(); }
+      }, 10000);
+      _sb.auth.onAuthStateChange(function(event, session){
+        console.log('[Auth] event durante code exchange:', event, !!session);
+        if(event === 'SIGNED_IN' && session && !done){
+          done = true;
+          clearTimeout(timer);
+          window.history.replaceState(null,'',window.location.pathname);
+          _authOnLogin(session.user).then(resolve);
+        }
+      });
+    });
     return;
   }
 
-  // ── Caso 2: Sessão existente no localStorage ──
-  var sess = await _sb.auth.getSession();
-  if(sess.data && sess.data.session){
-    await _authOnLogin(sess.data.session.user);
-  } else {
-    // ── Caso 3: Sem sessão — mostrar login ──
-    _authShowLogin();
+  // ── Caso 2: sessão existente no localStorage ──
+  var { data:{ session } } = await _sb.auth.getSession();
+  console.log('[Auth] getSession:', !!session);
+  if(session){
+    await _authOnLogin(session.user);
+    return;
   }
+
+  // ── Caso 3: sem sessão — mostrar login ──
+  _authShowLogin();
+
+  // Listener para logout futuro
+  _sb.auth.onAuthStateChange(function(event, session){
+    console.log('[Auth] event:', event, !!session);
+    if(event === 'SIGNED_OUT'){ _authShowLogin(); }
+  });
 }
 
 // ── Chamado após login bem-sucedido ──
 var _authLoginRunning = false;
 async function _authOnLogin(user){
-  if(_authLoginRunning) return;
+  if(_authLoginRunning){ console.log('[Auth] _authOnLogin already running, skip'); return; }
   _authLoginRunning = true;
   _sbUser = user;
+  console.log('[Auth] _authOnLogin started for:', user.email);
 
   // Buscar perfil e role no Supabase — sempre fresh, sem cache
   let perfilFinal = null;
@@ -7350,6 +7358,7 @@ async function _authOnLogin(user){
   }
 
   _sbRole = (perfilFinal && perfilFinal.role) || 'viewer';
+  console.log('[Auth] role:', _sbRole, 'perfil:', perfilFinal);
 
   // Carregar favoritos do Supabase (substitui localStorage)
   await _authLoadFavoritos();
@@ -7363,11 +7372,21 @@ async function _authOnLogin(user){
   // Esconder overlay e inicializar o app
   document.getElementById('authOverlay').classList.add('hidden');
   _authLoginRunning = false;
+
+  // Registrar listener de logout (só após login bem-sucedido)
+  if(!_sb._authListenerRegistered){
+    _sb._authListenerRegistered = true;
+    _sb.auth.onAuthStateChange(function(event){
+      if(event === 'SIGNED_OUT'){ _authShowLogin(); }
+    });
+  }
+
   _appInit();
 }
 
 // ── Mostrar tela de login ──
 function _authShowLogin(){
+  console.log('[Auth] showing login screen');
   document.getElementById('authOverlay').classList.remove('hidden');
   document.getElementById('authBlocked').style.display = 'none';
   document.getElementById('userWidget').style.display = 'none';
