@@ -857,8 +857,8 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 /* ── Sidebar ─────────────────────────────────────────────────── */
 .sidebar{width:240px;flex-shrink:0;background:var(--sur);border-right:1px solid var(--out);display:flex;flex-direction:column;overflow:hidden;transition:width .22s cubic-bezier(.4,0,.2,1);position:relative;z-index:90;}
 .sidebar.collapsed{width:64px;}
-.sidebar-toggle{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:20px;background:none;border:none;cursor:pointer;color:var(--on-sur-v);margin:10px 12px;transition:background .15s,margin .22s;flex-shrink:0;}
-.sidebar.collapsed .sidebar-toggle{margin:10px auto;}
+.sidebar-toggle{display:flex;align-items:center;justify-content:flex-start;width:100%;height:40px;border-radius:10px;background:none;border:none;cursor:pointer;color:var(--on-sur-v);padding:10px 12px;box-sizing:border-box;transition:background .15s;flex-shrink:0;}
+.sidebar.collapsed .sidebar-toggle{justify-content:center;padding:10px;width:100%;}
 .sidebar-toggle:hover{background:var(--sur-v);}
 .sidebar-toggle svg{width:20px;height:20px;fill:currentColor;}
 .sidebar-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:4px 8px;}
@@ -867,7 +867,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .sidebar-item:hover{background:var(--sur-v);color:var(--on-sur);}
 .sidebar-item.active{background:var(--pri-c);color:var(--pri);font-weight:700;}
 /* HOME: padronizar visual com os cabeçalhos ATENDIMENTOS/RETORNOS */
-#snav0.sidebar-item{font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+#snav0.sidebar-item{}
 #snav0.sidebar-item.active{font-weight:600;}
 #snav0.sidebar-item svg{width:20px;height:20px;}
 .sb-submenu .sidebar-item.active svg{opacity:1;}
