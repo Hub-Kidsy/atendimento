@@ -882,7 +882,7 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .sb-group{overflow:hidden;}
 .sb-group-btn{display:flex;align-items:center;gap:12px;padding:10px 12px;
   border-radius:10px;cursor:pointer;font-family:'Google Sans',sans-serif;
-  font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
+  font-size:14px;font-weight:600;letter-spacing:0;
   color:var(--on-sur-v);width:100%;box-sizing:border-box;text-align:left;
   border:none;background:none;white-space:nowrap;overflow:hidden;transition:background .15s,color .15s;}
 .sb-group-btn:hover{background:var(--sur-v);color:var(--on-sur);}
@@ -901,6 +901,25 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 .sidebar.collapsed .sb-group-btn{
   justify-content:center;padding:10px;gap:0;
 }
+/* ── Collapsed: force submenus fully hidden ── */
+.sidebar.collapsed .sb-submenu{
+  max-height:0 !important;
+  overflow:hidden !important;
+  visibility:hidden;
+}
+/* ── Collapsed: sb-group-btn shows only icon (no tooltip from ::after on sb-group-btn) ── */
+.sidebar.collapsed .sb-group-btn::after{
+  content:attr(title);
+  position:absolute;left:calc(100% + 8px);top:50%;
+  transform:translateY(-50%);
+  background:#333;color:#fff;font-size:12px;
+  padding:4px 8px;border-radius:5px;
+  white-space:nowrap;opacity:0;pointer-events:none;
+  transition:opacity .15s .1s;z-index:200;
+}
+.sidebar.collapsed .sb-group-btn:hover::after{opacity:1;}
+.sidebar.collapsed .sb-group-btn{position:relative;overflow:visible;}
+
 
 @media(max-width:900px){.sidebar{width:64px;}.sidebar .sidebar-label{opacity:0;width:0;}.sidebar .sidebar-item{justify-content:center;padding:10px;gap:0;}.sidebar .sidebar-badge{display:none;}.sidebar .sb-group-btn{justify-content:center;padding:10px;gap:0;}.sidebar .sb-group-label,.sidebar .sb-arrow{opacity:0;width:0;overflow:hidden;}}
 @media(max-width:600px){.sidebar{position:fixed;left:0;top:60px;bottom:0;z-index:200;transform:translateX(-100%);transition:transform .25s cubic-bezier(.4,0,.2,1),width .22s;width:240px!important;box-shadow:4px 0 24px rgba(0,0,0,.15);}.sidebar.mobile-open{transform:translateX(0);}.sidebar .sidebar-label{opacity:1!important;width:auto!important;}.sidebar .sidebar-item{justify-content:flex-start!important;padding:10px 12px!important;}.sidebar .sidebar-badge{display:inline-flex!important;}.sidebar-overlay{display:block;position:fixed;inset:0;z-index:199;background:rgba(0,0,0,.3);}.sidebar-overlay.hidden{display:none;}}
@@ -919,7 +938,9 @@ tbody tr:last-child td{border-bottom:none;}tbody tr:hover td{background:#f8f9fa;
 /* ── page3 configurações ─────────────────────────────────────── */
 
 #page3 #page4 .cfg-card,.cfg-card,#page8 .cfg-card,#page9 .cfg-card{background:var(--sur);border:1px solid var(--out);border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:18px;margin-bottom:16px;}
-#page3 #page4 .cfg-section-title,.cfg-section-title,#page8 .cfg-section-title,#page9 .cfg-section-title{font-family:'Google Sans',sans-serif;font-size:11px;font-weight:600;color:var(--on-sur-v);text-transform:uppercase;letter-spacing:.5px;padding-bottom:10px;border-bottom:1px solid var(--out-v);}
+#page3 #page4 .cfg-section-title,.cfg-section-title,#page8 .cfg-section-title,#page9 .cfg-card-title{font-family:'Google Sans',sans-serif;font-size:15px;font-weight:600;color:var(--on-sur);margin:0 0 4px;display:flex;align-items:center;gap:8px;letter-spacing:0;}
+.cfg-card-title span.cfg-card-badge{font-size:10px;font-weight:500;color:var(--on-sur-v);background:var(--bg);border:1px solid var(--out);border-radius:4px;padding:1px 6px;letter-spacing:.3px;text-transform:uppercase;}
+.cfg-section-title{font-family:'Google Sans',sans-serif;font-size:11px;font-weight:600;color:var(--on-sur-v);text-transform:uppercase;letter-spacing:.5px;padding-bottom:10px;border-bottom:1px solid var(--out-v);}
 #page3 #page4 .cfg-f,.cfg-f,#page8 .cfg-f,#page9 .cfg-f{display:flex;flex-direction:column;gap:5px;}
 #page3 #page4 .cfg-f label,.cfg-f label,#page8 .cfg-f label,#page9 .cfg-f label{font-size:12px;font-weight:500;color:var(--on-sur);}
 #page3 #page4 .cfg-f input,.cfg-f input,#page8 .cfg-f input,#page9 .cfg-f input{height:38px;border:1px solid var(--out);border-radius:8px;padding:0 12px;font-size:14px;font-family:'Google Sans',sans-serif;color:var(--on-sur);background:var(--sur);outline:none;transition:border-color .15s,box-shadow .15s;box-sizing:border-box;width:100%;}
@@ -2208,8 +2229,8 @@ body{
     <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
   </button>
   <nav class="sidebar-nav" role="navigation" aria-label="Menu principal">
-    <button class="sidebar-item active" id="snav0" data-page="0" data-tooltip="HOME" onclick="if(typeof sidebarNav==='function')sidebarNav(0)">
-      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg> <span class="sidebar-label">HOME</span>
+    <button class="sidebar-item active" id="snav0" data-page="0" data-tooltip="Home" onclick="if(typeof sidebarNav==='function')sidebarNav(0)">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg> <span class="sidebar-label">Home</span>
     </button>
 
     <!-- Grupo COMERCIAL -->
@@ -2295,9 +2316,14 @@ body{
       <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg> <span class="sidebar-label">Configurações</span>
     </button>
     <!-- USUÁRIOS — último item sidebar, apenas admin -->
-    <button class="sidebar-item" id="snav12" data-page="12" data-tooltip="USUÁRIOS" onclick="if(typeof sidebarNav==='function')sidebarNav(12)">
+    <button class="sidebar-item" id="snav12" data-page="12" data-tooltip="Usuários" onclick="if(typeof sidebarNav==='function')sidebarNav(12)">
       <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-      <span class="sidebar-label" style="text-transform:uppercase;letter-spacing:.04em">Usuários</span>
+      <span class="sidebar-label">Usuários</span>
+    </button>
+    <!-- CONFIGURAÇÕES — último item sidebar, admin/operador -->
+    <button class="sidebar-item" id="snav13" data-page="13" data-tooltip="Configurações" onclick="if(typeof sidebarNav==='function')sidebarNav(13)">
+      <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1115.6 12 3.611 3.611 0 0112 15.6z"/></svg>
+      <span class="sidebar-label">Configurações</span>
     </button>
   </nav>
 </div>
@@ -2408,30 +2434,11 @@ body{
 <div id="page4" style="display:none">
   <div style="max-width:640px;margin:32px auto;padding:0 24px 40px">
     <h2 style="font-family:'Google Sans',sans-serif;font-size:20px;font-weight:500;color:var(--on-sur);margin:0 0 20px;display:flex;align-items:center;gap:10px">⚙ Configurações da Planilha</h2>
-    <div class="cfg-card">
-      <div class="cfg-section-title">Conexão com Google Sheets</div>
-      <div class="cfg-f">
-        <label>ID da Planilha</label>
-        <input id="sheetId" placeholder="1cDH2mXl..." style="width:100%;box-sizing:border-box"/>
-        <small style="color:var(--on-sur-v)">URL: docs.google.com/spreadsheets/d/<strong>ID</strong>/edit</small>
-      </div>
-      <div class="cfg-f">
-        <label>Nome da Aba</label>
-        <input id="sheetName" style="width:220px"/>
-      </div>
-      <div class="cfg-f">
-        <label>API Key</label>
-        <input id="apiKey" type="password" placeholder="AIzaSy..." style="width:100%;box-sizing:border-box"/>
-        <small style="color:var(--on-sur-v)">Chave de API com Sheets API v4 habilitado.</small>
-      </div>
-      <div class="cfg-f">
-        <label>Client ID OAuth 2.0</label>
-        <input id="clientId" placeholder="123....apps.googleusercontent.com" style="width:100%;box-sizing:border-box"/>
-      </div>
-      <div style="display:flex;gap:10px;padding-top:8px;border-top:1px solid var(--out-v)">
-        <button class="btn btn-filled" onclick="saveCfg()">💾 Salvar</button>
-        <button class="btn btn-outlined" onclick="loadData()">↻ Testar Conexão</button>
-      </div>
+    <div class="cfg-card" style="text-align:center;padding:32px;color:var(--on-sur-v)">
+      <div style="font-size:28px;margin-bottom:10px">⚙</div>
+      <div style="font-size:14px;font-weight:500;color:var(--on-sur);margin-bottom:6px">Configurações centralizadas</div>
+      <div style="font-size:13px;margin-bottom:16px">As configurações foram movidas para a página <strong>Configurações</strong>.</div>
+      <button class="btn btn-filled btn-sm" onclick="sidebarNav(13)">Ir para Configurações</button>
     </div>
   </div>
 </div>
@@ -2490,30 +2497,11 @@ body{
 <div id="page9" style="display:none">
   <div style="max-width:640px;margin:32px auto;padding:0 24px 40px">
     <h2 style="font-family:'Google Sans',sans-serif;font-size:20px;font-weight:500;color:var(--on-sur);margin:0 0 20px;display:flex;align-items:center;gap:10px">⚙ Configurações da Planilha</h2>
-    <div class="cfg-card">
-      <div class="cfg-section-title">Conexão com Google Sheets</div>
-      <div class="cfg-f">
-        <label>ID da Planilha</label>
-        <input id="r_sheetId" placeholder="1cDH2mXl..." style="width:100%;box-sizing:border-box"/>
-        <small style="color:var(--on-sur-v)">URL: docs.google.com/spreadsheets/d/<strong>ID</strong>/edit</small>
-      </div>
-      <div class="cfg-f">
-        <label>Nome da Aba</label>
-        <input id="r_sheetName" style="width:220px"/>
-      </div>
-      <div class="cfg-f">
-        <label>API Key</label>
-        <input id="r_apiKey" type="password" placeholder="AIzaSy..." style="width:100%;box-sizing:border-box"/>
-        <small style="color:var(--on-sur-v)">Chave de API com Sheets API v4 habilitado.</small>
-      </div>
-      <div class="cfg-f">
-        <label>Client ID OAuth 2.0</label>
-        <input id="r_clientId" placeholder="123....apps.googleusercontent.com" style="width:100%;box-sizing:border-box"/>
-      </div>
-      <div style="display:flex;gap:10px;padding-top:8px;border-top:1px solid var(--out-v)">
-        <button class="btn btn-filled" onclick="saveCfg()">💾 Salvar</button>
-        <button class="btn btn-outlined" onclick="loadData()">↻ Testar Conexão</button>
-      </div>
+    <div class="cfg-card" style="text-align:center;padding:32px;color:var(--on-sur-v)">
+      <div style="font-size:28px;margin-bottom:10px">⚙</div>
+      <div style="font-size:14px;font-weight:500;color:var(--on-sur);margin-bottom:6px">Configurações centralizadas</div>
+      <div style="font-size:13px;margin-bottom:16px">As configurações foram movidas para a página <strong>Configurações</strong>.</div>
+      <button class="btn btn-filled btn-sm" onclick="sidebarNav(13)">Ir para Configurações</button>
     </div>
   </div>
 </div>
@@ -2573,29 +2561,11 @@ body{
 <div id="page11" style="display:none">
   <div style="max-width:640px;margin:32px auto;padding:0 24px 40px">
     <h2 style="font-family:'Google Sans',sans-serif;font-size:20px;font-weight:500;color:var(--on-sur);margin:0 0 20px;display:flex;align-items:center;gap:10px">⚙ Configurações Comercial</h2>
-    <div class="cfg-card">
-      <div class="cfg-section-title">Conexão com Google Sheets (TOTAL)</div>
-      <div class="cfg-f">
-        <label>ID da Planilha</label>
-        <input id="com_sheetId" placeholder="1cDH2mXl..." style="width:100%;box-sizing:border-box"/>
-        <small style="color:var(--on-sur-v)">URL: docs.google.com/spreadsheets/d/<strong>ID</strong>/edit</small>
-      </div>
-      <div class="cfg-f">
-        <label>Nome da Aba</label>
-        <input id="com_sheetName" value="TOTAL" style="width:220px"/>
-      </div>
-      <div class="cfg-f">
-        <label>API Key</label>
-        <input id="com_apiKey" type="password" placeholder="AIzaSy..." style="width:100%;box-sizing:border-box"/>
-      </div>
-      <div class="cfg-f">
-        <label>OAuth Client ID</label>
-        <input id="com_clientId" placeholder="xxxx.apps.googleusercontent.com" style="width:100%;box-sizing:border-box"/>
-      </div>
-      <div style="display:flex;gap:10px;padding-top:8px;border-top:1px solid var(--out-v)">
-        <button class="btn btn-filled" onclick="saveComercialCfg()">💾 Salvar</button>
-        <button class="btn btn-outlined" onclick="testComercialConn()">↻ Testar Conexão</button>
-      </div>
+    <div class="cfg-card" style="text-align:center;padding:32px;color:var(--on-sur-v)">
+      <div style="font-size:28px;margin-bottom:10px">⚙</div>
+      <div style="font-size:14px;font-weight:500;color:var(--on-sur);margin-bottom:6px">Configurações centralizadas</div>
+      <div style="font-size:13px;margin-bottom:16px">As configurações foram movidas para a página <strong>Configurações</strong>.</div>
+      <button class="btn btn-filled btn-sm" onclick="sidebarNav(13)">Ir para Configurações</button>
     </div>
   </div>
 </div>
@@ -2646,6 +2616,107 @@ body{
         <strong style="color:var(--on-sur)">Visualizador</strong> — Apenas dashboards e Home
       </div>
     </div>
+  </div>
+</div>
+
+
+<!-- CONFIGURAÇÕES CENTRALIZADAS — page13 -->
+<div id="page13" style="display:none">
+  <div style="max-width:720px;margin:32px auto;padding:0 24px 48px">
+    <h2 style="font-family:'Google Sans',sans-serif;font-size:20px;font-weight:500;color:var(--on-sur);margin:0 0 24px;display:flex;align-items:center;gap:10px">⚙ Configurações</h2>
+
+    <!-- ── Planilha de Atendimentos ── -->
+    <div class="cfg-card">
+      <div class="cfg-card-title">
+        📋 Planilha de Atendimentos
+        <span class="cfg-card-badge">Pós-venda</span>
+      </div>
+      <div class="cfg-section-title">Conexão com Google Sheets</div>
+      <div class="cfg-f">
+        <label>ID da Planilha</label>
+        <input id="sheetId" placeholder="1cDH2mXl..." style="width:100%;box-sizing:border-box"/>
+        <small style="color:var(--on-sur-v)">URL: docs.google.com/spreadsheets/d/<strong>ID</strong>/edit</small>
+      </div>
+      <div class="cfg-f">
+        <label>Nome da Aba</label>
+        <input id="sheetName" style="width:220px"/>
+      </div>
+      <div class="cfg-f">
+        <label>API Key</label>
+        <input id="apiKey" type="password" placeholder="AIzaSy..." style="width:100%;box-sizing:border-box"/>
+        <small style="color:var(--on-sur-v)">Chave de API com Sheets API v4 habilitado.</small>
+      </div>
+      <div class="cfg-f">
+        <label>Client ID OAuth 2.0</label>
+        <input id="clientId" placeholder="123....apps.googleusercontent.com" style="width:100%;box-sizing:border-box"/>
+      </div>
+      <div style="display:flex;gap:10px;padding-top:8px;border-top:1px solid var(--out-v)">
+        <button class="btn btn-filled" onclick="saveCfg()">💾 Salvar</button>
+        <button class="btn btn-outlined" onclick="loadData()">↻ Testar Conexão</button>
+      </div>
+    </div>
+
+    <!-- ── Planilha de Retornos ── -->
+    <div class="cfg-card">
+      <div class="cfg-card-title">
+        🔄 Planilha de Retornos
+        <span class="cfg-card-badge">Devoluções</span>
+      </div>
+      <div class="cfg-section-title">Conexão com Google Sheets</div>
+      <div class="cfg-f">
+        <label>ID da Planilha</label>
+        <input id="r_sheetId" placeholder="1cDH2mXl..." style="width:100%;box-sizing:border-box"/>
+        <small style="color:var(--on-sur-v)">URL: docs.google.com/spreadsheets/d/<strong>ID</strong>/edit</small>
+      </div>
+      <div class="cfg-f">
+        <label>Nome da Aba</label>
+        <input id="r_sheetName" style="width:220px"/>
+      </div>
+      <div class="cfg-f">
+        <label>API Key</label>
+        <input id="r_apiKey" type="password" placeholder="AIzaSy..." style="width:100%;box-sizing:border-box"/>
+        <small style="color:var(--on-sur-v)">Chave de API com Sheets API v4 habilitado.</small>
+      </div>
+      <div class="cfg-f">
+        <label>Client ID OAuth 2.0</label>
+        <input id="r_clientId" placeholder="123....apps.googleusercontent.com" style="width:100%;box-sizing:border-box"/>
+      </div>
+      <div style="display:flex;gap:10px;padding-top:8px;border-top:1px solid var(--out-v)">
+        <button class="btn btn-filled" onclick="saveCfg()">💾 Salvar</button>
+        <button class="btn btn-outlined" onclick="loadData()">↻ Testar Conexão</button>
+      </div>
+    </div>
+
+    <!-- ── Planilha Comercial ── -->
+    <div class="cfg-card">
+      <div class="cfg-card-title">
+        📊 Planilha Comercial
+        <span class="cfg-card-badge">Faturamento · TOTAL</span>
+      </div>
+      <div class="cfg-section-title">Conexão com Google Sheets (TOTAL)</div>
+      <div class="cfg-f">
+        <label>ID da Planilha</label>
+        <input id="com_sheetId" placeholder="1cDH2mXl..." style="width:100%;box-sizing:border-box"/>
+        <small style="color:var(--on-sur-v)">URL: docs.google.com/spreadsheets/d/<strong>ID</strong>/edit</small>
+      </div>
+      <div class="cfg-f">
+        <label>Nome da Aba</label>
+        <input id="com_sheetName" value="TOTAL" style="width:220px"/>
+      </div>
+      <div class="cfg-f">
+        <label>API Key</label>
+        <input id="com_apiKey" type="password" placeholder="AIzaSy..." style="width:100%;box-sizing:border-box"/>
+      </div>
+      <div class="cfg-f">
+        <label>OAuth Client ID</label>
+        <input id="com_clientId" placeholder="xxxx.apps.googleusercontent.com" style="width:100%;box-sizing:border-box"/>
+      </div>
+      <div style="display:flex;gap:10px;padding-top:8px;border-top:1px solid var(--out-v)">
+        <button class="btn btn-filled" onclick="saveComercialCfg()">💾 Salvar</button>
+        <button class="btn btn-outlined" onclick="testComercialConn()">↻ Testar Conexão</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -2754,6 +2825,7 @@ function sidebarNav(n){
     if(n===10){comSetPeriodMes();}
   }
   if(n===12){_usersLoad();}
+  if(n===13){_cfgPageLoad();}
   if([1,2,3,4].includes(n)){
     // Garantir seção ATENDIMENTOS ativa
     if(_activeSection!=='atend'){
@@ -3702,6 +3774,30 @@ window.onload=()=>{
 };
 
 // ── Inicialização do app (chamada pelo auth após login confirmado) ──
+// ── Carregar valores nos inputs da página Configurações (page13) ──
+function _cfgPageLoad(){
+  // Atendimentos
+  var secA=SECTIONS.atend;
+  var el;
+  ['sheetId','sheetName','apiKey','clientId'].forEach(function(k){
+    el=document.getElementById(k);
+    if(el)el.value=secA[k]||'';
+  });
+  // Retornos
+  var secR=SECTIONS.retorn;
+  ['sheetId','sheetName','apiKey','clientId'].forEach(function(k){
+    el=document.getElementById('r_'+k);
+    if(el)el.value=secR[k]||'';
+  });
+  // Comercial
+  var secC=SECTIONS.comercial;
+  el=document.getElementById('com_sheetId');   if(el)el.value=secC.sheetId||'';
+  el=document.getElementById('com_sheetName'); if(el)el.value=secC.sheetName||'TOTAL';
+  el=document.getElementById('com_apiKey');    if(el)el.value=secC.apiKey||'';
+  el=document.getElementById('com_clientId'); if(el)el.value=secC.clientId||'';
+}
+
+
 function _appInit(){
   // Inicializar SECTIONS com localStorage
   SECTIONS.atend.sheetId=localStorage.getItem('sheetId')||'';
@@ -3743,7 +3839,7 @@ function _appInit(){
       }
       if(_preloads.length)Promise.all(_preloads).catch(function(){});
     });
-  } else{switchPage(4);}
+  } else{switchPage(13);}  // Ir para Configurações se não há config
   // Carregar contador de famílias na Home
   loadHomeFamilias();
   if(typeof __drainQueue==='function')__drainQueue();
@@ -3787,7 +3883,7 @@ function switchPage(n){
     var _curD=[1,6].find(function(p){var pg=document.getElementById('page'+p);return pg&&pg.style.display!=='none';});
     if(_curD!==undefined&&_curD!==n)saveDashFilterState();
   })();
-  [0,1,2,3,4,5,6,7,8,9,10,11,12].forEach(i=>{
+  [0,1,2,3,4,5,6,7,8,9,10,11,12,13].forEach(i=>{
     var pg=document.getElementById('page'+i);if(pg)pg.style.display=i===n?'flex':'none';
     var tb=document.getElementById('tab'+i);if(tb)tb.classList.toggle('active',i===n);
   });
@@ -6468,6 +6564,8 @@ async function globalRefresh(){
     renderDashboard();
   } else if(_curPageN===10){
     if(typeof renderDashComercial==='function')renderDashComercial();
+  } else if(_curPageN===13){
+    _cfgPageLoad();
   }
   // Pages 0,4,9,11: static — no re-render needed
 
@@ -6553,9 +6651,9 @@ function updateSidebarActive(n){
   // Mapear página → id do sidebar item
   var pageMap={0:'snav0',1:'snav1',2:'snav2',3:'snav3',4:'snavCfg',
                6:'snavR1',7:'snavR2',8:'snavR3',9:'snavRCfg',
-               10:'snav10',11:'snav11',12:'snav12'};
+               10:'snav10',11:'snav11',12:'snav12',13:'snav13'};
   // Limpar todos os ativos
-  ['snav0','snav1','snav2','snav3','snavCfg','snavR1','snavR2','snavR3','snavRCfg','snav10','snav11','snav12'].forEach(function(id){
+  ['snav0','snav1','snav2','snav3','snavCfg','snavR1','snavR2','snavR3','snavRCfg','snav10','snav11','snav12','snav13'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.classList.remove('active');
   });
   var activeId=pageMap[n];
@@ -7275,7 +7373,7 @@ var _origSwitchPageCom=null;
   var _sp=switchPage;
   switchPage=function(n){
     _sp(n);
-    if(n===11){
+    if(n===11||n===13){
       document.getElementById('com_sheetId').value=SECTIONS.comercial.sheetId||'';
       document.getElementById('com_sheetName').value=SECTIONS.comercial.sheetName||'TOTAL';
       document.getElementById('com_apiKey').value=SECTIONS.comercial.apiKey||'';
@@ -7299,8 +7397,8 @@ let   _sbRole  = 'viewer';
 
 // Mapeamento role → páginas permitidas (números das páginas)
 const _ROLE_PAGES = {
-  admin:    [0,1,2,3,4,5,6,7,8,9,10,11,12], // tudo + gestão de usuários
-  operador: [0,1,2,3,6,7,8,10],              // sem config (4,9,11,12)
+  admin:    [0,1,2,3,4,5,6,7,8,9,10,11,12,13], // tudo
+  operador: [0,1,2,3,6,7,8,10,13],              // com Configurações
   viewer:   [0,1,6]                           // só dashboards e home
 };
 
@@ -7533,7 +7631,7 @@ function _authApplyPermissions(){
     0: 'snav0',
     1: 'snav1', 2: 'snav2', 3: 'snav3', 4: 'snavCfg',
     6: 'snavR1', 7: 'snavR2', 8: 'snavR3', 9: 'snavRCfg',
-    10: 'snav10', 11: 'snav11', 12: 'snav12'
+    10: 'snav10', 11: 'snav11', 12: 'snav12', 13: 'snav13'
   };
 
   Object.entries(navMap).forEach(([page, id])=>{
