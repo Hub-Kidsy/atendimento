@@ -6893,24 +6893,54 @@ async function loadComercialData(){
   if(_comLoadingPromise)return _comLoadingPromise;
   _comLoadingPromise=(async function(){
     try{
-      var url='https://sheets.googleapis.com/v4/spreadsheets/'+sec.sheetId+'/values/'+encodeURIComponent(sec.sheetName)+'!A1:S?key='+sec.apiKey;
+      var url='https://sheets.googleapis.com/v4/spreadsheets/'+sec.sheetId+'/values/'+encodeURIComponent(sec.sheetName)+'!A1:K?key='+sec.apiKey;
       var resp=await fetch(url);
       var json=await resp.json();
       if(!json.values||json.values.length<2){sec._data=[];return;}
-      var rows=json.values.slice(1).filter(r=>r.length>1&&r[0]);
+      // Empresas de logística/remessa que não são vendas a clientes
+      var _EXCL_NOMES=new Set([
+        'NKR LOGISTICA LTDA',
+        'SHPX LOGISTICA LTDA',
+        'AMAZON SERVICOS DE VAREJO DO BRASIL LTDA',
+        'CARDEX ARMAZENS GERAIS LTDA'
+      ]);
+      var rows=json.values.slice(1).filter(r=>{
+        if(r.length<=10)return false;
+        if(!(r[4]||'').trim())return false;          // sem data
+        if((r[10]||'').trim()!=='Autorizada')return false; // só autorizadas
+        var nome=(r[5]||'').trim().toUpperCase();
+        if(_EXCL_NOMES.has(nome))return false;       // excluir logística
+        return true;
+      });
       function _parseVal(v){return v&&v!==''&&!/^#/.test(v)?parseFloat(String(v).replace(/[R$\s]/g,'').replace(/\./g,'').replace(',','.')):0;}
       sec._data=rows.map(function(r,idx){
-        var fatVal=_parseVal(r[5]||'');
-        var nfVal=_parseVal(r[18]||'');
-        var rawDate=r[0]||'';
+        // NEW FORMAT: Bling NF export (A:K)
+        // [0]=Num pedido [1]=Serie [2]=Numero [3]=Natureza
+        // [4]=Data emissao [5]=Nome [6]=Codigo(SKU)
+        // [7]=Valor total [8]=Valor total liquido [9]=Nome da Loja [10]=Situacao
+        var rawDate=r[4]||'';
+        var fatVal=_parseVal(r[8]||'');  // Valor total liquido → faturamento
+        var nfVal=_parseVal(r[7]||'');   // Valor total → NF bruto
         var ts=0;if(rawDate){var _p=rawDate.split('/');ts=_p.length===3?new Date(+_p[2],+_p[1]-1,+_p[0]).getTime():new Date(rawDate).getTime();}
+        var canal=(r[9]||'').trim();
+        // Normalizar nome do canal para corresponder ao colorMap existente
+        if(/magalu/i.test(canal))canal='Magalu';
+        else if(/mercado livre/i.test(canal))canal='Mercado Livre';
+        else if(/shopee/i.test(canal))canal='Shopee';
+        else if(/amazon/i.test(canal))canal='Amazon';
+        else if(/tiktok/i.test(canal))canal='TikTok';
         return{
-          _row:idx+2,DATA_VENDA:rawDate,UF:r[1]||'',STATUS:r[3]||'',
-          CUSTO_TOTAL:r[4]||'',TOTAL_VENDA:r[5]||'',REPASSE:r[6]||'',
-          PEDIDOS:r[7]||'',SKU:r[8]||'',IMPOSTO_TOTAL2:r[9]||'',
-          PUBLI:r[10]||'',TRANSP:r[11]||'',MARGEM2:r[12]||'',
-          MARGEM_PCT2:r[13]||'',CANAL2:r[14]||'',ENVIO:r[15]||'',
-          EMPRESA:r[16]||'',META_DIARIA:r[17]||'',VALOR_NF:r[18]||'',
+          _row:idx+2,
+          DATA_VENDA:rawDate,
+          STATUS:r[10]||'',
+          SKU:(r[6]||'').trim(),
+          TOTAL_VENDA:r[8]||'',
+          CANAL2:canal,
+          VALOR_NF:r[7]||'',
+          PEDIDOS:'1',           // cada NF = 1 pedido
+          UF:'',REPASSE:'',EMPRESA:'',ENVIO:'',
+          CUSTO_TOTAL:'',IMPOSTO_TOTAL2:'',PUBLI:'',TRANSP:'',
+          MARGEM2:'',MARGEM_PCT2:'',META_DIARIA:'',
           _fat:isNaN(fatVal)?0:fatVal,
           _nf:isNaN(nfVal)?0:nfVal,
           _ts:isNaN(ts)?0:ts
@@ -7285,7 +7315,8 @@ async function loadHomeFamilias(){
   var _cacheKey='_homeFamCache';var _cacheTTL=300000;
   try{var _cached=JSON.parse(sessionStorage.getItem(_cacheKey)||'null');if(_cached&&Date.now()-_cached.t<_cacheTTL){el.textContent=_cached.v;return;}}catch(e){}
   try{
-    var url='https://sheets.googleapis.com/v4/spreadsheets/'+id+'/values/TOTAL!D:H?key='+key;
+    // NEW FORMAT: count authorized NFs as "famílias" (1 NF = 1 família)
+    var url='https://sheets.googleapis.com/v4/spreadsheets/'+id+'/values/BLING!A:K?key='+key;
     var resp=await fetch(url);
     if(!resp.ok){el.textContent='—';return;}
     var json=await resp.json();
@@ -7293,13 +7324,17 @@ async function loadHomeFamilias(){
     var total=0;
     for(var i=1;i<json.values.length;i++){
       var row=json.values[i];
-      var status=(row[0]||'').trim();
-      if(status==='Cancelado')continue;
-      var v=row[4]||'';
-      if(v){
-        var n=parseInt(String(v).replace(/[^\d]/g,''),10);
-        if(!isNaN(n))total+=n;
-      }
+      if(row.length<11)continue;
+      var situacao=(row[10]||'').trim();
+      // Contar apenas NFs autorizadas (excluir canceladas e remessas FBA)
+      var natureza=(row[3]||'').toLowerCase();
+      if(situacao!=='Autorizada')continue;
+      if(natureza.indexOf('remessa')!==-1)continue;
+      var nomeHF=(row[5]||'').trim().toUpperCase();
+      if(nomeHF==='NKR LOGISTICA LTDA'||nomeHF==='SHPX LOGISTICA LTDA'||
+         nomeHF==='AMAZON SERVICOS DE VAREJO DO BRASIL LTDA'||
+         nomeHF==='CARDEX ARMAZENS GERAIS LTDA')continue;
+      total++;
     }
     var _result=total.toLocaleString('pt-BR');el.textContent=_result;
     try{sessionStorage.setItem(_cacheKey,JSON.stringify({v:_result,t:Date.now()}));}catch(e){}
@@ -7308,7 +7343,7 @@ async function loadHomeFamilias(){
 
 function saveComercialCfg(){
   var id=document.getElementById('com_sheetId')?.value||'';
-  var name=document.getElementById('com_sheetName')?.value||'TOTAL';
+  var name=document.getElementById('com_sheetName')?.value||'BLING';
   var key=document.getElementById('com_apiKey')?.value||'';
   var cid=document.getElementById('com_clientId')?.value||'';
   localStorage.setItem('com_sheetId',id);
@@ -7326,7 +7361,7 @@ function saveComercialCfg(){
 async function testComercialConn(){
   // Ler valores atuais dos campos (mesmo sem salvar)
   var id=document.getElementById('com_sheetId')?.value||'';
-  var name=document.getElementById('com_sheetName')?.value||'TOTAL';
+  var name=document.getElementById('com_sheetName')?.value||'BLING';
   var key=document.getElementById('com_apiKey')?.value||'';
   if(!id||!key){alert('⚠ Preencha o ID da Planilha e a API Key antes de testar.');return;}
   try{
@@ -7351,7 +7386,7 @@ var _origSwitchPageCom=null;
     _sp(n);
     if(n===13){
       document.getElementById('com_sheetId').value=SECTIONS.comercial.sheetId||'';
-      document.getElementById('com_sheetName').value=SECTIONS.comercial.sheetName||'TOTAL';
+      document.getElementById('com_sheetName').value=SECTIONS.comercial.sheetName||'BLING';
       document.getElementById('com_apiKey').value=SECTIONS.comercial.apiKey||'';
       document.getElementById('com_clientId').value=SECTIONS.comercial.clientId||'';
     }
