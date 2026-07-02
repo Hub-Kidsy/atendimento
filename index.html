@@ -6409,7 +6409,7 @@ async function globalRefresh(){
   snack('🔄 Atualizando dados de todas as seções...','');
 
   // ── 2. Capturar contexto atual ANTES do reload ──
-  var _curPageN=[0,1,2,3,4,6,7,8,9,10,11].find(function(p){
+  var _curPageN=[0,1,2,3,6,7,8,10,12,13].find(function(p){
     var pg=document.getElementById('page'+p);return pg&&pg.style.display!=='none';
   })||0;
   var _savedSection=_activeSection;
@@ -6480,24 +6480,15 @@ async function globalRefresh(){
     })());
   }
 
-  // 4c. Comercial
-  var _secC=SECTIONS.comercial;
-  if(_secC.sheetId&&_secC.apiKey){
-    _promises.push((async function(){
-      try{
-        var url='https://sheets.googleapis.com/v4/spreadsheets/'+_secC.sheetId+'/values/'+encodeURIComponent(_secC.sheetName)+'!A1:S?key='+_secC.apiKey;
-        var resp=await fetch(url);if(!resp.ok)return;
-        var json=await resp.json();
-        if(!json.values||json.values.length<2)return;
-        var rows=json.values.slice(1).filter(function(r){return r.length>1&&r[0];});
-        function _pv(v){return v&&v!==''&&!/^#/.test(v)?parseFloat(String(v).replace(/[R$\s]/g,'').replace(/\./g,'').replace(',','.')):0;}
-        SECTIONS.comercial._data=rows.map(function(r,idx){
-          var fv=_pv(r[5]||''),nv=_pv(r[18]||''),rd=r[0]||'',ts=0;
-          if(rd){var _p=rd.split('/');ts=_p.length===3?new Date(+_p[2],+_p[1]-1,+_p[0]).getTime():new Date(rd).getTime();}
-          return{_row:idx+2,DATA_VENDA:rd,UF:r[1]||'',STATUS:r[3]||'',CUSTO_TOTAL:r[4]||'',TOTAL_VENDA:r[5]||'',REPASSE:r[6]||'',PEDIDOS:r[7]||'',SKU:r[8]||'',IMPOSTO_TOTAL2:r[9]||'',PUBLI:r[10]||'',TRANSP:r[11]||'',MARGEM2:r[12]||'',MARGEM_PCT2:r[13]||'',CANAL2:r[14]||'',ENVIO:r[15]||'',EMPRESA:r[16]||'',META_DIARIA:r[17]||'',VALOR_NF:r[18]||'',_fat:isNaN(fv)?0:fv,_nf:isNaN(nv)?0:nv,_ts:isNaN(ts)?0:ts};
-        });
-      }catch(e){console.warn('[globalRefresh] comercial:',e);}
-    })());
+  // 4c. Comercial — delegar ao loadComercialData() que tem formato e filtros corretos
+  if(SECTIONS.comercial.sheetId&&SECTIONS.comercial.apiKey){
+    _comLoadingPromise=null; // forçar novo fetch
+    _promises.push(
+      (typeof loadComercialData==='function'
+        ? loadComercialData()
+        : Promise.resolve()
+      ).catch(function(e){console.warn('[globalRefresh] comercial:',e);})
+    );
   }
 
   // 4d. Home familias
