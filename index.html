@@ -6898,18 +6898,17 @@ async function loadComercialData(){
       var json=await resp.json();
       if(!json.values||json.values.length<2){sec._data=[];return;}
       // Empresas de logística/remessa que não são vendas a clientes
-      var _EXCL_NOMES=new Set([
-        'NKR LOGISTICA LTDA',
-        'SHPX LOGISTICA LTDA',
-        'AMAZON SERVICOS DE VAREJO DO BRASIL LTDA',
-        'CARDEX ARMAZENS GERAIS LTDA'
-      ]);
+      // Excluir empresas de logística/remessa (match parcial para robustez)
+      var _EXCL_PARTIAL=['NKR LOGISTICA','SHPX LOGISTICA','AMAZON SERVICOS DE VAREJO','CARDEX ARMAZENS'];
+      function _isExcluded(nome){
+        var n=nome.trim().toUpperCase();
+        return _EXCL_PARTIAL.some(function(p){return n.indexOf(p)!==-1;});
+      }
       var rows=json.values.slice(1).filter(r=>{
         if(r.length<=10)return false;
         if(!(r[4]||'').trim())return false;          // sem data
         if((r[10]||'').trim()!=='Autorizada')return false; // só autorizadas
-        var nome=(r[5]||'').trim().toUpperCase();
-        if(_EXCL_NOMES.has(nome))return false;       // excluir logística
+        if(_isExcluded(r[5]||''))return false;       // excluir logística
         return true;
       });
       function _parseVal(v){return v&&v!==''&&!/^#/.test(v)?parseFloat(String(v).replace(/[R$\s]/g,'').replace(/\./g,'').replace(',','.')):0;}
@@ -7291,8 +7290,12 @@ function _comRenderAnual2026(allData){
   var meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   meses.forEach((m,i)=>{monthMap[i]=0;});
   // FIX: use pre-computed _fat and _ts to avoid parseBRL+_comParseDate per row
+  var _exclAnual=['NKR LOGISTICA','SHPX LOGISTICA','AMAZON SERVICOS DE VAREJO','CARDEX ARMAZENS'];
   allData.forEach(r=>{
     if((r.STATUS||'')==='Cancelado')return;
+    // Excluir logística (dupla proteção caso loader não tenha filtrado)
+    var _nAnual=(r.Nome||r._nome||'').toUpperCase();
+    if(_exclAnual.some(function(p){return _nAnual.indexOf(p)!==-1;}))return;
     var ts=r._ts||0;if(!ts)return;
     var d=new Date(ts);
     if(d.getFullYear()!==2026)return;
@@ -7301,7 +7304,29 @@ function _comRenderAnual2026(allData){
   var labels=meses;
   var vals=meses.map((_,i)=>monthMap[i]);
   var ctx=document.getElementById('comChartAnual');
-  if(ctx)_comCharts.anual=new Chart(ctx,{type:'line',data:{labels:labels,datasets:[{label:'Faturamento 2026',data:vals,borderColor:'#1a73e8',backgroundColor:'rgba(26,115,232,0.1)',fill:true,tension:0.3,borderWidth:2,pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return 'R$ '+c.raw.toLocaleString('pt-BR',{minimumFractionDigits:2})}}}},scales:{y:{ticks:{callback:function(v){return 'R$ '+(v/1000).toFixed(0)+'k'}}}}}});
+  if(ctx)_comCharts.anual=new Chart(ctx,{type:'line',data:{labels:labels,datasets:[{
+    label:'Faturamento 2026',data:vals,
+    borderColor:'#1a73e8',backgroundColor:'rgba(26,115,232,0.1)',
+    fill:true,tension:0.3,borderWidth:2,
+    pointRadius:5,pointHoverRadius:7,
+    pointBackgroundColor:'#1a73e8',pointBorderColor:'#fff',pointBorderWidth:2
+  }]},options:{responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{callbacks:{label:function(c){
+        var v=c.raw;
+        return 'R$ '+(v>=1000000?(v/1000000).toFixed(2).replace('.',',')+'M':
+               v>=1000?(v/1000).toFixed(1).replace('.',',')+'k':
+               v.toLocaleString('pt-BR',{minimumFractionDigits:2}));
+      }}},
+      // Mostrar valor nos pontos do gráfico
+      datalabels:false
+    },
+    scales:{y:{ticks:{callback:function(v){
+      return v>=1000000?(v/1000000).toFixed(1).replace('.',',')+'M':
+             v>=1000?(v/1000).toFixed(0)+'k':'R$ '+v;
+    }}}}
+  }});
 }
 
 // === HOME: Famílias dinâmicas ===
@@ -7331,9 +7356,8 @@ async function loadHomeFamilias(){
       if(situacao!=='Autorizada')continue;
       if(natureza.indexOf('remessa')!==-1)continue;
       var nomeHF=(row[5]||'').trim().toUpperCase();
-      if(nomeHF==='NKR LOGISTICA LTDA'||nomeHF==='SHPX LOGISTICA LTDA'||
-         nomeHF==='AMAZON SERVICOS DE VAREJO DO BRASIL LTDA'||
-         nomeHF==='CARDEX ARMAZENS GERAIS LTDA')continue;
+      if(['NKR LOGISTICA','SHPX LOGISTICA','AMAZON SERVICOS DE VAREJO','CARDEX ARMAZENS']
+         .some(function(p){return nomeHF.indexOf(p)!==-1;}))continue;
       total++;
     }
     var _result=total.toLocaleString('pt-BR');el.textContent=_result;
