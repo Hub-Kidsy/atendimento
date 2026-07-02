@@ -3460,7 +3460,7 @@ function detectModal(desc){const s=(desc||'').toLowerCase();if(s.includes('cance
 const SECTIONS={
   comercial:{key:'comercial',label:'COMERCIAL',
     sheetId:localStorage.getItem('com_sheetId')||'',
-    sheetName:localStorage.getItem('com_sheetName')||'TOTAL',
+    sheetName:(localStorage.getItem('com_sheetName')||'BLING')==='TOTAL'?'BLING':(localStorage.getItem('com_sheetName')||'BLING'),
     apiKey:localStorage.getItem('com_apiKey')||'',
     clientId:localStorage.getItem('com_clientId')||'',
     _data:[],_dash:[]
@@ -3752,7 +3752,7 @@ function _cfgPageLoad(){
   // Comercial
   var secC=SECTIONS.comercial;
   el=document.getElementById('com_sheetId');   if(el)el.value=secC.sheetId||'';
-  el=document.getElementById('com_sheetName'); if(el)el.value=secC.sheetName||'TOTAL';
+  el=document.getElementById('com_sheetName'); if(el)el.value=secC.sheetName||'BLING';
   el=document.getElementById('com_apiKey');    if(el)el.value=secC.apiKey||'';
   el=document.getElementById('com_clientId'); if(el)el.value=secC.clientId||'';
 }
@@ -3767,12 +3767,17 @@ function _appInit(){
   SECTIONS.retorn.sheetId=localStorage.getItem('retorn_sheetId')||'';
   // Comercial
   SECTIONS.comercial.sheetId=localStorage.getItem('com_sheetId')||'';
-  SECTIONS.comercial.sheetName=localStorage.getItem('com_sheetName')||'TOTAL';
+  SECTIONS.comercial.sheetName=localStorage.getItem('com_sheetName')||'BLING';
   SECTIONS.comercial.apiKey=localStorage.getItem('com_apiKey')||'';
   SECTIONS.comercial.clientId=localStorage.getItem('com_clientId')||'';
   SECTIONS.retorn.sheetName=localStorage.getItem('retorn_sheetName')||'RETORNOS';
   SECTIONS.retorn.apiKey=localStorage.getItem('retorn_apiKey')||'';
   SECTIONS.retorn.clientId=localStorage.getItem('retorn_clientId')||'';
+  // ── Auto-migrar sheetName TOTAL→BLING se ainda estiver com valor antigo
+  if(localStorage.getItem('com_sheetName')==='TOTAL'){
+    localStorage.setItem('com_sheetName','BLING');
+    SECTIONS.comercial.sheetName='BLING';
+  }
   // Seção ATENDIMENTOS ativa — sincronizar cfg
   _activeSection='atend';
   var sec=SECTIONS.atend;
@@ -3819,7 +3824,9 @@ function saveCfg(){
         sessionStorage.removeItem('gToken');
         sessionStorage.removeItem('gTokenExp');
       }
-      sec[k]=v;cfg[k]=v;
+      sec[k]=v;
+      // Só sincronizar cfg (atendimentos) quando salvar a seção atend
+      if(!isR)cfg[k]=v;
       localStorage.setItem(pfx+k,v);
     }
   });
