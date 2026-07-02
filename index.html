@@ -3800,6 +3800,7 @@ function _appInit(){
         _preloads.push(loadRetornDataIfEmpty());
       }
       if(SECTIONS.comercial.sheetId&&SECTIONS.comercial.apiKey){
+        if(typeof _comLoadingPromise!=='undefined')_comLoadingPromise=null;
         _preloads.push(loadComercialData());
       }
       if(_preloads.length)Promise.all(_preloads).catch(function(){});
@@ -6900,6 +6901,7 @@ async function loadComercialData(){
         if(sec.sheetName!=='BLING'){
           var url2='https://sheets.googleapis.com/v4/spreadsheets/'+sec.sheetId+'/values/BLING!A1:AC?key='+sec.apiKey;
           var resp2=await fetch(url2);
+          if(!resp2.ok){sec._data=[];return;}
           var json2=await resp2.json();
           if(json2.values&&json2.values.length>=2){
             // Migrar automaticamente
@@ -6969,7 +6971,11 @@ async function loadComercialData(){
           _ts:isNaN(ts)?0:ts
         };
       });
-    }catch(e){console.error('Comercial load error:',e);sec._data=[];}
+    }catch(e){
+      console.error('[Comercial] load error:',e.message||e);
+      snack('⚠️ Erro ao carregar dados comerciais: '+( e.message||'verifique as configurações'),'error');
+      sec._data=[];
+    }
     finally{_comLoadingPromise=null;} // liberar guard após conclusão
   })();
   return _comLoadingPromise;
@@ -7012,7 +7018,7 @@ async function renderDashComercial(){
   }
   var data=SECTIONS.comercial._data;
   if(!data.length){
-    document.getElementById('comKpiRow').innerHTML='<div style="padding:20px;color:var(--on-sur-v)">Nenhum dado carregado. Configure a conexão com a aba TOTAL em Configurações.</div>';
+    document.getElementById('comKpiRow').innerHTML='<div style="padding:20px;color:var(--on-sur-v)">Nenhum dado carregado. Configure a conexão com a aba BLING em Configurações.</div>';
     return;
   }
   // Apply filters
@@ -7402,7 +7408,14 @@ function saveComercialCfg(){
   SECTIONS.comercial.apiKey=key;
   SECTIONS.comercial.clientId=cid;
   SECTIONS.comercial._data=[];
+  _comLoadingPromise=null; // forçar novo fetch
   alert('Configurações Comercial salvas com sucesso!');
+  // Carregar dados imediatamente após salvar
+  if(id&&key){
+    loadComercialData().then(function(){
+      snack('✅ Dados comerciais carregados','success');
+    }).catch(function(){});
+  }
 }
 
 async function testComercialConn(){
