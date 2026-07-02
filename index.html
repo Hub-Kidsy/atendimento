@@ -3040,7 +3040,7 @@ function openModal(rec){
           '</div>',
           '<div id="disputaExtra" style="display:'+(dA?'block':'none')+'">',
             '<div class="fg" style="grid-template-columns:1fr 2fr;gap:10px">',
-              fSel('PLAT_DISPUTA','Plataforma Disputa',r.PLAT_DISPUTA,['','Amazon','Mercado Livre','TikTok','Shopee','Cardex','MT LOG','Magalu']),
+              fSel('PLAT_DISPUTA','Plataforma Disputa',r.PLAT_DISPUTA,['','Amazon','Mercado Livre','TikTok','Shopee','Cardex','MT LOG','MTLOG','Magalu']),
               fInp('OBS_DISPUTA','Observações da Disputa',r.OBS_DISPUTA),
             '</div>',
             '<div class="fg3" style="margin:16px 0">',
@@ -4190,8 +4190,8 @@ function openModalRetorn(rec){
           fInp('OBS_RELEVANTES','Obs. Relevantes',r.OBS_RELEVANTES),
         '</div>',
         '<div class="fg3">',
-          fSel('ENTRADA_CARDEX','Entrada Cardex',r.ENTRADA_CARDEX||'',['','ESTOQUE','DEFEITOS','DESCARTE'],false),
-          fSel('ENTRADA_BLING','Entrada Bling',r.ENTRADA_BLING||'',['','CARDEX','DEFEITOS','DESCARTE'],false),
+          fSel('ENTRADA_BLING','Entrada Cardex (destino)',r.ENTRADA_BLING||'',['','ESTOQUE','DEFEITOS','DESCARTE'],false),
+          fSel('ENTRADA_BLING2','Entrada Bling',r.ENTRADA_BLING2||'',['','CARDEX','DEFEITOS','DESCARTE'],false),
           fYN('NEC_TRAT_PLAT','Nec. Tratativa Plataforma?',r.NEC_TRAT_PLAT),
         '</div>',
         '<div class="fg" style="grid-template-columns:1fr">',
@@ -4220,7 +4220,7 @@ function openModalRetorn(rec){
           '</div>',
           '<div id="disputaExtra_r" style="display:'+(dA?'block':'none')+'">',
             '<div class="fg" style="grid-template-columns:1fr 2fr;gap:10px">',
-              fSel('PLAT_DISPUTA','Plataforma Disputa',r.PLAT_DISPUTA,['','Amazon','Mercado Livre','TikTok','Shopee','Cardex','MT LOG','Magalu']),
+              fSel('PLAT_DISPUTA','Plataforma Disputa',r.PLAT_DISPUTA,['','Amazon','Mercado Livre','TikTok','Shopee','Cardex','MT LOG','MTLOG','Magalu']),
               fInp('OBS_DISPUTA','Observações da Disputa',r.OBS_DISPUTA),
             '</div>',
             '<div class="fg3" style="margin:16px 0">',
@@ -5357,6 +5357,14 @@ async function saveRecord(){
       +'\n\nDeseja salvar mesmo assim?';
     if(!confirm(dupMsg))return; // usuário cancelou
   }
+  // Sincronizar cfg com seção ativa antes de solicitar token OAuth
+  if(_activeSection==='retorn'){
+    var _srSec=SECTIONS.retorn;
+    cfg.clientId  = _srSec.clientId  || cfg.clientId;
+    cfg.sheetId   = _srSec.sheetId   || cfg.sheetId;
+    cfg.sheetName = _srSec.sheetName || cfg.sheetName;
+    cfg.apiKey    = _srSec.apiKey    || cfg.apiKey;
+  }
   // ────────────────────────────────────────────────────────────────
   const tkn=await getToken();
   if(!tkn){
@@ -5438,7 +5446,9 @@ async function saveRecord(){
   // ── Modal de confirmação — não altera fluxo de ATEND vs RETORN ──
   var _savedCurRec=curRec;var _savedNovos=novos;
   showConfirmChanges(_changes, async function(){
-    var tkn2=await getToken();if(!tkn2)return;
+    // Re-sync cfg for second token request
+  if(_activeSection==='retorn'){var _srSec2=SECTIONS.retorn;cfg.clientId=_srSec2.clientId||cfg.clientId;}
+  var tkn2=await getToken();if(!tkn2)return;
     try{
       const res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+_cfg.sheetId+'/values:batchUpdate',
         {method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+tkn2},
@@ -6090,6 +6100,13 @@ async function bulkSave(){
   var _activeFKEYS=_isR?FORMULA_KEYS_RETORN:FORMULA_KEYS;
   var _FCOLS=new Set(_activeFKEYS.map(function(k){return _activeCOL[k];}).filter(function(v){return v!==undefined;}));
   var _sfx=_isR?'_r':'';
+  // Sincronizar cfg com a seção ativa antes de solicitar token OAuth
+  if(_isR){
+    cfg.clientId  = _sec.clientId  || cfg.clientId;
+    cfg.sheetId   = _sec.sheetId   || cfg.sheetId;
+    cfg.sheetName = _sec.sheetName || cfg.sheetName;
+    cfg.apiKey    = _sec.apiKey    || cfg.apiKey;
+  }
   // ────────────────────────────────────────────────────────────────
   const tkn=await getToken();if(!tkn)return;
   const data=[];keys.forEach(i=>{const r=bulkOrig[i];Object.entries(bulkChg[i]).forEach(([key,val])=>{const idx=_activeCOL[key];if(idx===undefined||_FCOLS.has(idx))return;data.push({range:_cfg.sheetName+'!'+n2c(idx)+r._row,values:[[val]]});});});
