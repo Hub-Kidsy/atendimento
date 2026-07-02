@@ -6891,10 +6891,24 @@ async function loadComercialData(){
   if(_comLoadingPromise)return _comLoadingPromise;
   _comLoadingPromise=(async function(){
     try{
-      var url='https://sheets.googleapis.com/v4/spreadsheets/'+sec.sheetId+'/values/'+encodeURIComponent(sec.sheetName)+'!A1:K?key='+sec.apiKey;
+      var url='https://sheets.googleapis.com/v4/spreadsheets/'+sec.sheetId+'/values/'+encodeURIComponent(sec.sheetName)+'!A1:AC?key='+sec.apiKey;
       var resp=await fetch(url);
+      if(!resp.ok){sec._data=[];return;}
       var json=await resp.json();
-      if(!json.values||json.values.length<2){sec._data=[];return;}
+      if(!json.values||json.values.length<2){
+        // Fallback: se sheetName não era BLING, tentar com BLING
+        if(sec.sheetName!=='BLING'){
+          var url2='https://sheets.googleapis.com/v4/spreadsheets/'+sec.sheetId+'/values/BLING!A1:AC?key='+sec.apiKey;
+          var resp2=await fetch(url2);
+          var json2=await resp2.json();
+          if(json2.values&&json2.values.length>=2){
+            // Migrar automaticamente
+            sec.sheetName='BLING';
+            localStorage.setItem('com_sheetName','BLING');
+            json=json2; // continuar com dados corretos
+          } else {sec._data=[];return;}
+        } else {sec._data=[];return;}
+      }
       // Empresas de logística/remessa que não são vendas a clientes
       // Excluir empresas de logística/remessa (match parcial para robustez)
       var _EXCL_PARTIAL=['NKR LOGISTICA','SHPX LOGISTICA','AMAZON SERVICOS DE VAREJO','CARDEX ARMAZENS'];
@@ -6903,23 +6917,27 @@ async function loadComercialData(){
         return _EXCL_PARTIAL.some(function(p){return n.indexOf(p)!==-1;});
       }
       var rows=json.values.slice(1).filter(r=>{
-        if(r.length<=10)return false;
+        if(r.length<=12)return false;
         if(!(r[4]||'').trim())return false;          // sem data
-        if((r[10]||'').trim()!=='Autorizada')return false; // só autorizadas
+        if((r[14]||'').trim()!=='Autorizada')return false; // [14]=Situacao
         if(_isExcluded(r[5]||''))return false;       // excluir logística
         return true;
       });
       function _parseVal(v){return v&&v!==''&&!/^#/.test(v)?parseFloat(String(v).replace(/[R$\s]/g,'').replace(/\./g,'').replace(',','.')):0;}
       sec._data=rows.map(function(r,idx){
-        // NEW FORMAT: Bling NF export (A:K)
+        // FORMAT: Bling NF export ampliado (A:AC)
         // [0]=Num pedido [1]=Serie [2]=Numero [3]=Natureza
         // [4]=Data emissao [5]=Nome [6]=Codigo(SKU)
-        // [7]=Valor total [8]=Valor total liquido [9]=Nome da Loja [10]=Situacao
+        // [7]=Valor total [8]=Frete [9]=Desconto [10]=Aliq IPI [11]=IPI
+        // [12]=Valor total liquido [13]=Nome da Loja [14]=Situacao
+        // [15]=Aliq ICMS [16]=ICMS [17]=Aliq PIS [18]=PIS
+        // [19]=Aliq COFINS [20]=COFINS [21]=UF [22]=DIFAL [23]=Aliq FCP
+        // [24]=FCP DIFAL [25]=Aliq ICMS ST [26]=ICMS ST
         var rawDate=r[4]||'';
-        var fatVal=_parseVal(r[8]||'');  // Valor total liquido → faturamento
-        var nfVal=_parseVal(r[7]||'');   // Valor total → NF bruto
+        var fatVal=_parseVal(r[12]||''); // [12]=Valor total liquido → faturamento
+        var nfVal=_parseVal(r[7]||'');   // [7]=Valor total → NF bruto
         var ts=0;if(rawDate){var _p=rawDate.split('/');ts=_p.length===3?new Date(+_p[2],+_p[1]-1,+_p[0]).getTime():new Date(rawDate).getTime();}
-        var canal=(r[9]||'').trim();
+        var canal=(r[13]||'').trim();    // [13]=Nome da Loja
         // Normalizar nome do canal para corresponder ao colorMap existente
         if(/magalu/i.test(canal))canal='Magalu';
         else if(/mercado livre/i.test(canal))canal='Mercado Livre';
@@ -6929,13 +6947,21 @@ async function loadComercialData(){
         return{
           _row:idx+2,
           DATA_VENDA:rawDate,
-          STATUS:r[10]||'',
-          SKU:(r[6]||'').trim(),
-          TOTAL_VENDA:r[8]||'',
-          CANAL2:canal,
-          VALOR_NF:r[7]||'',
+          STATUS:r[14]||'',       // [14]=Situacao
+          SKU:(r[6]||'').trim(),  // [6]=Codigo
+          TOTAL_VENDA:r[12]||'', // [12]=Valor total liquido
+          CANAL2:canal,           // [13]=Nome da Loja (normalizado)
+          VALOR_NF:r[7]||'',     // [7]=Valor total bruto
+          UF:r[21]||'',          // [21]=UF (novo)
+          FRETE:_parseVal(r[8]||''),    // [8]=Frete
+          DESCONTO:_parseVal(r[9]||''), // [9]=Desconto
+          IPI:_parseVal(r[11]||''),     // [11]=IPI valor
+          ICMS:_parseVal(r[16]||''),    // [16]=ICMS valor
+          PIS:_parseVal(r[18]||''),     // [18]=PIS valor
+          COFINS:_parseVal(r[20]||''),  // [20]=COFINS valor
+          DIFAL:_parseVal(r[22]||''),   // [22]=DIFAL destino
           PEDIDOS:'1',           // cada NF = 1 pedido
-          UF:'',REPASSE:'',EMPRESA:'',ENVIO:'',
+          REPASSE:'',EMPRESA:'',ENVIO:'',
           CUSTO_TOTAL:'',IMPOSTO_TOTAL2:'',PUBLI:'',TRANSP:'',
           MARGEM2:'',MARGEM_PCT2:'',META_DIARIA:'',
           _fat:isNaN(fatVal)?0:fatVal,
@@ -7339,7 +7365,7 @@ async function loadHomeFamilias(){
   try{var _cached=JSON.parse(sessionStorage.getItem(_cacheKey)||'null');if(_cached&&Date.now()-_cached.t<_cacheTTL){el.textContent=_cached.v;return;}}catch(e){}
   try{
     // NEW FORMAT: count authorized NFs as "famílias" (1 NF = 1 família)
-    var url='https://sheets.googleapis.com/v4/spreadsheets/'+id+'/values/BLING!A:K?key='+key;
+    var url='https://sheets.googleapis.com/v4/spreadsheets/'+id+'/values/BLING!A:AC?key='+key;
     var resp=await fetch(url);
     if(!resp.ok){el.textContent='—';return;}
     var json=await resp.json();
@@ -7347,9 +7373,8 @@ async function loadHomeFamilias(){
     var total=0;
     for(var i=1;i<json.values.length;i++){
       var row=json.values[i];
-      if(row.length<11)continue;
-      var situacao=(row[10]||'').trim();
-      // Contar apenas NFs autorizadas (excluir canceladas e remessas FBA)
+      if(row.length<13)continue;
+      var situacao=(row[14]||'').trim(); // [14]=Situacao (novo formato)
       var natureza=(row[3]||'').toLowerCase();
       if(situacao!=='Autorizada')continue;
       if(natureza.indexOf('remessa')!==-1)continue;
