@@ -6399,6 +6399,16 @@ function snack(msg,type){type=type||'';const t=document.getElementById('snack');
 // ════════════════════════════════════════════════════════════
 var _globalRefreshRunning=false;
 
+// ── fetchWithTimeout: evita que fetch trave globalRefresh indefinidamente
+function _fetchTimeout(url, ms){
+  ms = ms || 30000; // 30s timeout por padrão
+  return new Promise(function(resolve, reject){
+    var timer = setTimeout(function(){ reject(new Error('timeout')); }, ms);
+    fetch(url).then(function(r){ clearTimeout(timer); resolve(r); })
+              .catch(function(e){ clearTimeout(timer); reject(e); });
+  });
+}
+
 async function globalRefresh(){
   if(_globalRefreshRunning)return;
   _globalRefreshRunning=true;
@@ -6433,19 +6443,20 @@ async function globalRefresh(){
     _promises.push((async function(){
       try{
         var rng=encodeURIComponent(_secA.sheetName+'!A1:BK');
-        var res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+_secA.sheetId+'/values/'+rng+'?key='+_secA.apiKey);
+        var res=await _fetchTimeout('https://sheets.googleapis.com/v4/spreadsheets/'+_secA.sheetId+'/values/'+rng+'?key='+_secA.apiKey);
         if(!res.ok)return;
         var allRows=(await res.json()).values||[];
         if(allRows.length<2)return;
         var headers=allRows[0]||[];
-        var _prevA=_activeSection;_activeSection='atend';
-        applyColumnsMap(headers);
+        // FIX: build COL for atend independently — NO _activeSection toggle
+        var _colA=buildCOL(headers);
+        Object.assign(COL, _colA);
+        FORMULA_COLS=new Set(FORMULA_KEYS.map(function(k){return COL[k];}).filter(function(v){return v!==undefined;}));
         var newData=allRows.slice(1).map(function(row,i){
           var r={_row:i+2,_raw:[...row]};
-          Object.entries(COL).forEach(function(e){r[e[0]]=row[e[1]]||'';});return r;
+          Object.entries(_colA).forEach(function(e){r[e[0]]=row[e[1]]||'';});return r;
         });
         SECTIONS.atend._data=newData;SECTIONS.atend._dash=newData;
-        _activeSection=_prevA;
         var atAtivos=newData.filter(function(r){return !IGNORADOS_BULK.includes(r.STATUS);});
         var _s2=document.getElementById('snav2Count');if(_s2)_s2.textContent=atAtivos.length||'';
         var _s3=document.getElementById('snav3Count');if(_s3)_s3.textContent=atAtivos.length||'';
@@ -6459,20 +6470,21 @@ async function globalRefresh(){
     _promises.push((async function(){
       try{
         var rng=encodeURIComponent(_secR.sheetName+'!A1:BK');
-        var res=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+_secR.sheetId+'/values/'+rng+'?key='+_secR.apiKey);
+        var res=await _fetchTimeout('https://sheets.googleapis.com/v4/spreadsheets/'+_secR.sheetId+'/values/'+rng+'?key='+_secR.apiKey);
         if(!res.ok)return;
         var allRows=(await res.json()).values||[];
         if(allRows.length<2)return;
         var headers=allRows[0]||[];
-        var _prevR=_activeSection;_activeSection='retorn';
-        applyColumnsMap(headers);
-        var _col=typeof COL_RETORN!=='undefined'?COL_RETORN:COL;
+        // FIX: build COL_RETORN independently — NO _activeSection toggle
+        var _colR=buildCOL(headers);
+        Object.assign(COL_RETORN, _colR);
+        var _fkR=typeof FORMULA_KEYS_RETORN!=='undefined'?FORMULA_KEYS_RETORN:[];
+        FORMULA_COLS=new Set(_fkR.map(function(k){return _colR[k];}).filter(function(v){return v!==undefined;}));
         var newData=allRows.slice(1).map(function(row,i){
           var r={_row:i+2,_raw:[...row]};
-          Object.entries(_col).forEach(function(e){r[e[0]]=row[e[1]]||'';});return r;
+          Object.entries(_colR).forEach(function(e){r[e[0]]=row[e[1]]||'';});return r;
         });
         SECTIONS.retorn._data=newData;SECTIONS.retorn._dash=newData;
-        _activeSection=_prevR;
         var _ig=typeof IGNORADOS_RETORN!=='undefined'?IGNORADOS_RETORN:['CONCLUIDO',''];
         var retAtivos=newData.filter(function(r){return !_ig.includes(r.STATUS);});
         var _sR2=document.getElementById('snavR2Count');if(_sR2)_sR2.textContent=retAtivos.length||'';
@@ -6534,6 +6546,14 @@ async function globalRefresh(){
   var _tot=(SECTIONS.atend._data.length)+(SECTIONS.retorn._data.length)+(SECTIONS.comercial._data.length);
   snack('✅ Dados atualizados ('+_tot+' registros no total)','success');
 }
+// Safety: reset _globalRefreshRunning if it gets stuck (e.g. tab hidden during refresh)
+window.addEventListener('focus', function(){
+  if(_globalRefreshRunning){
+    _globalRefreshRunning=false;
+    var _b=document.getElementById('globalRefreshBtn');
+    if(_b){_b.disabled=false;_b.textContent='↻ Atualizar';}
+  }
+});
 
 
 
@@ -6827,15 +6847,7 @@ function updateReqVisual(){
       </div>
       <button class="dlg-x" onclick="closeConfDlg()">✕</button>
     </div>
-    <div class="dlg-body" id="dlgConfBody" style="padding:16px 20px;max-height:55vh;overflow-y:auto"></div>
-    <div class="dlg-ftr">
-      <button class="btn btn-outlined" onclick="closeConfDlg()">Cancelar</button>
-      <button class="btn btn-filled" id="dlgConfOk">Confirmar Alterações</button>
-    </div>
-  </div>
-</div>
-
-<script>
+    <div class
 (function(){
   function toggleApps(e){e.stopPropagation();var m=document.getElementById('appMenu');if(m)m.classList.toggle('open');}
   function closeApps(e){var m=document.getElementById('appMenu');var btn=document.getElementById('appLauncherBtn');if(!m)return;if(!m.contains(e.target)&&e.target!==btn&&!btn.contains(e.target))m.classList.remove('open');}
@@ -6893,14 +6905,14 @@ async function loadComercialData(){
   _comLoadingPromise=(async function(){
     try{
       var url='https://sheets.googleapis.com/v4/spreadsheets/'+sec.sheetId+'/values/'+encodeURIComponent(sec.sheetName)+'!A1:AC?key='+sec.apiKey;
-      var resp=await fetch(url);
+      var resp=await _fetchTimeout(url, 25000);
       if(!resp.ok){sec._data=[];return;}
       var json=await resp.json();
       if(!json.values||json.values.length<2){
         // Fallback: se sheetName não era BLING, tentar com BLING
         if(sec.sheetName!=='BLING'){
           var url2='https://sheets.googleapis.com/v4/spreadsheets/'+sec.sheetId+'/values/BLING!A1:AC?key='+sec.apiKey;
-          var resp2=await fetch(url2);
+          var resp2=await _fetchTimeout(url2, 25000);
           if(!resp2.ok){sec._data=[];return;}
           var json2=await resp2.json();
           if(json2.values&&json2.values.length>=2){
@@ -7408,14 +7420,8 @@ function saveComercialCfg(){
   SECTIONS.comercial.apiKey=key;
   SECTIONS.comercial.clientId=cid;
   SECTIONS.comercial._data=[];
-  _comLoadingPromise=null; // forçar novo fetch
+  _comLoadingPromise=null; // garantir que próximo fetch seja fresco
   alert('Configurações Comercial salvas com sucesso!');
-  // Carregar dados imediatamente após salvar
-  if(id&&key){
-    loadComercialData().then(function(){
-      snack('✅ Dados comerciais carregados','success');
-    }).catch(function(){});
-  }
 }
 
 async function testComercialConn(){
@@ -7446,6 +7452,14 @@ var _origSwitchPageCom=null;
     _sp(n);
     if(n===13){
       document.getElementById('com_sheetId').value=SECTIONS.comercial.sheetId||'';
+      document.getElementById('com_sheetName').value=SECTIONS.comercial.sheetName||'BLING';
+      document.getElementById('com_apiKey').value=SECTIONS.comercial.apiKey||'';
+      document.getElementById('com_clientId').value=SECTIONS.comercial.clientId||'';
+    }
+  };
+})();
+
+tId').value=SECTIONS.comercial.sheetId||'';
       document.getElementById('com_sheetName').value=SECTIONS.comercial.sheetName||'BLING';
       document.getElementById('com_apiKey').value=SECTIONS.comercial.apiKey||'';
       document.getElementById('com_clientId').value=SECTIONS.comercial.clientId||'';
